@@ -20,7 +20,7 @@ const Home = () => {
     const database = getDatabase();
 
     const Item = styled(Paper)(({ theme }) => ({
-        backgroundColor: '#26558B',
+        backgroundColor: '#4fc3f7',
         ...theme.typography.body2,
         padding: theme.spacing(1),
         textAlign: 'center',

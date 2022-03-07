@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import { Question } from '../../../models/question';
-import { Button } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 
-const QuestionField = (props : any) => {
-    const {text, updateQuestionText, deleteItem} = props;
+const QuestionField = (props: any) => {
+    const { text, updateQuestionText, deleteItem } = props;
     return (
         <>
-            <TextField id="filled-basic" label="Filled" variant="filled" value={text} 
-            onChange={(event) => {
-                updateQuestionText(event.target.value);
-            }} />
-            <Button style={{color: 'red'}} onClick={() => {
-                deleteItem();
-            }}>Delete</Button>
+            <Grid item xs={8} >
+                <TextField id="outlined-basic" sx={{width: 1}}  label="" variant="outlined" value={text}
+                    onChange={(event) => {
+                        updateQuestionText(event.target.value);
+                    }} />
+            </Grid>
+            <Grid item xs={4} sx={{width: 1}}>
+                <Button variant="outlined" color="error" onClick={() => {
+                    deleteItem();
+                }}>Delete</Button>
+            </Grid>
         </>
-        
+
     )
 }
 
