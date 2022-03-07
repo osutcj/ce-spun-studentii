@@ -1,4 +1,4 @@
-import { FormControl, Grid, InputLabel, Menu, MenuItem, Select } from '@mui/material';
+import { Button, FormControl, Grid, InputLabel, Menu, MenuItem, Select } from '@mui/material';
 import { getDatabase, onValue, ref, update } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
 import { Question } from '../../models/question';
@@ -27,14 +27,17 @@ const CurrentGame = (props: any) => {
 
     }, [])
     
-
-    const handleChange = (event: any) => {
-        setSelected((event.target.value - 1));
+    useEffect(() => {
         console.log(selected);
         update(ref(database, "/"), {
             currentQuestion: selected,
         });
+    }, [selected])
+
+    const handleChange = (event: any) => {
+        setSelected((event.target.value));
     }
+
 
     
     return (
@@ -52,14 +55,14 @@ const CurrentGame = (props: any) => {
                     >
                         {questions.map((q: Question, index) => {
                             return (
-                                <MenuItem key={index+1} value={index+1}>{q.text}</MenuItem>
+                                <MenuItem key={index} value={index}>{q.text}</MenuItem>
                             )
 
                         })}
-                        <MenuItem key="0" value="0">0</MenuItem>
                     </Select>
                 </FormControl>
             </Grid>
+
         </Grid>
     )
 }
