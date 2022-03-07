@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import Home from './components/Home';
 import Admin from './components/Admin';
+import './firebase/firebaseConfig';
 
 function App() {
   return (
