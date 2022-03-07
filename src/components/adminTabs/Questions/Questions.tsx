@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Question } from '../../../models/question';
 import { getDatabase, ref, onValue, set, update } from "firebase/database";
 import TextField from '@mui/material/TextField';
-import { Button } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import QuestionField from './QuestionField';
 
-let questions:Array<Question> = new Array<Question>();
+let questions: Array<Question> = new Array<Question>();
 const Questions = (props: any) => {
 
     const [newChange, setNewChange] = useState(false);
@@ -22,7 +22,7 @@ const Questions = (props: any) => {
         })
     }, [])
 
-    
+
 
     const addNewQuestion = () => {
         let newQuestions = questions;
@@ -33,32 +33,37 @@ const Questions = (props: any) => {
     const handleQuestionsUpdate = () => {
         console.log(questions);
         update(ref(database, "/"), {
-            questions:questions,
+            questions: questions,
         });
     }
 
-    const deleteItem = (index : number) => {
+    const deleteItem = (index: number) => {
         questions.splice(index, 1);
         setNewChange(!newChange);
     }
 
 
     return (
-        <div>
+        <Grid container spacing={2} sx={{ width: 1 / 2 }}>
             {questions.map((q, index) => {
                 return (
-                    <div style={{margin: 10}}>
-                        <QuestionField text={q.text} updateQuestionText={(newText:String) => {
-                            questions[index].text = newText;
-                            setNewChange(!newChange);
-                        }} deleteItem={() => deleteItem(index)} />
-                    </div>
+
+
+                    <QuestionField text={q.text} updateQuestionText={(newText: String) => {
+                        questions[index].text = newText;
+                        setNewChange(!newChange);
+                    }} deleteItem={() => deleteItem(index)} />
+
                 )
-                
+
             })}
-            <Button style={{margin: 10}} variant="contained" onClick={() => addNewQuestion()}>Adauga o intrebare</Button>
-            <Button style={{margin: 10}} variant="contained" onClick={() => handleQuestionsUpdate()}>Salveaza</Button>
-        </div>
+            <Grid item xs={8}>
+                <Button variant="outlined" onClick={() => addNewQuestion()}>Adauga o intrebare</Button>
+            </Grid>
+            <Grid item xs={4}>
+                <Button variant="outlined" onClick={() => handleQuestionsUpdate()}>Salveaza</Button>
+            </Grid>
+        </Grid>
 
     )
 }
