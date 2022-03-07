@@ -39,7 +39,7 @@ const Home = () => {
             setTeam2Points(data.team2);
             data.questions[data.currentQuestion].answers.map((ans:Answer) => {
                 if (ans.revealed) {
-                    totalPoints += ans.points;
+                    totalPoints += ans.points === undefined ? 0 : ans.points;
                 }
             })
             if (data.doublePoints) {
@@ -53,7 +53,7 @@ const Home = () => {
     }, []);
 
     const indexOfAnswer = (index: number) => {
-        if (answers.length > index && answers[index].revealed) {
+        if (answers !== undefined && answers.length > index && answers[index].revealed) {
             return answers[index].text;
             
         }

@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import * as React from 'react';
+import { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { Link } from "react-router-dom";
-import { Container, fabClasses, Grid, Box, Avatar } from "@mui/material";
+import { Container, Grid, Box, Avatar } from "@mui/material";
 import '../styles/admin.css';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import CurrentGame from './adminTabs/CurrentGame';
+import Questions from './adminTabs/Questions/Questions';
+import AddAnswers from './adminTabs/Answers/AddAnswers';
 
 
 const loginEmail = "osut@osugi.ro";
@@ -14,11 +19,43 @@ const Admin = () => {
     const [loggedIn, setLoggedIn] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [currentTab, changeCurrentTab] = useState(0);
 
     const handleLogin = () => {
         if (email === loginEmail && password === loginPassword) {
             setLoggedIn(true);
         }
+    }
+
+    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+        changeCurrentTab(newValue);
+    };
+
+    interface TabPanelProps {
+        children?: React.ReactNode;
+        index: number;
+        value: number;
+    }
+
+
+    function TabPanel(props: TabPanelProps) {
+        const { children, value, index, ...other } = props;
+
+        return (
+            <div
+                role="tabpanel"
+                hidden={value !== index}
+                id={`simple-tabpanel-${index}`}
+                aria-labelledby={`simple-tab-${index}`}
+                {...other}
+            >
+                {value === index && (
+                    <Box sx={{ p: 3 }}>
+                        {children}
+                    </Box>
+                )}
+            </div>
+        );
     }
 
 
@@ -53,9 +90,24 @@ const Admin = () => {
     }
 
     return (
-        <div>
-            <p>Admin</p>
-        </div>
+        <Box sx={{ width: '100%' }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <Tabs value={currentTab} style={{backgroundColor: 'white'}} onChange={handleTabChange} aria-label="basic tabs example">
+                    <Tab label="Joc curent" id={'1'} />
+                    <Tab label="Adaugare intrebari" id={'2'} />
+                    <Tab label="Adaugare raspunsuri" id={'3'} />
+                </Tabs>
+            </Box>
+            <TabPanel value={currentTab} index={0}>
+                <CurrentGame/>
+            </TabPanel>
+            <TabPanel value={currentTab} index={1}>
+                <Questions/>
+            </TabPanel>
+            <TabPanel value={currentTab} index={2}>
+                <AddAnswers/>
+            </TabPanel>
+        </Box>
     )
 }
 

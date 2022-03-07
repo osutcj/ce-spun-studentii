@@ -1,12 +1,12 @@
 export class Answer {
-    points: number;
-    revealed: boolean;
-    text: String;
+    points: number | undefined;
+    revealed: boolean | undefined;
+    text: String | undefined;
 
 
-    constructor(points?: Number|any, revealed?: boolean|any, text?: String|any) {
-        this.points = points;
-        this.revealed = revealed;
-        this.text = text;
+    constructor(points?: number|undefined, revealed?: boolean|undefined, text?: String|undefined) {
+        this.points = points === undefined ? 0 : points;
+        this.revealed = revealed === undefined ? false : revealed;
+        this.text = text === undefined ? "" : text;
     }
 }
