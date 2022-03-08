@@ -38,25 +38,31 @@ const CurrentGame = (props: any) => {
             currentQuestion: selected,
         });
 
-        setRevealed(questions[selected].revealed);
+        
 
     }, [selected])
 
     useEffect(() => {
         console.log(revealed);
-        questions[selected].revealed = revealed;
-        update(ref(database, "/"), {
-            questions: questions,
-        });
+        //questions[selected].revealed = revealed;
+        setRevealed(questions[selected].revealed);
 
-    }, [revealed])
+    }, [selected])
 
     const handleChange = (event: any) => {
         setSelected((event.target.value));
+        setRevealed(questions[selected].revealed);
+        
     }
 
     const handleRevealedChange = (event: any) => {
         setRevealed(event.target.checked);
+        questions[selected].revealed = !revealed;
+
+        update(ref(database, "/"), {
+            questions: questions,
+        });
+
     }
 
 
