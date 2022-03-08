@@ -1,4 +1,4 @@
-import { Button, FormControl, Grid, InputLabel, Menu, MenuItem, Select } from '@mui/material';
+import { Button, FormControl, FormControlLabel, Grid, InputLabel, Menu, MenuItem, Select, Switch } from '@mui/material';
 import { getDatabase, onValue, ref, update } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
 import { Question } from '../../models/question';
@@ -10,11 +10,13 @@ import { Question } from '../../models/question';
 const CurrentGame = (props: any) => {
 
     const database = getDatabase();
-    const [questions, setQuestions] = useState([]);
+    const [questions, setQuestions] = useState(new Array<Question>());
     const [newChange, setNewChange] = useState(false);
     const [selected, setSelected] = useState(1);
     const [curent, setCurent] = useState(new Question());
-    
+
+    const [revealed, setRevealed] = useState(false)
+
     useEffect(() => {
         const dbQuestions = ref(database, '/');
         onValue(dbQuestions, (snapshot) => {
@@ -25,21 +27,40 @@ const CurrentGame = (props: any) => {
             }
         })
 
+        
+
+
     }, [])
-    
+
     useEffect(() => {
         console.log(selected);
         update(ref(database, "/"), {
             currentQuestion: selected,
         });
+
+        setRevealed(questions[selected].revealed);
+
     }, [selected])
+
+    useEffect(() => {
+        console.log(revealed);
+        questions[selected].revealed = revealed;
+        update(ref(database, "/"), {
+            questions: questions,
+        });
+
+    }, [revealed])
 
     const handleChange = (event: any) => {
         setSelected((event.target.value));
     }
 
+    const handleRevealedChange = (event: any) => {
+        setRevealed(event.target.checked);
+    }
 
-    
+
+
     return (
         <Grid container spacing={2} sx={{ width: 1 / 2 }}>
             <Grid item xs={12}>
@@ -62,6 +83,17 @@ const CurrentGame = (props: any) => {
                     </Select>
                 </FormControl>
             </Grid>
+            <Grid item xs={12}>
+                <FormControl component="fieldset" variant="standard">
+                    <FormControlLabel
+                        control={
+                            <Switch checked={revealed} onChange={handleRevealedChange} name="revealed" />
+                        }
+                        label="Question Revealed"
+                    />
+                </FormControl>
+            </Grid>
+
 
         </Grid>
     )
