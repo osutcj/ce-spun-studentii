@@ -42,12 +42,12 @@ const CurrentGame = (props: any) => {
 
     }, [selected])
 
-    useEffect(() => {
-        console.log(revealed);
-        //questions[selected].revealed = revealed;
-        setRevealed(questions[selected].revealed);
+    // useEffect(() => {
+    //     console.log(revealed);
+    //     //questions[selected].revealed = revealed;
+    //     // setRevealed(questions[selected].revealed);
 
-    }, [selected])
+    // }, [selected])
 
     const handleChange = (event: any) => {
         setSelected((event.target.value));
