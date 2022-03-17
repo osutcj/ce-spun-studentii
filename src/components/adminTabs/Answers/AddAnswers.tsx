@@ -35,7 +35,7 @@ const AddAnswers = (props: any) => {
     }
 
     const handlePuncte = (event: any) => {
-        console.log(event.target.id)
+        console.log(event.target.value)
     }
 
     const handleText = (event: any) => {
