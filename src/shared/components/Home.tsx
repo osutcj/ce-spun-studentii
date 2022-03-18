@@ -74,10 +74,8 @@ const Home = () => {
   return (
     <Container maxWidth="lg" style={{paddingTop: 10}}>
       <Box sx={{ flexGrow: 2 }}>
-        <div
-          style={{ display: 'flex', justifyContent: 'center', width: '100vw' }}
-        >
-          <p style={{textAlign: 'center', fontSize: 25}}>{points}</p>
+        <div style={{ width: '100%'}}>
+          <p style={{fontSize: 25}}>{points}</p>
         </div>
         <div>
           <h1>
