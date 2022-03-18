@@ -31,7 +31,6 @@ const Questions = (props: any) => {
     }
 
     const handleQuestionsUpdate = () => {
-        console.log(questions);
         update(ref(database, "/"), {
             questions: questions,
         });
