@@ -10,14 +10,14 @@ import { Answer } from '../models/answer';
 import { styled } from '@mui/material';
 import { db } from '../../utils/firebase/firebase';
 import { useObjectVal } from 'react-firebase-hooks/database';
-import { DB } from '../models/db';
+import { DB, DBAnswer, DBQuestion, DBTeam } from '../models/db';
 
 const Home = () => {
-  const [currentQuestion, setCurrentQuestion] = useState(new Question());
-  const [answers, setAnswers] = useState<Answer[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState<DBQuestion>();
+  const [answers, setAnswers] = useState<DBAnswer[]>([]);
   const [points, setPoints] = useState(0);
-  const [team1Points, setTeam1Points] = useState(0);
-  const [team2Points, setTeam2Points] = useState(0);
+  const [team1, setTeam1] = useState<DBTeam>();
+  const [team2, setTeam2] = useState<DBTeam>();
 
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: '#4fc3f7',
@@ -25,43 +25,41 @@ const Home = () => {
     padding: theme.spacing(1),
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    minHeight: 20,
+    minHeight: 40,
   }));
 
   const [dbValue] = useObjectVal<DB>(ref(db, '/'));
 
+  const computeTotalPoints = () => {
+    if (dbValue) {
+      let totalPoints = 0;
+      dbValue.questions[dbValue.currentQuestion].answers.map(answer => {
+        if (answer.revealed) {
+          totalPoints += answer.points;
+        }
+      });
+      setPoints(totalPoints);
+    }
+  }
+
   useEffect(() => {
     if (dbValue) {
-      // if (dbValue.currentQuestion)
+      console.log(dbValue);
+      if (dbValue) {
+        if (dbValue.questions[dbValue.currentQuestion]) {
+            setCurrentQuestion(dbValue.questions[dbValue.currentQuestion]);
+            setAnswers(dbValue.questions[dbValue.currentQuestion].answers);
+            computeTotalPoints();
+        }
+        if (dbValue.team1) {
+          setTeam1(dbValue.team1);
+        }
+        if (dbValue.team2) {
+          setTeam2(dbValue.team2);
+        }
+      }
     }
   }, [dbValue]);
-
-  // useEffect(() => {
-  //   const questions = ref(db, '/questions');
-  //   onValue(questions, (snapshot) => {
-  //     const data = snapshot.val();
-  //     setCurrentQuestion(data.questions[data.currentQuestion]);
-  //     setAnswers(
-  //       data.currentQuestion >= 0
-  //         ? data.questions[data.currentQuestion].answers
-  //         : []
-  //     );
-  //     let totalPoints = 0;
-  //     setTeam1Points(data.team1);
-  //     setTeam2Points(data.team2);
-  //     data.questions[data.currentQuestion].answers.map((ans: Answer) => {
-  //       if (ans.revealed) {
-  //         totalPoints += ans.points === undefined ? 0 : ans.points;
-  //       }
-  //     });
-  //     if (data.doublePoints) {
-  //       totalPoints *= 2;
-  //     } else if (data.triplePoints) {
-  //       totalPoints *= 3;
-  //     }
-  //     setPoints(totalPoints);
-  //   });
-  // }, []);
 
   const indexOfAnswer = (index: number) => {
     if (
@@ -69,24 +67,22 @@ const Home = () => {
       answers.length > index &&
       answers[index].revealed
     ) {
-      return answers[index].text;
+      return `${answers[index].text} -  ${answers[index].points}`;
     }
     return '';
   };
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" style={{paddingTop: 10}}>
       <Box sx={{ flexGrow: 2 }}>
         <div
-          style={{ display: 'flex', justifyContent: 'center', width: '100%' }}
+          style={{ display: 'flex', justifyContent: 'center', width: '100vw' }}
         >
-          <Grid container spacing={2}>
-            <p>{points}</p>
-          </Grid>
+          <p style={{textAlign: 'center', fontSize: 25}}>{points}</p>
         </div>
         <div>
           <h1>
-            {currentQuestion.revealed ? currentQuestion.text : 'Coming...'}
+            {currentQuestion && currentQuestion.revealed ? currentQuestion.text : 'Coming...'}
           </h1>
         </div>
         <Grid container spacing={2}>
@@ -103,23 +99,23 @@ const Home = () => {
             <Item>{indexOfAnswer(3)}</Item>
           </Grid>
           <Grid item xs={6}>
-            <Item></Item>
+            <Item>{indexOfAnswer(4)}</Item>
           </Grid>
           <Grid item xs={6}>
-            <Item></Item>
+            <Item>{indexOfAnswer(5)}</Item>
           </Grid>
           <Grid item xs={6}>
-            <Item></Item>
+            <Item>{indexOfAnswer(6)}</Item>
           </Grid>
           <Grid item xs={6}>
-            <Item></Item>
+            <Item>{indexOfAnswer(7)}</Item>
           </Grid>
         </Grid>
         <div>
-          <p>Echipa 1: {team1Points}</p>
+          <p>{team1?.name}: {team1?.points}</p>
         </div>
         <div>
-          <p>Echipa 2: {team2Points}</p>
+          <p>{team2?.name}: {team2?.points}</p>
         </div>
       </Box>
     </Container>

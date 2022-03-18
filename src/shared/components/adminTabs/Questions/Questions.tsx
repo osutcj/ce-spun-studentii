@@ -49,7 +49,7 @@ const Questions = (props: any) => {
                 return (
 
 
-                    <QuestionField text={q.text} updateQuestionText={(newText: String) => {
+                    <QuestionField text={q.text} updateQuestionText={(newText: string) => {
                         questions[index].text = newText;
                         setNewChange(!newChange);
                     }} deleteItem={() => deleteItem(index)} />

@@ -66,6 +66,7 @@ const questionData = questions
       return [{
         text: result[1],
         points: +result[2],
+        revealed: false,
       }];
     }),
   }));

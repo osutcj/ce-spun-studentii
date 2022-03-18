@@ -13,6 +13,7 @@ export interface DBTeam {
 
 export interface DBAnswer {
   text: string;
+  revealed: boolean;
   points: number;
 }
 

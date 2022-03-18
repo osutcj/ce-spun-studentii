@@ -1,0 +1,21 @@
+.container {
+    background-color: #f0f0f0;
+    position: absolute;
+    top: 20px;
+    left: 40%;
+    padding: 15px 30px;
+}
+
+.form-field {
+    padding: 15px 20px;
+}
+
+.login-button {
+    background-color: #f30303;
+    margin: 0 20px;
+}
+
+.login-button:hover {
+    background-color: #f30303;
+    color: #000000;
+}
