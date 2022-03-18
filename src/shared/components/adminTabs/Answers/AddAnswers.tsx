@@ -4,10 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { Question } from '../../../models/question';
 
 
-
-let questions: Array<Question> = new Array<Question>();
-
-
 const AddAnswers = (props: any) => {
 
     const database = getDatabase();

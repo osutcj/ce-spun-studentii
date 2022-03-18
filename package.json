@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "seed:new": "ts-node -O '{\"module\":\"commonjs\"}' src/utils/scripts/seed.ts"
+    "seed:new": "ts-node -O \"{\\\"module\\\":\\\"commonjs\\\"}\" src/utils/scripts/seed.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.8.2",

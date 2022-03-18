@@ -3,7 +3,7 @@ import { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { Container, Grid, Box, Avatar } from '@mui/material';
-import '../styles/admin.css';
+import './styles/admin.css';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import CurrentGame from './adminTabs/CurrentGame';
