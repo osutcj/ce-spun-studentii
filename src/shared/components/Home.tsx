@@ -44,7 +44,6 @@ const Home = () => {
 
   useEffect(() => {
     if (dbValue) {
-      console.log(dbValue);
       if (dbValue) {
         if (dbValue.questions[dbValue.currentQuestion]) {
             setCurrentQuestion(dbValue.questions[dbValue.currentQuestion]);

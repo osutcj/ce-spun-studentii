@@ -1,43 +1,80 @@
-import { Select, MenuItem, SelectChangeEvent, InputLabel, FormControl, Grid, TextField } from '@mui/material';
-import { getDatabase, ref, onValue } from 'firebase/database';
+import { Select, MenuItem, SelectChangeEvent, InputLabel, FormControl, Grid, TextField, Button } from '@mui/material';
+import { getDatabase, ref, onValue, update } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
 import { Question } from '../../../models/question';
-
+import { db } from '../../../../utils/firebase/firebase';
+import { useObjectVal } from 'react-firebase-hooks/database';
+import {DB, DBAnswer, DBQuestion} from '../../../models/db';
 
 const AddAnswers = (props: any) => {
 
-    const database = getDatabase();
-    const [questions, setQuestions] = useState([]);
+
+    const [questions, setQuestions] = useState<DBQuestion[]>([]);
     const [newChange, setNewChange] = useState(false);
+    const [answers, setAnswers] = useState<DBAnswer[]>([]);
 
     const [selected, setSelected] = useState('');
-    
+
+    const [dbValue] = useObjectVal<DB>(ref(db, '/'));
 
     useEffect(() => {
-        const dbQuestions = ref(database, '/');
-        onValue(dbQuestions, (snapshot) => {
-            const data = snapshot.val();
-            if (data.questions !== undefined) {
-                setQuestions(data.questions);
-                setNewChange(!newChange);
-            }
-        })
-
-    }, [])
+        if (dbValue && dbValue.questions) {
+            setQuestions(dbValue.questions);
+        }
+    }, [dbValue])
 
     const handleChange = (event: SelectChangeEvent<typeof selected>) => {
-        setSelected(event.target.value);
-        console.log(event.target.value);
+        if (dbValue && dbValue.questions) {
+            setAnswers(dbValue.questions[+event.target.value].answers);
+            setSelected(event.target.value);
+        }
     }
 
-    const handlePuncte = (event: any) => {
-        console.log(event.target.value)
+    const handlePuncte = (index: number, newValue: number) => {
+        const newAnswers = answers.map((answer, answerIndex) => {
+            if (answerIndex === index) {
+                return {
+                    text: answer.text,
+                    points: newValue,
+                    revealed: answer.revealed,
+                }
+            }
+            return answer;
+        })
+        setAnswers(newAnswers);
     }
 
-    const handleText = (event: any) => {
-        console.log(event.target.id)
+    const handleText = (index: number, newValue: string) => {
+        const newAnswers = answers.map((answer, answerIndex) => {
+            if (answerIndex === index) {
+                return {
+                    text: newValue,
+                    points: answer.points,
+                    revealed: answer.revealed
+                }
+            }
+            return answer;
+        });
+        setAnswers(newAnswers);
     }
 
+    const pushNewAnswer = () => {
+        if (answers.length < 8) {
+            //do some stuff
+            setAnswers([...answers, {points: 0, text: "", revealed: false}]);
+        }
+    }
+
+    const saveAnswers = () => {
+        update(ref(db, '/questions/' + selected), {
+            answers: answers,
+        })
+    }
+
+    const deleteItem = (index: number) => {
+        answers.splice(index, 1);
+        setNewChange(!newChange);
+    }
 
     return (
         <div>
@@ -53,7 +90,7 @@ const AddAnswers = (props: any) => {
                             onChange={handleChange}
 
                         >
-                            {questions.map((q: Question, index) => {
+                            {questions.map((q: DBQuestion, index) => {
                                 return (
                                     <MenuItem key={index} value={index}>{q.text}</MenuItem>
                                 )
@@ -62,65 +99,31 @@ const AddAnswers = (props: any) => {
 
                     </FormControl>
                 </Grid>
-                <Grid item xs={8}>
-                    <TextField fullWidth id="1" label="Raspuns 1" onChange={handleText} variant="outlined" />
-                </Grid>
-                <Grid item xs={4}>
-                    <TextField fullWidth id="1" label="Puncte 1" onChange={handlePuncte} variant="outlined" />
-                </Grid>
-                
-                <Grid item xs={8}>
-                    <TextField fullWidth id="2" label="Raspuns 2" onChange={handleText} variant="outlined" />
-                </Grid>
-                <Grid item xs={4}>
-                    <TextField fullWidth id="2" label="Puncte 2" onChange={handlePuncte} variant="outlined" />
-                </Grid>
 
-                <Grid item xs={8}>
-                    <TextField fullWidth id="3" label="Raspuns 3" onChange={handleText} variant="outlined" />
-                </Grid>
-                <Grid item xs={4}>
-                    <TextField fullWidth id="3" label="Puncte 3" onChange={handlePuncte} variant="outlined" />
-                </Grid>
+                {answers.map((answer, index) => {
+                    return (
+                        <>
+                            <Grid item xs={6}>
+                                <TextField fullWidth id={"R"+index.toString()} label={`Raspuns ${index+1}`} value={answer.text} onChange={(event) => handleText(index, event.target.value)} variant="outlined" />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <TextField fullWidth id={"P"+index.toString()} label={`Puncte ${index+1}`} value={answer.points} onChange={(event) => handlePuncte(index, +event.target.value)} variant="outlined" />
+                            </Grid>
+                            <Grid item xs={3} sx={{width: 1}}>
+                                <Button variant="outlined" color="error" onClick={() => {
+                                    deleteItem(index);
+                                }}>Delete</Button>
+                            </Grid>
+                        </>
+                    )
+                })}
 
-                <Grid item xs={8}>
-                    <TextField fullWidth id="4" label="Raspuns 4" onChange={handleText} variant="outlined" />
-                </Grid>
-                <Grid item xs={4}>
-                    <TextField fullWidth id="4" label="Puncte 4" onChange={handlePuncte} variant="outlined" />
-                </Grid>
-
-
-                <Grid item xs={8}>
-                    <TextField fullWidth id="5" label="Raspuns 5" onChange={handleText} variant="outlined" />
-                </Grid>
-                <Grid item xs={4}>
-                    <TextField fullWidth id="5" label="Puncte 5" onChange={handlePuncte} variant="outlined" />
-                </Grid>
-
-                
-                <Grid item xs={8}>
-                    <TextField fullWidth id="6" label="Raspuns 6" onChange={handleText}variant="outlined" />
-                </Grid>
-                <Grid item xs={4}>
-                    <TextField fullWidth id="6" label="Puncte 6" onChange={handlePuncte} variant="outlined" />
-                </Grid>
-
-                
-                <Grid item xs={8}>
-                    <TextField fullWidth id="7" label="Raspuns 7" onChange={handleText} variant="outlined" />
-                </Grid>
-                <Grid item xs={4}>
-                    <TextField fullWidth id="7" label="Puncte 7" onChange={handlePuncte} variant="outlined" />
-                </Grid>
-
-                
-                <Grid item xs={8}>
-                    <TextField fullWidth id="8" label="Raspuns 8" onChange={handleText} variant="outlined" />
-                </Grid>
-                <Grid item xs={4}>
-                    <TextField fullWidth id="8" label="Puncte 8" onChange={handlePuncte} variant="outlined" />
-                </Grid>
+            <Grid item xs={8}>
+                <Button variant="outlined" onClick={() => pushNewAnswer()}>Adauga un raspuns</Button>
+            </Grid>
+            <Grid item xs={4}>
+                <Button variant="outlined" onClick={() => saveAnswers()}>Salveaza</Button>
+            </Grid>
 
             </Grid>
 
