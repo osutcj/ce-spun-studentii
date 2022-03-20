@@ -1,22 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-} from "react-router-dom";
-import Home from './components/Home';
-import Admin from './components/Admin';
-import './firebase/firebaseConfig';
+import { Route, Routes } from 'react-router-dom';
+import Home from './shared/components/Home';
+import Admin from './shared/components/Admin';
+
+export const RealtimeData = React.createContext({});
 
 function App() {
   return (
-    <BrowserRouter>
+    <div className="App">
       <Routes>
         <Route path="/" element={<Home />}></Route>
-        <Route path='/admin' element={<Admin/>} />
+        <Route path='/adminosugbine' element={<Admin />}></Route>
       </Routes>
-    </BrowserRouter>
+    </div>
   );
 }
 
