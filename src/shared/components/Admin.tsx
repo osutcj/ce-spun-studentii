@@ -9,6 +9,7 @@ import Tabs from '@mui/material/Tabs';
 import CurrentGame from './adminTabs/CurrentGame';
 import Questions from './adminTabs/Questions/Questions';
 import AddAnswers from './adminTabs/Answers/AddAnswers';
+import Teams from './adminTabs/Teams/TeamsTab';
 
 const loginEmail = 'osut@osugi.ro';
 const loginPassword = 'osugbine';
@@ -66,7 +67,7 @@ const Admin = () => {
         >
           <Avatar
             alt="OSUT"
-            src={require('../img/cometa.png')}
+            // src={require('../img/cometa.png')}
             sx={{ width: 48, height: 48 }}
           />
           <Grid container spacing={3}>
@@ -120,6 +121,7 @@ const Admin = () => {
           <Tab label="Joc curent" id={'1'} />
           <Tab label="Adaugare intrebari" id={'2'} />
           <Tab label="Adaugare raspunsuri" id={'3'} />
+          <Tab label="Modifica echipe" id={'4'} />
         </Tabs>
       </Box>
       <TabPanel value={currentTab} index={0}>
@@ -130,6 +132,9 @@ const Admin = () => {
       </TabPanel>
       <TabPanel value={currentTab} index={2}>
         <AddAnswers />
+      </TabPanel>
+      <TabPanel value={currentTab} index={3}>
+        <Teams />
       </TabPanel>
     </Box>
   );
