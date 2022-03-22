@@ -15,6 +15,9 @@ const CurrentGame = (props: any) => {
     const [selected, setSelected] = useState(0);
     const [curent, setCurent] = useState(new Question());
 
+    const [doublePoints, setDoublePoints] = useState(false);
+    const [triplePoints, setTriplePoints] = useState(false);
+
     const [revealed, setRevealed] = useState(false)
 
     const [dbValue] = useObjectVal<DB>(ref(db, '/'));
@@ -90,13 +93,20 @@ const CurrentGame = (props: any) => {
     }
 
     const addPointsToTeam = (teamNumber: number) => {
-        
+
         let points = 0;
         questions[selected].answers.map(answer => {
             if (answer.revealed) {
                 points += answer.points;
             }
         })
+
+        if (doublePoints) {
+            points *= 2;
+        }
+        if (triplePoints) {
+            points *= 3;
+        }
 
         if (teamNumber === 1 && dbValue) {
             const newTeam1Points = dbValue?.team1.points + points;
@@ -109,6 +119,25 @@ const CurrentGame = (props: any) => {
             update(ref(db, '/team2'), {
                 points: newTeam2Points
             });
+        }
+    }
+
+
+    const handlePointsMultiplier = (event: any, type: number) => {
+        const checkedValue = event.target.checked;
+        if (type === 1) {
+            setDoublePoints(checkedValue);
+            setTriplePoints(false);
+            update(ref(db, '/'), {
+                pointsMultiplier: checkedValue ? 2 : 1
+            })
+        }
+        else {
+            setDoublePoints(false);
+            setTriplePoints(checkedValue);
+            update(ref(db, '/'), {
+                pointsMultiplier: checkedValue ? 3 : 1
+            })
         }
     }
 
@@ -168,7 +197,25 @@ const CurrentGame = (props: any) => {
                 )
             }) : null}
 
-            <div style={{marginTop: 10, width: '100%'}}>
+            <FormControl component="fieldset" variant="standard">
+                <FormControlLabel
+                    control={
+                        <Switch checked={doublePoints} onChange={(event) => {handlePointsMultiplier(event, 1)}} name="revealed" />
+                    }
+                    label="Puncte duble"
+                />
+            </FormControl>
+
+            <FormControl component="fieldset" variant="standard">
+                <FormControlLabel
+                    control={
+                        <Switch checked={triplePoints} onChange={(event) => {handlePointsMultiplier(event, 2)}} name="revealed" />
+                    }
+                    label="Puncte triple"
+                />
+            </FormControl>
+
+            <div style={{ marginTop: 10, width: '100%' }}>
                 <h2>Adauga puncte la:</h2>
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
