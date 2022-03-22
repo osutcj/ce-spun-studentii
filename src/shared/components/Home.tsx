@@ -44,6 +44,7 @@ const Home = () => {
           totalPoints += answer.points;
         }
       });
+      totalPoints *= dbValue.pointsMultiplier;
       setPoints(totalPoints);
     }
   }
