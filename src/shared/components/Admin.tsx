@@ -10,12 +10,13 @@ import CurrentGame from './adminTabs/CurrentGame';
 import Questions from './adminTabs/Questions/Questions';
 import AddAnswers from './adminTabs/Answers/AddAnswers';
 import Teams from './adminTabs/Teams/TeamsTab';
+import FlashRound from './adminTabs/FlashRound';
 
 const loginEmail = 'osut@osugi.ro';
 const loginPassword = 'osugbine';
 
 const Admin = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [currentTab, changeCurrentTab] = useState(0);
@@ -122,6 +123,7 @@ const Admin = () => {
           <Tab label="Adaugare intrebari" id={'2'} />
           <Tab label="Adaugare raspunsuri" id={'3'} />
           <Tab label="Modifica echipe" id={'4'} />
+          <Tab label="RUNDA FLASH" id={'5'} />
         </Tabs>
       </Box>
       <TabPanel value={currentTab} index={0}>
@@ -135,6 +137,9 @@ const Admin = () => {
       </TabPanel>
       <TabPanel value={currentTab} index={3}>
         <Teams />
+      </TabPanel>
+      <TabPanel value={currentTab} index={4}>
+        <FlashRound />
       </TabPanel>
     </Box>
   );
