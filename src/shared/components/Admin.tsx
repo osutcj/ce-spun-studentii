@@ -15,7 +15,7 @@ const loginEmail = 'osut@osugi.ro';
 const loginPassword = 'osugbine';
 
 const Admin = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [currentTab, changeCurrentTab] = useState(0);

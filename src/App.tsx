@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logo from './logo.svg';
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Home from './shared/components/Home';
@@ -11,7 +12,7 @@ function App() {
     <div className="App">
       <Routes>
         <Route path="/" element={<Home />}></Route>
-        <Route path='/adminosugibine' element={<Admin />}></Route>
+        <Route path="/admin" element={<Admin />}></Route>
       </Routes>
     </div>
   );
