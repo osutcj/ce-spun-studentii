@@ -15,6 +15,7 @@ export interface DBAnswer {
   text: string;
   revealed: boolean;
   points: number;
+  revealed: boolean;
 }
 
 export interface DBQuestion {
@@ -24,7 +25,17 @@ export interface DBQuestion {
   revealed: boolean;
 }
 
+export interface FlashRoundAnswers {
+  answer: string,
+  points: number,
+}
+export interface FlashRound {
+  answers1: FlashRoundAnswers[],
+  answers2: FlashRoundAnswers[],
+}
+
 export interface DB {
+  flash: FlashRound,
   currentQuestion: number;
   pointsMultiplier: PointsMode;
   questions: DBQuestion[];
