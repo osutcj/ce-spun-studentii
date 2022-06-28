@@ -15,7 +15,6 @@ export interface DBAnswer {
   text: string;
   revealed: boolean;
   points: number;
-  revealed: boolean;
 }
 
 export interface DBQuestion {
