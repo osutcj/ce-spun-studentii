@@ -4,7 +4,8 @@ export interface DBTeam {
 }
 
 export interface NormalGame {
-    currentQuestion: number,
+    id: string,
+    currentQuestion: string,
     name: string,
     questionRevealed: boolean,
     revealedAnswers: Array < number >,

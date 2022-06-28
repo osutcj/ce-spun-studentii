@@ -15,9 +15,13 @@ const GamesService = {
     get: async () => {
         const querySnapshot = await getDocs(collection(firestore, GAMES_COLLECTION));
 
-        const gamesData: Array<object> = [];
+        const gamesData: NormalGame[] = [];
         querySnapshot.forEach(doc => {
-            gamesData.push(doc.data());
+            const data = doc.data()as NormalGame;
+            gamesData.push({
+                ... data,
+                id: doc.id
+            });
         })
 
         return gamesData;
