@@ -68,7 +68,6 @@ const Admin = () => {
         >
           <Avatar
             alt="OSUT"
-            // src={require('../img/cometa.png')}
             sx={{ width: 48, height: 48 }}
           />
           <Grid container spacing={3}>
