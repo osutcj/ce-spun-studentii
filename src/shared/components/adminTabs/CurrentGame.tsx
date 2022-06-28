@@ -11,15 +11,12 @@ import { DB, DBQuestion } from '../../models/db';
 const CurrentGame = (props: any) => {
 
     const [questions, setQuestions] = useState<DBQuestion[]>([]);
-    const [newChange, setNewChange] = useState(false);
+    const [revealed, setRevealed] = useState(false)
     const [selected, setSelected] = useState(0);
     const [showGame, setShowGame] = useState(0);
-    const [curent, setCurent] = useState(new Question());
 
     const [doublePoints, setDoublePoints] = useState(false);
     const [triplePoints, setTriplePoints] = useState(false);
-
-    const [revealed, setRevealed] = useState(false)
 
     const [dbValue] = useObjectVal<DB>(ref(db, '/'));
 
@@ -173,7 +170,6 @@ const CurrentGame = (props: any) => {
                         value={selected}
                         label="Numar Intrebare"
                         onChange={handleChange}
-
                     >
                         {questions.map((q: DBQuestion, index) => {
                             return (
