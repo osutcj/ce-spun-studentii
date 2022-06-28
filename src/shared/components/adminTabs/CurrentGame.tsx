@@ -51,11 +51,15 @@ const CurrentGame = (props: any) => {
     const handleChange = (event: any) => {
         resetDbValues();
         setSelected((event.target.value));
-        setShowGame((event.target.value));
+        
         setRevealed(false);
         update(ref(db, '/'), {
             currentQuestion: event.target.value
         })
+    }
+
+    const handleGameChange = (event: any) => {
+        setShowGame((event.target.value));
     }
 
     const handleRevealedChange = (event: any) => {
@@ -154,11 +158,11 @@ const CurrentGame = (props: any) => {
                         id="demo-simple-select"
                         value={showGame}
                         label="Id Joc"
-                        onChange={handleChange}
+                        onChange={handleGameChange}
                     >
-                        <MenuItem key={1} value={showGame}>Game 1</MenuItem>
-                        <MenuItem key={2} value={showGame}>Game 2</MenuItem>
-                        <MenuItem key={3} value={showGame}>Game 3</MenuItem>
+                        <MenuItem key={1} value={"1"}>Game 1</MenuItem>
+                        <MenuItem key={2} value={"2"}>Game 2</MenuItem>
+                        <MenuItem key={3} value={"3"}>Game 3</MenuItem>
                     </Select>
                 </FormControl>
                 <FormControl fullWidth margin="normal">
