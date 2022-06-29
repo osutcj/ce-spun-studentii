@@ -9,7 +9,8 @@ function useFlashRound(docId: string) {
 
     useEffect(() => {
         const unsubscribe = docId ? onSnapshot(doc(firestore, FLASH_ROUND_COLLECTION, docId), (data => {
-            setFlashAnswers(data.data());
+            const flashData = data.data() as FlashRound;
+            setFlashAnswers(flashData);
         })) : () => { };
 
         return () => {

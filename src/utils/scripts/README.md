@@ -16,3 +16,9 @@ After all these steps have been made, you can run the seeding script
 3. Open a terminal in the project's root directory and run the command `npm run seed:firestore`
 
 ### Note: This process will permanently change the database' content, so proceed with caution
+
+
+## Admin login credentials
+These are required in order to fully use the application. Good luck!
+- Email: osut@osut.ro
+- Password: ce-spun-studentii-23
