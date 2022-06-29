@@ -6,18 +6,13 @@ export interface FlashRoundAnswers {
 export interface FlashRound {
     id: string,
     name: string,
-    answers1: FlashRoundAnswers[] | EmptyFlashRoundAnswer[],
-    answers2: FlashRoundAnswers[] | EmptyFlashRoundAnswer[],
+    answers1: FlashRoundAnswers[],
+    answers2: FlashRoundAnswers[],
     type: number
     currentRound: number,
 }
 
-export class EmptyFlashRoundAnswer implements FlashRoundAnswers {
-    answer: string;
-    points: number;
-
-    constructor() {
-        this.answer = "";
-        this.points = 0;
-    }
+export const EmptyFlashRound: FlashRoundAnswers = {
+    points: 0,
+    answer: "",
 }

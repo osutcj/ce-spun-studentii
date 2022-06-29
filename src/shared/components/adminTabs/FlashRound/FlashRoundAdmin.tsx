@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Grid, Button, InputLabel, FormControl, Select, MenuItem } from '@mui/material';
-import { EmptyFlashRoundAnswer, FlashRound } from '../../../models/flash-round';
+import { Container, Grid, Button, InputLabel, FormControl, Select, MenuItem, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { EmptyFlashRound, FlashRound } from '../../../models/flash-round';
 import { FlashRoundAnswers } from '../../../models/flash-round';
 import RoundAnswer from './RoundAnswer';
 import useFlashRound from '../../../../hooks/useFlashRound';
@@ -12,6 +12,7 @@ const FlashRoundAdmin = () => {
     const [flashRounds, setFlashRounds] = useState<FlashRound[]>();
     const [answers1, setAnswers1] = useState<FlashRoundAnswers[]>([]);
     const [answers2, setAnswers2] = useState<FlashRoundAnswers[]>([]);
+    const [round, setRound] = useState<number>(1);
     const flash = useFlashRound(game);
 
 
@@ -27,9 +28,7 @@ const FlashRoundAdmin = () => {
 
     useEffect(() => {
         if (flash) {
-            console.log(flash);
             if (flash.answers1) {
-                console.log(flash.answers1);
                 setAnswers1(flash.answers1);
             }
             else {
@@ -57,7 +56,6 @@ const FlashRoundAdmin = () => {
 
     const renderTextFields = (round: number) => {
         let answersArray = [];
-        console.log(answers1);
         if (answers1.length > 0 && answers2.length > 0) {
             for (let i = 0; i < 4; i++) {
                 if (round === 1) {
@@ -71,16 +69,22 @@ const FlashRoundAdmin = () => {
         return answersArray;
     }
 
+    const handleRoundChange = (event: React.SyntheticEvent, newRound: number) => {
+        setRound(newRound);
+        FlashRoundService.update(game, {
+            ...flash,
+            currentRound: newRound,
+        })
+    }
+
 
     const saveChanges = () => {
-        console.log(answers1);
-        console.log(answers2);
         FlashRoundService.update(game, {
-            id: game,
+            ...flash,
             answers1,
             answers2,
             type: 2,
-            currentRound: 1,
+            currentRound: round,
         })
             .catch(error => console.error(error));
     }
@@ -88,10 +92,7 @@ const FlashRoundAdmin = () => {
     const createEmptyTextFields = () => {
         const fields: FlashRoundAnswers[] = [];
         for (let i = 0; i < 4; i++) {
-            fields.push({
-                points: 0,
-                answer: ""
-            });
+            fields.push(EmptyFlashRound);
         }
         return fields;
     }
@@ -152,6 +153,17 @@ const FlashRoundAdmin = () => {
                         >
                             Salveaza a doua runda
                         </Button>
+                    </Grid>
+                    <Grid item xs={12} spacing={4} style={{ margin: 20 }}>
+                        <ToggleButtonGroup
+                            color="primary"
+                            value={round}
+                            exclusive
+                            onChange={handleRoundChange}
+                        >
+                            <ToggleButton value={1}>Runda 1</ToggleButton>
+                            <ToggleButton value={2}>Runda 2</ToggleButton>
+                        </ToggleButtonGroup>
                     </Grid>
                 </>
             )}

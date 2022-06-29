@@ -3,15 +3,9 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
-// import '../styles/home.css';
-import { ref, onValue } from 'firebase/database';
-import { Question } from '../models/question';
-import { Answer } from '../models/answer';
 import { styled } from '@mui/material';
-import { db } from '../../utils/firebase/firebase';
-import { useObjectVal } from 'react-firebase-hooks/database';
 import { DBAnswer, DBQuestion } from '../models/questions';
-import { DBTeam, NormalGame } from '../models/game';
+import { NormalGame } from '../models/game';
 import './styles/home.css'
 import { useParams } from 'react-router-dom';
 import useGame from '../../hooks/useGame';
@@ -20,10 +14,7 @@ import QuestionsService from '../../services/questions.service';
 const Home = (props: any) => {
   const [currentQuestion, setCurrentQuestion] = useState<DBQuestion>();
   const [questions, setQuestions] = useState<DBQuestion[]>([]);
-  const [answers, setAnswers] = useState<DBAnswer[]>([]);
   const [points, setPoints] = useState(0);
-  const [team1, setTeam1] = useState<DBTeam>();
-  const [team2, setTeam2] = useState<DBTeam>();
 
   const urlParams = useParams();
 
