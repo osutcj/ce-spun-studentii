@@ -4,11 +4,13 @@ export interface DBTeam {
 }
 
 export interface NormalGame {
-    currentQuestion: number,
+    id: string,
+    currentQuestion: string,
     name: string,
     questionRevealed: boolean,
     revealedAnswers: Array < number >,
     team1: DBTeam,
     team2: DBTeam,
-    type: 1
+    type: number,
+    pointsMultiplier: number
 }

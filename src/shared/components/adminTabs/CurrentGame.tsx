@@ -4,102 +4,99 @@ import React, { useEffect, useState } from 'react';
 import { Question } from '../../models/question';
 import { db } from '../../../utils/firebase/firebase';
 import { useObjectVal } from 'react-firebase-hooks/database';
-import { DB, DBQuestion } from '../../models/db';
 
+import QuestionsService from '../../../services/questions.service';
+import { DBAnswer, DBQuestion } from '../../models/questions';
 
+import useGame from '../../../hooks/useGame';
+import GamesService from '../../../services/games.service';
+import { NormalGame } from '../../models/game';
 
 const CurrentGame = (props: any) => {
 
     const [questions, setQuestions] = useState<DBQuestion[]>([]);
     const [revealed, setRevealed] = useState(false)
-    const [selected, setSelected] = useState(0);
-    const [showGame, setShowGame] = useState(0);
+    const [selected, setSelected] = useState<any>(-1);
+    const [selectedGame, setSelectedGame] = useState("");
 
     const [doublePoints, setDoublePoints] = useState(false);
     const [triplePoints, setTriplePoints] = useState(false);
 
-    const [dbValue] = useObjectVal<DB>(ref(db, '/'));
+    const [gamesList, setGamesList] = useState<NormalGame[]>([]);
+
+    const game: NormalGame = useGame(selectedGame || "");
 
     useEffect(() => {
-        if (dbValue) {
-            setQuestions(dbValue.questions);
-        }
-    }, [dbValue])
-
-    const resetDbValues = () => {
-        if (dbValue) {
-            const newQuestions = dbValue.questions.map(question => {
-                const newAnswers = question.answers.map(answer => {
-                    return {
-                        ...answer,
-                        revealed: false,
-                    }
-                })
-                return {
-                    ...question,
-                    answers: newAnswers,
-                    revealed: false
-                }
+        QuestionsService.get()
+            .then(response => {
+                setQuestions(response);
             })
-            update(ref(db, '/'), { questions: newQuestions });
-        }
+            .catch(error => console.error(error));
+
+        GamesService.get()
+            .then(response => {
+                setGamesList(response);
+            })
+            .catch(error => console.error(error));
+    }, [])
+
+    const resetDbValues = (newQuestion: string) => {
+        GamesService.update(selectedGame, {
+            ...game,
+            currentQuestion: newQuestion,
+            questionRevealed: false,
+            revealedAnswers: [],
+        });
+    }
+
+    const resetStates = () => {
+        setSelected(undefined);
+        setDoublePoints(false);
+        setTriplePoints(false);
+        setRevealed(false);
+        resetDbValues("");
     }
 
     const handleChange = (event: any) => {
-        resetDbValues();
-        setSelected((event.target.value));
-        
+        resetDbValues(questions[event.target.value].text);
+        setSelected(event.target.value);
         setRevealed(false);
-        update(ref(db, '/'), {
-            currentQuestion: event.target.value
-        })
     }
 
     const handleGameChange = (event: any) => {
-        setShowGame((event.target.value));
+        setSelectedGame(event.target.value);
+        resetStates();
     }
 
     const handleRevealedChange = (event: any) => {
         setRevealed(event.target.checked);
-        questions[selected].revealed = !revealed;
-
-        update(ref(db, "/"), {
-            questions: questions,
+        GamesService.update(selectedGame, {
+            ...game,
+            questionRevealed: event.target.checked
         });
 
     }
 
     const handleRevealAnswer = (event: any, index: number) => {
-        const newRevealedValue = event.target.checked;
-        const newQuestions = questions.map((question, questionIndex) => {
-            if (questionIndex === selected && question.answers) {
-                const newAnswers = question.answers.map((answer, answerIndex) => {
-                    if (answerIndex === index) {
-                        return {
-                            ...answer,
-                            revealed: newRevealedValue,
-                        }
-                    }
-                    return answer;
-                });
-                return {
-                    ...question,
-                    answers: newAnswers,
-                }
-            }
-            return question;
+        const revealedAnswers = game.revealedAnswers;
+        if (event.target.checked) {
+            revealedAnswers.push(index);
+        }
+        else {
+            revealedAnswers.splice(revealedAnswers.indexOf(index), 1);
+        }
+
+        GamesService.update(selectedGame, {
+            ...game,
+            revealedAnswers
         });
-        setQuestions(newQuestions);
-        update(ref(db, '/'), {
-            questions: newQuestions
-        })
     }
 
     const addPointsToTeam = (teamNumber: number) => {
 
         let points = 0;
-        questions[selected].answers.map(answer => {
-            if (answer.revealed) {
+        questions[selected].answers.map((answer, index) => {
+            if (game.revealedAnswers.find((revealedAnswer: number) => revealedAnswer === index) !== undefined) {
                 points += answer.points;
             }
         })
@@ -111,18 +108,35 @@ const CurrentGame = (props: any) => {
             points *= 3;
         }
 
-        if (teamNumber === 1 && dbValue) {
-            const newTeam1Points = dbValue?.team1.points + points;
-            update(ref(db, '/team1'), {
-                points: newTeam1Points
+        if (teamNumber === 1) {
+            points += game.team1.points;
+            GamesService.update(selectedGame, {
+                ...game,
+                revealedAnswers: [],
+                currentQuestion: "",
+                team1: {
+                    name: game.team1.name,
+                    points
+                }
             });
         }
-        if (teamNumber === 2 && dbValue) {
-            const newTeam2Points = dbValue?.team2.points + points;
-            update(ref(db, '/team2'), {
-                points: newTeam2Points
-            });
+        if (teamNumber === 2) {
+            points += game.team2.points;
+            GamesService.update(selectedGame, {
+                ...game,
+                revealedAnswers: [],
+                currentQuestion: "",
+                team2: {
+                    name: game.team2.name,
+                    points
+                }
+            })
         }
+
+        setSelected(undefined);
+        setDoublePoints(false);
+        setTriplePoints(false);
+        setRevealed(false);
     }
 
 
@@ -131,17 +145,39 @@ const CurrentGame = (props: any) => {
         if (type === 1) {
             setDoublePoints(checkedValue);
             setTriplePoints(false);
-            update(ref(db, '/'), {
+            GamesService.update(selectedGame, {
+                ...game,
                 pointsMultiplier: checkedValue ? 2 : 1
             })
         }
         else {
             setDoublePoints(false);
             setTriplePoints(checkedValue);
-            update(ref(db, '/'), {
+            GamesService.update(selectedGame, {
+                ...game,
                 pointsMultiplier: checkedValue ? 3 : 1
             })
         }
+        // if (type === 1) {
+        //     setDoublePoints(checkedValue);
+        //     setTriplePoints(false);
+        //     update(ref(db, '/'), {
+        //         pointsMultiplier: checkedValue ? 2 : 1
+        //     })
+        // }
+        // else {
+        //     setDoublePoints(false);
+        //     setTriplePoints(checkedValue);
+        //     update(ref(db, '/'), {
+        //         pointsMultiplier: checkedValue ? 3 : 1
+        //     })
+        // }
+    }
+
+    const isAnswerRevealed = (answerIndex: number) => {
+        return game.revealedAnswers.find((answer: number) => {
+            return answerIndex === answer;
+        }) !== undefined;
     }
 
 
@@ -149,101 +185,123 @@ const CurrentGame = (props: any) => {
         <Grid container spacing={2} sx={{ width: 1 / 2 }}>
             <Grid item xs={12}>
                 <FormControl fullWidth margin="normal">
-                    <InputLabel id="demo-simple-select-label">Selecteaza Joc</InputLabel>
+                    <InputLabel id="game-select-label">Joc curent</InputLabel>
                     <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={showGame}
-                        label="Id Joc"
+                        labelId="game-select-label"
+                        id="game-select"
+                        value={selectedGame}
+                        label="Joc curent"
                         onChange={handleGameChange}
                     >
-                        <MenuItem key={1} value={"1"}>Game 1</MenuItem>
-                        <MenuItem key={2} value={"2"}>Game 2</MenuItem>
-                        <MenuItem key={3} value={"3"}>Game 3</MenuItem>
+                        {gamesList.map((gameOption, index) => (
+                            <MenuItem key={index} value={gameOption.id}>{gameOption.name}</MenuItem>
+                        ))}
+
                     </Select>
                 </FormControl>
-                <FormControl fullWidth margin="normal">
-                    <InputLabel id="demo-simple-select-label">Intrebare</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={selected}
-                        label="Numar Intrebare"
-                        onChange={handleChange}
-                    >
-                        {questions.map((q: DBQuestion, index) => {
-                            return (
-                                <MenuItem key={index} value={index}>{q.text}</MenuItem>
-                            )
-
-                        })}
-                    </Select>
-                </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-                <FormControl component="fieldset" variant="standard">
-                    <FormControlLabel
-                        control={
-                            <Switch checked={revealed} onChange={handleRevealedChange} name="revealed" />
-                        }
-                        label="Question Revealed"
-                    />
-                </FormControl>
+                {selectedGame ? (
+                    <>
+                        <p style={{ color: 'black' }}>Link-ul pentru jocul curent: &nbsp;
+                            <a style={{ color: 'blue', textDecoration: 'underline' }} href={`${window.location.origin}/${selectedGame}`}>
+                                {`${window.location.origin}/${selectedGame}`}
+                            </a>
+                        </p>
+                        <FormControl fullWidth margin="normal">
+                            <InputLabel id="demo-simple-select-label">Intrebare</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={selected}
+                                label="Numar Intrebare"
+                                onChange={handleChange}
+                            >
+                                {questions.map((q: DBQuestion, index) => {
+                                    return (
+                                        <MenuItem key={index} value={index}>{q.text}</MenuItem>
+                                    )
+                                })}
+                            </Select>
+                        </FormControl>
+                    </>
+                ) : null}
             </Grid>
 
-            {questions[selected] ? questions[selected].answers.map((answer, index) => {
-                return (
-                    <Grid container spacing={2} key={index}>
-                        <Grid item xs={8}>
-                            <Paper style={{ backgroundColor: '#ededed', padding: 10, margin: 5 }}>
-                                <p style={{ textAlign: 'left' }}>{answer.text}</p>
-                            </Paper>
+            {
+                selectedGame && selected !== undefined ? (
+                    <Grid item xs={12}>
+                        <FormControl component="fieldset" variant="standard">
+                            <FormControlLabel
+                                control={
+                                    <Switch checked={revealed} onChange={handleRevealedChange} name="revealed" />
+                                }
+                                label="Afiseaza intrebarea"
+                            />
+                        </FormControl>
+                    </Grid>
+                ) : null
+            }
+
+            {
+                questions[selected] && selectedGame ? questions[selected].answers.map((answer, index) => {
+                    return (
+                        <Grid container spacing={2} key={index}>
+                            <Grid item xs={8}>
+                                <Paper style={{ backgroundColor: '#ededed', padding: 10, margin: 5 }}>
+                                    <p style={{ textAlign: 'left' }}>{answer.answer}</p>
+                                </Paper>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <FormControl component="fieldset" variant="standard">
+                                    <FormControlLabel
+                                        control={
+                                            <Switch checked={isAnswerRevealed(index)} onChange={(event) => handleRevealAnswer(event, index)} name="revealed" />
+                                        }
+                                        label="Revealed"
+                                    />
+                                </FormControl>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={4}>
-                            <FormControl component="fieldset" variant="standard">
-                                <FormControlLabel
-                                    control={
-                                        <Switch checked={answer.revealed} onChange={(event) => handleRevealAnswer(event, index)} name="revealed" />
-                                    }
-                                    label="Revealed"
-                                />
-                            </FormControl>
-                        </Grid>
-                    </Grid>
-                )
-            }) : null}
+                    )
+                }) : null
+            }
 
-            <FormControl component="fieldset" variant="standard">
-                <FormControlLabel
-                    control={
-                        <Switch checked={doublePoints} onChange={(event) => {handlePointsMultiplier(event, 1)}} name="revealed" />
-                    }
-                    label="Puncte duble"
-                />
-            </FormControl>
+            {
+                selectedGame && selected !== undefined ? (
+                    <>
+                        <FormControl component="fieldset" variant="standard">
+                            <FormControlLabel
+                                control={
+                                    <Switch checked={doublePoints} onChange={(event) => { handlePointsMultiplier(event, 1) }} name="revealed" />
+                                }
+                                label="Puncte duble"
+                            />
+                        </FormControl>
 
-            <FormControl component="fieldset" variant="standard">
-                <FormControlLabel
-                    control={
-                        <Switch checked={triplePoints} onChange={(event) => {handlePointsMultiplier(event, 2)}} name="revealed" />
-                    }
-                    label="Puncte triple"
-                />
-            </FormControl>
+                        <FormControl component="fieldset" variant="standard">
+                            <FormControlLabel
+                                control={
+                                    <Switch checked={triplePoints} onChange={(event) => { handlePointsMultiplier(event, 2) }} name="revealed" />
+                                }
+                                label="Puncte triple"
+                            />
+                        </FormControl>
 
-            <div style={{ marginTop: 10, width: '100%' }}>
-                <h2>Adauga puncte la:</h2>
-                <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                        <Button variant="outlined" onClick={() => addPointsToTeam(1)}>{dbValue?.team1.name}</Button>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Button variant="outlined" onClick={() => addPointsToTeam(2)}>{dbValue?.team2.name}</Button>
-                    </Grid>
-                </Grid>
-            </div>
+                        <div style={{ marginTop: 10, width: '100%' }}>
+                            <h2>Adauga puncte la:</h2>
+                            <Grid container spacing={2}>
+                                <Grid item xs={6}>
+                                    <Button variant="outlined" onClick={() => addPointsToTeam(1)}>{game?.team1.name}</Button>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Button variant="outlined" onClick={() => addPointsToTeam(2)}>{game?.team2.name}</Button>
+                                </Grid>
+                            </Grid>
+                        </div>
+                    </>
+                ) : null
+            }
 
-        </Grid>
+        </Grid >
     )
 }
 

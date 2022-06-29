@@ -15,9 +15,13 @@ const QuestionsService = {
     get: async () => {
         const querySnapshot = await getDocs(collection(firestore, QUESTIONS_COLLECTION));
 
-        const gamesData: Array<object> = [];
+        const gamesData: DBQuestion[] = [];
         querySnapshot.forEach(doc => {
-            gamesData.push(doc.data());
+            const data = doc.data()as DBQuestion;
+            gamesData.push({
+                ... data,
+                id: doc.id
+            });
         })
 
         return gamesData;
@@ -31,7 +35,7 @@ const QuestionsService = {
         const docRef = await addDoc(collection(firestore, QUESTIONS_COLLECTION), question);
         return docRef;
     },
-    update: async (id : string, question : DBQuestion) => {
+    update: async (id : string, question : DBQuestion | any) => {
         const gameRef = doc(firestore, QUESTIONS_COLLECTION, id);
         await updateDoc(gameRef, question);
     },

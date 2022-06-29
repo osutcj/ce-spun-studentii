@@ -15,9 +15,13 @@ const GamesService = {
     get: async () => {
         const querySnapshot = await getDocs(collection(firestore, GAMES_COLLECTION));
 
-        const gamesData: Array<object> = [];
+        const gamesData: NormalGame[] = [];
         querySnapshot.forEach(doc => {
-            gamesData.push(doc.data());
+            const data = doc.data()as NormalGame;
+            gamesData.push({
+                ... data,
+                id: doc.id
+            });
         })
 
         return gamesData;
@@ -31,7 +35,7 @@ const GamesService = {
         const docRef = await addDoc(collection(firestore, GAMES_COLLECTION), game);
         return docRef;
     },
-    update: async (id : string, game : NormalGame) => {
+    update: async (id : string, game : NormalGame | any) => {
         const gameRef = doc(firestore, GAMES_COLLECTION, id);
         await updateDoc(gameRef, game);
     },
