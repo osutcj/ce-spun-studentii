@@ -17,7 +17,7 @@ const loginEmail = 'osut@osut.ro';
 const loginPassword = 'ce-spun-studentii-23';
 
 const Admin = () => {
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [currentTab, changeCurrentTab] = useState(0);

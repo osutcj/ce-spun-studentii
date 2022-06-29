@@ -79,4 +79,3 @@ const questionsData = questions.map((question, index) => ({
 questionsData.forEach(question => {
     addDoc(collection(firestore, QUESTIONS_COLLECTION), question);
 });
-
