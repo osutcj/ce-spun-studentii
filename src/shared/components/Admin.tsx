@@ -120,29 +120,29 @@ const Admin = () => {
           aria-label="basic tabs example"
         >
           <Tab label="Joc curent" id={'1'} />
-          <Tab label="Adaugare intrebari" id={'2'} />
-          <Tab label="Adaugare raspunsuri" id={'3'} />
-          <Tab label="Modifica echipe" id={'4'} />
-          <Tab label="Runda fulger" id={'5'} />
-          <Tab label="Manageriere jocuri" id={'6'} />
+          {/* <Tab label="Adaugare intrebari" id={'2'} />
+          <Tab label="Adaugare raspunsuri" id={'3'} /> */}
+          <Tab label="Modifica echipe" id={'2'} />
+          <Tab label="Runda fulger" id={'3'} />
+          <Tab label="Manageriere jocuri" id={'4'} />
         </Tabs>
       </Box>
       <TabPanel value={currentTab} index={0}>
         <CurrentGame />
       </TabPanel>
-      <TabPanel value={currentTab} index={1}>
+      {/* <TabPanel value={currentTab} index={1}>
         <Questions />
       </TabPanel>
       <TabPanel value={currentTab} index={2}>
         <AddAnswers />
-      </TabPanel>
-      <TabPanel value={currentTab} index={3}>
+      </TabPanel> */}
+      <TabPanel value={currentTab} index={1}>
         <Teams />
       </TabPanel>
-      <TabPanel value={currentTab} index={4}>
+      <TabPanel value={currentTab} index={2}>
         <FlashRoundAdmin />
       </TabPanel>
-      <TabPanel value={currentTab} index={5}>
+      <TabPanel value={currentTab} index={3}>
         <GamesManagement />
       </TabPanel>
     </Box>
