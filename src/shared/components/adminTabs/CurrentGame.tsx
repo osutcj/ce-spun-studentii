@@ -158,20 +158,6 @@ const CurrentGame = (props: any) => {
                 pointsMultiplier: checkedValue ? 3 : 1
             })
         }
-        // if (type === 1) {
-        //     setDoublePoints(checkedValue);
-        //     setTriplePoints(false);
-        //     update(ref(db, '/'), {
-        //         pointsMultiplier: checkedValue ? 2 : 1
-        //     })
-        // }
-        // else {
-        //     setDoublePoints(false);
-        //     setTriplePoints(checkedValue);
-        //     update(ref(db, '/'), {
-        //         pointsMultiplier: checkedValue ? 3 : 1
-        //     })
-        // }
     }
 
     const isAnswerRevealed = (answerIndex: number) => {

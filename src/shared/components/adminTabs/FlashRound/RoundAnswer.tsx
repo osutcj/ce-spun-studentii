@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Grid, TextField, Button } from '@mui/material';
 
 const RoundAnswer = (props: any) => {
@@ -6,6 +6,17 @@ const RoundAnswer = (props: any) => {
 
     const [answer, setAnswer] = useState('');
     const [points, setPoints] = useState(0);
+
+    useEffect(() => {
+        if (props.answer) {
+            setAnswer(props.answer);
+        }
+        if (props.points) {
+            setPoints(props.points);
+        }
+    }, []);
+
+
     return (
         <Container>
             <Grid container spacing={3}>
@@ -18,7 +29,7 @@ const RoundAnswer = (props: any) => {
                         value={answer}
                         onChange={(e) => {
                             setAnswer(e.target.value);
-                            updateFields({answer: e.target.value, points: points})
+                            updateFields({ answer: e.target.value, points: points })
                         }}
                     />
                 </Grid>
@@ -31,7 +42,7 @@ const RoundAnswer = (props: any) => {
                         value={points}
                         onChange={(e) => {
                             setPoints(+e.target.value);
-                            updateFields({answer: answer, points: +e.target.value})
+                            updateFields({ answer: answer, points: +e.target.value })
                         }}
                     />
                 </Grid>

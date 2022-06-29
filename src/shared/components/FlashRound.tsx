@@ -3,21 +3,21 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
-// import '../styles/home.css';
-import { ref, onValue } from 'firebase/database';
-import { Question } from '../models/question';
-import { Answer } from '../models/answer';
 import { styled } from '@mui/material';
-import { db } from '../../utils/firebase/firebase';
-import { useObjectVal } from 'react-firebase-hooks/database';
-import { DB, DBAnswer, DBQuestion, DBTeam } from '../models/db';
 import './styles/home.css'
+import useFlashRound from '../../hooks/useFlashRound';
+import { useParams } from 'react-router-dom';
+import { FlashRoundAnswers } from '../models/flash-round';
+import { compose } from '@mui/system';
 
 const FlashRound = () => {
 
-    const [answers, setAnswers] = useState<DBAnswer[]>([]);
+    const [answers, setAnswers] = useState<FlashRoundAnswers[]>([]);
     const [points, setPoints] = useState(0);
-    const [timer, setTimer] = useState(0);
+
+    const urlParams = useParams();
+
+    const flash = useFlashRound(urlParams.id || "");
 
     const Item = styled(Paper)(({ theme }) => ({
         background: 'linear-gradient(to bottom,#cedbe9 0%,#aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%,#4bb8f0 71%, #3A8BC2 84%, #26558B 100%)',
@@ -32,44 +32,30 @@ const FlashRound = () => {
         fontSize: 15,
     }));
 
-    const [dbValue] = useObjectVal<DB>(ref(db, '/'));
-
     useEffect(() => {
-        let round = 0;
-        let round1Answers = 0;
-        let round1Points = 0;
+        if (flash) {
+            if (flash.currentRound === 1) {
+                setAnswers(flash.answers1);
+                computePoints(flash.answers1);
+            }
+            if (flash.currentRound === 2) {
+                setAnswers(flash.answers2);
+                computePoints(flash.answers2);
+            }
+        }
+    }, [flash]);
+
+    const computePoints = (answers: FlashRoundAnswers[]) => {
         let totalPoints = 0;
-        dbValue?.flash.answers1.map(value => {
-            if (value.points) {
-                totalPoints += value.points;
-            }
-            if (value.answer.length > 0) {
-                round1Answers ++;
-            }
-            if (value.points > 0) {
-                round1Points ++;
-            }
-        })
-        dbValue?.flash.answers2.map(value => {
-            if (value.points) {
-                totalPoints += value.points;
-            }
+        answers.map(answer => {
+            totalPoints += answer.points;
         });
         setPoints(totalPoints);
-        if (round1Answers === 5 && round2Answers === 5) {
-            setAnswers(dbValue?.flash.answers2);
-        }
-        else {
-            setAnswers(dbValue?.flash.answers1);
-        }
-    }, [dbValue])
+    }
 
     const indexOfAnswer = (index: number) => {
-        if (
-            answers !== undefined &&
-            answers.length > index
-        ) {
-            return `${answers[index].answer} -  ${answers[index].points}`;
+        if (answers && answers.length > 0 && answers.length > index && answers[index].answer) {
+            return `${answers[index].answer} - ${answers[index].points}`;
         }
         return '';
     };
@@ -83,11 +69,7 @@ const FlashRound = () => {
                             <p style={{ fontSize: 25 }}>{points}</p>
                         </div>
                     </div>
-                    {/* <div className={'questions'}>
-                        <h1 className='question'>
-                            {currentQuestion && currentQuestion.revealed ? currentQuestion.text : 'Coming...'}
-                        </h1>
-                    </div> */}
+
                     <Grid container spacing={2}>
                         <Grid item xs={3}></Grid>
                         <Grid item xs={6}>
@@ -119,20 +101,6 @@ const FlashRound = () => {
                         </Grid>
                         <Grid item xs={3}></Grid>
                     </Grid>
-
-                    {/* <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
-                        <div className='scor' id={'boardScore'}>
-                            <p style={{ fontSize: 25, color: 'yellow' }}>{timer}</p>
-                        </div>
-                    </div> */}
-                    {/* <div className={'btnHolder'}>
-                        <div id="awardTeam1" className="button">
-                            <p>{team1?.name}: {team1?.points}</p>
-                        </div>
-                        <div id="awardTeam2" className="button">
-                            <p>{team2?.name}: {team2?.points}</p>
-                        </div>
-                    </div> */}
                 </Box>
             </Container>
         </div>

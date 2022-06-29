@@ -13,7 +13,7 @@ function App() {
       <Routes>
         <Route path="/:id" element={<Home />}></Route>
         <Route path='/admin' element={<Admin />}></Route>
-        <Route path='/flash' element={<FlashRound />}></Route>
+        <Route path='/flash/:id' element={<FlashRound />}></Route>
       </Routes>
     </div>
   );
