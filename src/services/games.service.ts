@@ -35,7 +35,7 @@ const GamesService = {
         const docRef = await addDoc(collection(firestore, GAMES_COLLECTION), game);
         return docRef;
     },
-    update: async (id : string, game : NormalGame) => {
+    update: async (id : string, game : NormalGame | any) => {
         const gameRef = doc(firestore, GAMES_COLLECTION, id);
         await updateDoc(gameRef, game);
     },

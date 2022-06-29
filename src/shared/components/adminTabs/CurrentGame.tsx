@@ -16,7 +16,7 @@ const CurrentGame = (props: any) => {
 
     const [questions, setQuestions] = useState<DBQuestion[]>([]);
     const [revealed, setRevealed] = useState(false)
-    const [selected, setSelected] = useState(-1);
+    const [selected, setSelected] = useState<any>(-1);
     const [selectedGame, setSelectedGame] = useState("");
 
     const [doublePoints, setDoublePoints] = useState(false);
@@ -24,9 +24,7 @@ const CurrentGame = (props: any) => {
 
     const [gamesList, setGamesList] = useState<NormalGame[]>([]);
 
-    const game = useGame(selectedGame || "");
-
-    console.log(game);
+    const game: NormalGame = useGame(selectedGame || "");
 
     useEffect(() => {
         QuestionsService.get()
@@ -62,6 +60,7 @@ const CurrentGame = (props: any) => {
     const handleChange = (event: any) => {
         resetDbValues(questions[event.target.value].text);
         setSelected(event.target.value);
+        setRevealed(false);
     }
 
     const handleGameChange = (event: any) => {
@@ -110,6 +109,7 @@ const CurrentGame = (props: any) => {
         }
 
         if (teamNumber === 1) {
+            points += game.team1.points;
             GamesService.update(selectedGame, {
                 ...game,
                 revealedAnswers: [],
@@ -121,6 +121,7 @@ const CurrentGame = (props: any) => {
             });
         }
         if (teamNumber === 2) {
+            points += game.team2.points;
             GamesService.update(selectedGame, {
                 ...game,
                 revealedAnswers: [],
@@ -129,8 +130,13 @@ const CurrentGame = (props: any) => {
                     name: game.team2.name,
                     points
                 }
-            });
+            })
         }
+
+        setSelected(undefined);
+        setDoublePoints(false);
+        setTriplePoints(false);
+        setRevealed(false);
     }
 
 
@@ -139,17 +145,33 @@ const CurrentGame = (props: any) => {
         if (type === 1) {
             setDoublePoints(checkedValue);
             setTriplePoints(false);
-            update(ref(db, '/'), {
+            GamesService.update(selectedGame, {
+                ...game,
                 pointsMultiplier: checkedValue ? 2 : 1
             })
         }
         else {
             setDoublePoints(false);
             setTriplePoints(checkedValue);
-            update(ref(db, '/'), {
+            GamesService.update(selectedGame, {
+                ...game,
                 pointsMultiplier: checkedValue ? 3 : 1
             })
         }
+        // if (type === 1) {
+        //     setDoublePoints(checkedValue);
+        //     setTriplePoints(false);
+        //     update(ref(db, '/'), {
+        //         pointsMultiplier: checkedValue ? 2 : 1
+        //     })
+        // }
+        // else {
+        //     setDoublePoints(false);
+        //     setTriplePoints(checkedValue);
+        //     update(ref(db, '/'), {
+        //         pointsMultiplier: checkedValue ? 3 : 1
+        //     })
+        // }
     }
 
     const isAnswerRevealed = (answerIndex: number) => {
@@ -178,95 +200,108 @@ const CurrentGame = (props: any) => {
                     </Select>
                 </FormControl>
                 {selectedGame ? (
-                    <FormControl fullWidth margin="normal">
-                        <InputLabel id="demo-simple-select-label">Intrebare</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={selected}
-                            label="Numar Intrebare"
-                            onChange={handleChange}
-                        >
-                            {questions.map((q: DBQuestion, index) => {
-                                return (
-                                    <MenuItem key={index} value={index}>{q.text}</MenuItem>
-                                )
-                            })}
-                        </Select>
-                    </FormControl>
+                    <>
+                        <p style={{ color: 'black' }}>Link-ul pentru jocul curent: &nbsp;
+                            <a style={{ color: 'blue', textDecoration: 'underline' }} href={`${window.location.origin}/${selectedGame}`}>
+                                {`${window.location.origin}/${selectedGame}`}
+                            </a>
+                        </p>
+                        <FormControl fullWidth margin="normal">
+                            <InputLabel id="demo-simple-select-label">Intrebare</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={selected}
+                                label="Numar Intrebare"
+                                onChange={handleChange}
+                            >
+                                {questions.map((q: DBQuestion, index) => {
+                                    return (
+                                        <MenuItem key={index} value={index}>{q.text}</MenuItem>
+                                    )
+                                })}
+                            </Select>
+                        </FormControl>
+                    </>
                 ) : null}
             </Grid>
 
-            {selectedGame && selected !== undefined ? (
-                <Grid item xs={12}>
-                    <FormControl component="fieldset" variant="standard">
-                        <FormControlLabel
-                            control={
-                                <Switch checked={revealed} onChange={handleRevealedChange} name="revealed" />
-                            }
-                            label="Afiseaza intrebarea"
-                        />
-                    </FormControl>
-                </Grid>
-            ) : null}
-
-            {questions[selected] && selectedGame ? questions[selected].answers.map((answer, index) => {
-                return (
-                    <Grid container spacing={2} key={index}>
-                        <Grid item xs={8}>
-                            <Paper style={{ backgroundColor: '#ededed', padding: 10, margin: 5 }}>
-                                <p style={{ textAlign: 'left' }}>{answer.answer}</p>
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <FormControl component="fieldset" variant="standard">
-                                <FormControlLabel
-                                    control={
-                                        <Switch checked={isAnswerRevealed(index)} onChange={(event) => handleRevealAnswer(event, index)} name="revealed" />
-                                    }
-                                    label="Revealed"
-                                />
-                            </FormControl>
-                        </Grid>
+            {
+                selectedGame && selected !== undefined ? (
+                    <Grid item xs={12}>
+                        <FormControl component="fieldset" variant="standard">
+                            <FormControlLabel
+                                control={
+                                    <Switch checked={revealed} onChange={handleRevealedChange} name="revealed" />
+                                }
+                                label="Afiseaza intrebarea"
+                            />
+                        </FormControl>
                     </Grid>
-                )
-            }) : null}
+                ) : null
+            }
 
-            {selectedGame && selected !== undefined ? (
-                <>
-                    <FormControl component="fieldset" variant="standard">
-                        <FormControlLabel
-                            control={
-                                <Switch checked={doublePoints} onChange={(event) => { handlePointsMultiplier(event, 1) }} name="revealed" />
-                            }
-                            label="Puncte duble"
-                        />
-                    </FormControl>
-
-                    <FormControl component="fieldset" variant="standard">
-                        <FormControlLabel
-                            control={
-                                <Switch checked={triplePoints} onChange={(event) => { handlePointsMultiplier(event, 2) }} name="revealed" />
-                            }
-                            label="Puncte triple"
-                        />
-                    </FormControl>
-
-                    <div style={{ marginTop: 10, width: '100%' }}>
-                        <h2>Adauga puncte la:</h2>
-                        <Grid container spacing={2}>
-                            <Grid item xs={6}>
-                                <Button variant="outlined" onClick={() => addPointsToTeam(1)}>{game?.team1.name}</Button>
+            {
+                questions[selected] && selectedGame ? questions[selected].answers.map((answer, index) => {
+                    return (
+                        <Grid container spacing={2} key={index}>
+                            <Grid item xs={8}>
+                                <Paper style={{ backgroundColor: '#ededed', padding: 10, margin: 5 }}>
+                                    <p style={{ textAlign: 'left' }}>{answer.answer}</p>
+                                </Paper>
                             </Grid>
-                            <Grid item xs={6}>
-                                <Button variant="outlined" onClick={() => addPointsToTeam(2)}>{game?.team2.name}</Button>
+                            <Grid item xs={4}>
+                                <FormControl component="fieldset" variant="standard">
+                                    <FormControlLabel
+                                        control={
+                                            <Switch checked={isAnswerRevealed(index)} onChange={(event) => handleRevealAnswer(event, index)} name="revealed" />
+                                        }
+                                        label="Revealed"
+                                    />
+                                </FormControl>
                             </Grid>
                         </Grid>
-                    </div>
-                </>
-            ) : null}
+                    )
+                }) : null
+            }
 
-        </Grid>
+            {
+                selectedGame && selected !== undefined ? (
+                    <>
+                        <FormControl component="fieldset" variant="standard">
+                            <FormControlLabel
+                                control={
+                                    <Switch checked={doublePoints} onChange={(event) => { handlePointsMultiplier(event, 1) }} name="revealed" />
+                                }
+                                label="Puncte duble"
+                            />
+                        </FormControl>
+
+                        <FormControl component="fieldset" variant="standard">
+                            <FormControlLabel
+                                control={
+                                    <Switch checked={triplePoints} onChange={(event) => { handlePointsMultiplier(event, 2) }} name="revealed" />
+                                }
+                                label="Puncte triple"
+                            />
+                        </FormControl>
+
+                        <div style={{ marginTop: 10, width: '100%' }}>
+                            <h2>Adauga puncte la:</h2>
+                            <Grid container spacing={2}>
+                                <Grid item xs={6}>
+                                    <Button variant="outlined" onClick={() => addPointsToTeam(1)}>{game?.team1.name}</Button>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Button variant="outlined" onClick={() => addPointsToTeam(2)}>{game?.team2.name}</Button>
+                                </Grid>
+                            </Grid>
+                        </div>
+                    </>
+                ) : null
+            }
+
+        </Grid >
     )
 }
 

@@ -10,15 +10,41 @@ import { Answer } from '../models/answer';
 import { styled } from '@mui/material';
 import { db } from '../../utils/firebase/firebase';
 import { useObjectVal } from 'react-firebase-hooks/database';
-import { DB, DBAnswer, DBQuestion, DBTeam } from '../models/db';
+import { DBAnswer, DBQuestion } from '../models/questions';
+import { DBTeam, NormalGame } from '../models/game';
 import './styles/home.css'
+import { useParams } from 'react-router-dom';
+import useGame from '../../hooks/useGame';
+import QuestionsService from '../../services/questions.service';
 
-const Home = () => {
+const Home = (props: any) => {
   const [currentQuestion, setCurrentQuestion] = useState<DBQuestion>();
+  const [questions, setQuestions] = useState<DBQuestion[]>([]);
   const [answers, setAnswers] = useState<DBAnswer[]>([]);
   const [points, setPoints] = useState(0);
   const [team1, setTeam1] = useState<DBTeam>();
   const [team2, setTeam2] = useState<DBTeam>();
+
+  const urlParams = useParams();
+
+  const game: NormalGame = useGame(urlParams.id || "");
+
+  useEffect(() => {
+    QuestionsService.get()
+      .then((response: DBQuestion[]) => {
+        setQuestions(response);
+      })
+      .catch(error => console.error(error));
+  }, []);
+
+  useEffect(() => {
+    if (game && game.currentQuestion) {
+      setCurrentQuestion(findQuestionByName(game.currentQuestion));
+    }
+    if (game && game.revealedAnswers) {
+      computeTotalPoints();
+    }
+  }, [game]);
 
 
   const Item = styled(Paper)(({ theme }) => ({
@@ -34,47 +60,36 @@ const Home = () => {
     fontSize: 15,
   }));
 
-  const [dbValue] = useObjectVal<DB>(ref(db, '/'));
-
   const computeTotalPoints = () => {
-    if (dbValue) {
+    if (game) {
       let totalPoints = 0;
-      dbValue.questions[dbValue.currentQuestion].answers.map(answer => {
-        if (answer.revealed) {
+      currentQuestion?.answers.map((answer: DBAnswer, index: number) => {
+        if (indexOfAnswer(index)) {
           totalPoints += answer.points;
         }
       });
-      totalPoints *= dbValue.pointsMultiplier;
+
+      totalPoints *= game.pointsMultiplier;
+
       setPoints(totalPoints);
     }
   }
 
-  useEffect(() => {
-    if (dbValue) {
-      if (dbValue.questions[dbValue.currentQuestion]) {
-        setCurrentQuestion(dbValue.questions[dbValue.currentQuestion]);
-        setAnswers(dbValue.questions[dbValue.currentQuestion].answers);
-        computeTotalPoints();
-      }
-      if (dbValue.team1) {
-        setTeam1(dbValue.team1);
-      }
-      if (dbValue.team2) {
-        setTeam2(dbValue.team2);
-      }
-    }
-  }, [dbValue]);
-
   const indexOfAnswer = (index: number) => {
-    if (
-      answers !== undefined &&
-      answers.length > index &&
-      answers[index].revealed
-    ) {
-      return `${answers[index].text} -  ${answers[index].points}`;
+
+    if (currentQuestion && game && game.revealedAnswers) {
+      const answerRevealed = game.revealedAnswers.find((answerEntry: number) => answerEntry === index);
+      if (answerRevealed !== undefined) {
+        return currentQuestion.answers[index].answer;
+      }
     }
     return '';
+
   };
+
+  const findQuestionByName = (name: string) => {
+    return questions.find((questionEntry: DBQuestion) => questionEntry.text === name);
+  }
 
   return (
     <div className={'board'}>
@@ -87,7 +102,7 @@ const Home = () => {
           </div>
           <div className={'questions'}>
             <h1 className='question'>
-              {currentQuestion && currentQuestion.revealed ? currentQuestion.text : 'Coming...'}
+              {game && game.questionRevealed ? game.currentQuestion : 'Coming...'}
             </h1>
           </div>
           <Grid container spacing={2}>
@@ -118,10 +133,10 @@ const Home = () => {
           </Grid>
           <div className={'btnHolder'}>
             <div id="awardTeam1" className="button">
-              <p>{team1?.name}: {team1?.points}</p>
+              <p>{game?.team1?.name}: {game?.team1?.points}</p>
             </div>
             <div id="awardTeam2" className="button">
-              <p>{team2?.name}: {team2?.points}</p>
+              <p>{game?.team2?.name}: {game?.team2?.points}</p>
             </div>
           </div>
         </Box>

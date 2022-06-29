@@ -11,5 +11,6 @@ export interface NormalGame {
     revealedAnswers: Array < number >,
     team1: DBTeam,
     team2: DBTeam,
-    type: 1
+    type: number,
+    pointsMultiplier: number
 }
