@@ -11,6 +11,7 @@ import Questions from './adminTabs/Questions/Questions';
 import AddAnswers from './adminTabs/Answers/AddAnswers';
 import Teams from './adminTabs/Teams/TeamsTab';
 import FlashRoundAdmin from './adminTabs/FlashRound/FlashRoundAdmin';
+import GamesManagement from './adminTabs/Games/GamesManagement';
 
 const loginEmail = 'osut@osut.ro';
 const loginPassword = 'ce-spun-studentii-23';
@@ -123,6 +124,7 @@ const Admin = () => {
           <Tab label="Adaugare raspunsuri" id={'3'} />
           <Tab label="Modifica echipe" id={'4'} />
           <Tab label="Runda fulger" id={'5'} />
+          <Tab label="Manageriere jocuri" id={'6'} />
         </Tabs>
       </Box>
       <TabPanel value={currentTab} index={0}>
@@ -137,9 +139,11 @@ const Admin = () => {
       <TabPanel value={currentTab} index={3}>
         <Teams />
       </TabPanel>
-
       <TabPanel value={currentTab} index={4}>
         <FlashRoundAdmin />
+      </TabPanel>
+      <TabPanel value={currentTab} index={5}>
+        <GamesManagement />
       </TabPanel>
     </Box>
   );
