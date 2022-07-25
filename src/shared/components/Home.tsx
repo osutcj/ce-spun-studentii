@@ -10,11 +10,17 @@ import './styles/home.css'
 import { useParams } from 'react-router-dom';
 import useGame from '../../hooks/useGame';
 import QuestionsService from '../../services/questions.service';
+import wrongAnswerSound from '../../static/x.mp3';
+import wrongAnswerPng from '../../static/x.png';
+import useSound from 'use-sound';
 
 const Home = (props: any) => {
   const [currentQuestion, setCurrentQuestion] = useState<DBQuestion>();
   const [questions, setQuestions] = useState<DBQuestion[]>([]);
   const [points, setPoints] = useState(0);
+  const [wrongAnswers, setWrongAnswers] = useState<number>(0);
+  const [play, { stop }] = useSound(wrongAnswerSound);
+
 
   const urlParams = useParams();
 
@@ -27,6 +33,18 @@ const Home = (props: any) => {
       })
       .catch(error => console.error(error));
   }, []);
+
+  useEffect(() => {
+    if (game?.wrongAnswer !== 0) {
+      play();
+      setWrongAnswers(Math.min(3, game.wrongAnswer));
+
+      setTimeout(() => {
+        setWrongAnswers(0);
+        stop();
+      }, 2000);
+    }
+  }, [game?.wrongAnswer]);
 
   useEffect(() => {
     if (game && game.currentQuestion) {
@@ -82,8 +100,38 @@ const Home = (props: any) => {
     return questions.find((questionEntry: DBQuestion) => questionEntry.text === name);
   }
 
+  const RenderWrongAnswers = () => {
+    const photos = [];
+    for (let i = 0; i < wrongAnswers; i++) {
+      photos.push(
+        <Grid item xs={12 / wrongAnswers}>
+          <img src={wrongAnswerPng} width={200} height={200} />
+        </Grid>
+      )
+    }
+    return (
+      <Grid container>
+        {photos.map(photo => photo)}
+      </Grid>
+    )
+  }
+
+  const getWrongAnswersOffset = () => {
+    switch (wrongAnswers) {
+      case 1:
+        return '44%'
+      case 2:
+        return '37%'
+      default:
+        return '30%'
+    }
+  }
+
   return (
     <div className={'board'}>
+      <div style={{ position: 'absolute', top: '30%', left: getWrongAnswersOffset() }}>
+        <RenderWrongAnswers />
+      </div>
       <Container maxWidth="lg" style={{ paddingTop: 30, paddingBottom: 50 }}>
         <Box sx={{ flexGrow: 2 }} >
           <div style={{ display: 'flex', justifyContent: 'center' }}>
