@@ -46,6 +46,7 @@ const CurrentGame = (props: any) => {
             currentQuestion: newQuestion,
             questionRevealed: false,
             revealedAnswers: [],
+            wrongAnswer: 0,
         });
     }
 
@@ -166,6 +167,13 @@ const CurrentGame = (props: any) => {
         }) !== undefined;
     }
 
+    const wrongAnswer = () => {
+        GamesService.update(game.id, {
+            ...game,
+            wrongAnswer: game.wrongAnswer + 1
+        });
+    }
+
 
     return (
         <Grid container spacing={2} sx={{ width: 1 / 2 }}>
@@ -271,6 +279,10 @@ const CurrentGame = (props: any) => {
                                 label="Puncte triple"
                             />
                         </FormControl>
+
+                        <div style={{ marginTop: 10, width: '100%' }}>
+                            <Button color='error' variant='outlined' onClick={wrongAnswer}>Raspuns gresit</Button>
+                        </div>
 
                         <div style={{ marginTop: 10, width: '100%' }}>
                             <h2>Adauga puncte la:</h2>

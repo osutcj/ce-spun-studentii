@@ -12,7 +12,8 @@ export interface NormalGame {
     team1: DBTeam,
     team2: DBTeam,
     type: number,
-    pointsMultiplier: number
+    pointsMultiplier: number,
+    wrongAnswer: number
 }
 
 export const EmptyGame: NormalGame = {
@@ -31,4 +32,5 @@ export const EmptyGame: NormalGame = {
     },
     type: 1,
     pointsMultiplier: 1,
+    wrongAnswer: 0,
 }
