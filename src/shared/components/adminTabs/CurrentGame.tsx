@@ -168,7 +168,7 @@ const CurrentGame = (props: any) => {
     }
 
     const wrongAnswer = () => {
-        GamesService.update(game.id, {
+        GamesService.update(selectedGame, {
             ...game,
             wrongAnswer: game.wrongAnswer + 1
         });

@@ -9,7 +9,7 @@ function useGame(docId: string) {
     const [game, setGame] = useState<NormalGame | any>(EmptyGame);
 
     useEffect(() => {
-
+        console.log(docId);
         const unsubscribe = docId ? onSnapshot(doc(firestore, GAMES_COLLECTION, docId), (data) => {
             setGame(data.data());
         }) : () => { };
