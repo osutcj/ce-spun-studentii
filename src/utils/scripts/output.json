@@ -1,0 +1,16 @@
+{
+    "Data": [
+        {
+            "Question": "Cine nu stie ce face?",
+            "Answear": "Mihoc"
+        },
+        {
+            "Question": "Mai voi folosii React si TS?",
+            "Answear": "Probabil nu"
+        },
+        {
+            "Question": "Ce framework nu seamana defapt cu react?",
+            "Answear": "Vue :("
+        }
+    ]
+}
