@@ -2,7 +2,6 @@
     "type": "module",
     "dependencies": {
         "colors": "^1.4.0",
-        "csvtojson": "^2.0.10",
         "fs": "0.0.1-security"
     }
 }

@@ -88,7 +88,6 @@ const FlashRoundAdmin = () => {
                 sumPoints += answers1[i].points
                 if (!(answers1[i].answer.length > 1 && answers1[i].answer.length<50 && answers1[i].points >=0 && answers1[i].points < 101)){
                     allGood = 0;
-                    console.log(answers1[i]);
                 }
             }
         } else {
@@ -96,7 +95,6 @@ const FlashRoundAdmin = () => {
                 sumPoints += answers1[i].points
                 if(!(answers2[i].answer.length > 1 && answers2[i].answer.length<50 && answers2[i].points >=0 && answers2[i].points < 101)){
                     allGood = 0;
-                    console.log(answers1[i]);
                 }
             }
         }
