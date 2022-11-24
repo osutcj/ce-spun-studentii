@@ -17,7 +17,7 @@ const loginEmail = 'osut@osut.ro';
 const loginPassword = 'ce-spun-studentii-23';
 
 const Admin = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [currentTab, changeCurrentTab] = useState(0);
@@ -67,10 +67,7 @@ const Admin = () => {
             padding: 5,
           }}
         >
-          <Avatar
-            alt="OSUT"
-            sx={{ width: 48, height: 48 }}
-          />
+          <Avatar alt="OSUT" sx={{ width: 48, height: 48 }} />
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <TextField
@@ -120,29 +117,29 @@ const Admin = () => {
           aria-label="basic tabs example"
         >
           <Tab label="Joc curent" id={'1'} />
-          {/* <Tab label="Adaugare intrebari" id={'2'} />
-          <Tab label="Adaugare raspunsuri" id={'3'} /> */}
-          <Tab label="Modifica echipe" id={'2'} />
-          <Tab label="Runda fulger" id={'3'} />
-          <Tab label="Manageriere jocuri" id={'4'} />
+          <Tab label="Adaugare intrebari" id={'2'} />
+          <Tab label="Adaugare raspunsuri" id={'3'} />
+          <Tab label="Modifica echipe" id={'4'} />
+          <Tab label="Runda fulger" id={'5'} />
+          <Tab label="Manageriere jocuri" id={'6'} />
         </Tabs>
       </Box>
       <TabPanel value={currentTab} index={0}>
         <CurrentGame />
       </TabPanel>
-      {/* <TabPanel value={currentTab} index={1}>
+      <TabPanel value={currentTab} index={1}>
         <Questions />
       </TabPanel>
       <TabPanel value={currentTab} index={2}>
         <AddAnswers />
-      </TabPanel> */}
-      <TabPanel value={currentTab} index={1}>
-        <Teams />
-      </TabPanel>
-      <TabPanel value={currentTab} index={2}>
-        <FlashRoundAdmin />
       </TabPanel>
       <TabPanel value={currentTab} index={3}>
+        <Teams />
+      </TabPanel>
+      <TabPanel value={currentTab} index={4}>
+        <FlashRoundAdmin />
+      </TabPanel>
+      <TabPanel value={currentTab} index={5}>
         <GamesManagement />
       </TabPanel>
     </Box>

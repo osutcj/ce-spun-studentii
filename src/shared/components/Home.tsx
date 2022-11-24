@@ -4,9 +4,9 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import { styled } from '@mui/material';
-import { DBAnswer, DBQuestion } from '../models/questions';
-import { NormalGame } from '../models/game';
-import './styles/home.css'
+import { DBAnswer, DBQuestion } from '../types/questions';
+import { NormalGame } from '../types/game';
+import './styles/home.css';
 import { useParams } from 'react-router-dom';
 import useGame from '../../hooks/useGame';
 import QuestionsService from '../../services/questions.service';
@@ -21,17 +21,16 @@ const Home = (props: any) => {
   const [wrongAnswers, setWrongAnswers] = useState<number>(0);
   const [play, { stop }] = useSound(wrongAnswerSound);
 
-
   const urlParams = useParams();
 
-  const game: NormalGame = useGame(urlParams.id || "");
+  const game: NormalGame = useGame(urlParams.id || '');
 
   useEffect(() => {
     QuestionsService.get()
       .then((response: DBQuestion[]) => {
         setQuestions(response);
       })
-      .catch(error => console.error(error));
+      .catch((error) => console.error(error));
   }, []);
 
   useEffect(() => {
@@ -55,9 +54,9 @@ const Home = (props: any) => {
     }
   }, [game]);
 
-
   const Item = styled(Paper)(({ theme }) => ({
-    background: 'linear-gradient(to bottom,#cedbe9 0%,#aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%,#4bb8f0 71%, #3A8BC2 84%, #26558B 100%)',
+    background:
+      'linear-gradient(to bottom,#cedbe9 0%,#aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%,#4bb8f0 71%, #3A8BC2 84%, #26558B 100%)',
     ...theme.typography.body2,
     padding: theme.spacing(1),
     textAlign: 'center',
@@ -82,23 +81,25 @@ const Home = (props: any) => {
 
       setPoints(totalPoints);
     }
-  }
+  };
 
   const indexOfAnswer = (index: number) => {
-
     if (currentQuestion && game && game.revealedAnswers) {
-      const answerRevealed = game.revealedAnswers.find((answerEntry: number) => answerEntry === index);
+      const answerRevealed = game.revealedAnswers.find(
+        (answerEntry: number) => answerEntry === index
+      );
       if (answerRevealed !== undefined) {
         return currentQuestion.answers[index].answer;
       }
     }
     return '';
-
   };
 
   const findQuestionByName = (name: string) => {
-    return questions.find((questionEntry: DBQuestion) => questionEntry.text === name);
-  }
+    return questions.find(
+      (questionEntry: DBQuestion) => questionEntry.text === name
+    );
+  };
 
   const RenderWrongAnswers = () => {
     const photos = [];
@@ -107,41 +108,45 @@ const Home = (props: any) => {
         <Grid item xs={12 / wrongAnswers}>
           <img src={wrongAnswerPng} width={200} height={200} />
         </Grid>
-      )
+      );
     }
-    return (
-      <Grid container>
-        {photos.map(photo => photo)}
-      </Grid>
-    )
-  }
+    return <Grid container>{photos.map((photo) => photo)}</Grid>;
+  };
 
   const getWrongAnswersOffset = () => {
     switch (wrongAnswers) {
       case 1:
-        return '44%'
+        return '44%';
       case 2:
-        return '37%'
+        return '37%';
       default:
-        return '30%'
+        return '30%';
     }
-  }
+  };
 
   return (
     <div className={'board'}>
-      <div style={{ position: 'absolute', top: '30%', left: getWrongAnswersOffset() }}>
+      <div
+        style={{
+          position: 'absolute',
+          top: '30%',
+          left: getWrongAnswersOffset(),
+        }}
+      >
         <RenderWrongAnswers />
       </div>
       <Container maxWidth="lg" style={{ paddingTop: 30, paddingBottom: 50 }}>
-        <Box sx={{ flexGrow: 2 }} >
+        <Box sx={{ flexGrow: 2 }}>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <div className='scor' id={'boardScore'}>
+            <div className="scor" id={'boardScore'}>
               <p style={{ fontSize: 25 }}>{points}</p>
             </div>
           </div>
           <div className={'questions'}>
-            <h1 className='question'>
-              {game && game.questionRevealed ? game.currentQuestion : 'Coming...'}
+            <h1 className="question">
+              {game && game.questionRevealed
+                ? game.currentQuestion
+                : 'Coming...'}
             </h1>
           </div>
           <Grid container spacing={2}>
@@ -172,10 +177,14 @@ const Home = (props: any) => {
           </Grid>
           <div className={'btnHolder'}>
             <div id="awardTeam1" className="button">
-              <p>{game?.team1?.name}: {game?.team1?.points}</p>
+              <p>
+                {game?.team1?.name}: {game?.team1?.points}
+              </p>
             </div>
             <div id="awardTeam2" className="button">
-              <p>{game?.team2?.name}: {game?.team2?.points}</p>
+              <p>
+                {game?.team2?.name}: {game?.team2?.points}
+              </p>
             </div>
           </div>
         </Box>
