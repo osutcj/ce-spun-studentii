@@ -35,3 +35,4 @@ data.forEach(row => {
 
 json = JSON.stringify(json);
 writeFileSync('output.json', json);
+g

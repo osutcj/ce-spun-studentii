@@ -53,18 +53,6 @@ function GamesManagement() {
         })])
     }
 
-    function areDistinct(arr)
-    {
-        let n = arr.length;
-    
-        let s = new Set();
-        for (let i = 0; i < n; i++) {
-            s.add(arr[i]);
-        }
-
-        return (s.size == arr.length);
-    }
-
     const handleGameUpdate = () => {
         games.map(game => {
             console.log(game.name)
@@ -78,14 +66,11 @@ function GamesManagement() {
             names[k] = game.name;
             k++;
         }
-        if (areDistinct(names)){
-            games.map(game => {
-                GamesService.update(game.id, game)
-                    .catch(error => console.error(error));
-            })  
-        } else {
-            alert("Numele se repeta!");
-        }
+        games.map(game => {
+            GamesService.update(game.id, game)
+                .catch(error => console.error(error));
+        })  
+        
 
     }
 

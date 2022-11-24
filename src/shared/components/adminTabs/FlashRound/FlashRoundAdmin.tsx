@@ -86,14 +86,14 @@ const FlashRoundAdmin = () => {
         if (round == 1){
             for (let i=0; i<answers1.length; i++){
                 sumPoints += answers1[i].points
-                if (!(answers1[i].answer.length > 1 && answers1[i].answer.length<50 && answers1[i].points >=0 && answers1[i].points < 101)){
+                if (!(answers1[i].answer.length > 1 && answers1[i].answer.length<50 && answers1[i].points >=0 && answers1[i].points < 1001)){
                     allGood = 0;
                 }
             }
         } else {
             for (let i=0; i<answers2.length; i++){
                 sumPoints += answers1[i].points
-                if(!(answers2[i].answer.length > 1 && answers2[i].answer.length<50 && answers2[i].points >=0 && answers2[i].points < 101)){
+                if(!(answers2[i].answer.length > 1 && answers2[i].answer.length<50 && answers2[i].points >=0 && answers2[i].points < 1001)){
                     allGood = 0;
                 }
             }
@@ -158,7 +158,6 @@ const FlashRoundAdmin = () => {
             })}
             {game && (
                 <>
-                    <small>Suma punctelor trebuie sa fie 100!</small>
                     <Grid item xs={12}>
                         <Button
                             fullWidth

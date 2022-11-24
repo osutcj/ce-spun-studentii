@@ -11,7 +11,7 @@ const RoundAnswer = (props: any) => {
         if (props.answer) {
             setAnswer(props.answer);
         }
-        if (props.points) {
+        if (props.points && props.points.isNumeric) {
             setPoints(props.points);
         }
     }, []);
