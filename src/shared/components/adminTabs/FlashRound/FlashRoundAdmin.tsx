@@ -101,7 +101,7 @@ const FlashRoundAdmin = () => {
             }
         }
 
-        if (sumPoints>100){
+        if (sumPoints>400){
             allGood = 0;
         }
 
