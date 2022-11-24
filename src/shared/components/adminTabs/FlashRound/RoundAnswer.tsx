@@ -11,7 +11,7 @@ const RoundAnswer = (props: any) => {
         if (props.answer) {
             setAnswer(props.answer);
         }
-        if (props.points) {
+        if (props.points && props.points.isNumeric) {
             setPoints(props.points);
         }
     }, []);
@@ -41,7 +41,7 @@ const RoundAnswer = (props: any) => {
                         variant="standard"
                         value={points}
                         onChange={(e) => {
-                            setPoints(+e.target.value);
+                            setPoints(e.target.value);
                             updateFields({ answer: answer, points: +e.target.value })
                         }}
                     />

@@ -55,9 +55,23 @@ function GamesManagement() {
 
     const handleGameUpdate = () => {
         games.map(game => {
+            console.log(game.name)
+            if (game.name == ""){
+                GamesService.remove(game.id)
+            }
+        })
+        let names = [];
+        let k = 0;
+        for (let game of games){
+            names[k] = game.name;
+            k++;
+        }
+        games.map(game => {
             GamesService.update(game.id, game)
                 .catch(error => console.error(error));
-        })
+        })  
+        
+
     }
 
     return (

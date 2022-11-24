@@ -79,14 +79,44 @@ const FlashRoundAdmin = () => {
 
 
     const saveChanges = () => {
-        FlashRoundService.update(game, {
-            ...flash,
-            answers1,
-            answers2,
-            type: 2,
-            currentRound: round,
-        })
-            .catch(error => console.error(error));
+
+        let allGood = 1;
+        let sumPoints = 0;
+
+        if (round == 1){
+            for (let i=0; i<answers1.length; i++){
+                sumPoints += answers1[i].points
+                if (!(answers1[i].answer.length > 1 && answers1[i].answer.length<50 && answers1[i].points >=0 && answers1[i].points < 1001)){
+                    allGood = 0;
+                }
+            }
+        } else {
+            for (let i=0; i<answers2.length; i++){
+                sumPoints += answers1[i].points
+                if(!(answers2[i].answer.length > 1 && answers2[i].answer.length<50 && answers2[i].points >=0 && answers2[i].points < 1001)){
+                    allGood = 0;
+                }
+            }
+        }
+
+        if (sumPoints>400){
+            allGood = 0;
+        }
+
+        if (allGood){
+            FlashRoundService.update(game, {
+                ...flash,
+                answers1,
+                answers2,
+                type: 2,
+                currentRound: round,
+            })
+                .catch(error => console.error(error));
+            alert(`Runda ${round} salvata cu succes`)
+        } else {
+            alert(`Input invalid al rundei ${round}!`)
+        }
+
     }
 
     const createEmptyTextFields = () => {
@@ -145,6 +175,8 @@ const FlashRoundAdmin = () => {
                             </div>
                         )
                     })}
+                    <small>Suma punctelor trebuie sa fie 100!</small>
+
                     <Grid item xs={12}>
                         <Button
                             fullWidth
