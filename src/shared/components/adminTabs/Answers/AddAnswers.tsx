@@ -1,135 +1,180 @@
-import { Select, MenuItem, SelectChangeEvent, InputLabel, FormControl, Grid, TextField, Button } from '@mui/material';
-import { getDatabase, ref, onValue, update } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
-import { Question } from '../../../models/question';
-import { db } from '../../../../utils/firebase/firebase';
-import { useObjectVal } from 'react-firebase-hooks/database';
-import {DB, DBAnswer, DBQuestion} from '../../../models/db';
+import {
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  InputLabel,
+  FormControl,
+  Grid,
+  TextField,
+  Button,
+} from '@mui/material';
+import { DBQuestion, DBAnswer } from '../../../types/questions';
+import QuestionsService from '../../../../services/questions.service';
 
-const AddAnswers = (props: any) => {
+const AddAnswers = () => {
+  const [questions, setQuestions] = useState<DBQuestion[]>([]);
+  const [answers, setAnswers] = useState<DBAnswer[]>([]);
 
+  const [selected, setSelected] = useState<string>('');
 
-    const [questions, setQuestions] = useState<DBQuestion[]>([]);
-    const [newChange, setNewChange] = useState(false);
-    const [answers, setAnswers] = useState<DBAnswer[]>([]);
+  useEffect(() => {
+    getQuestions();
+  }, []);
 
-    const [selected, setSelected] = useState('');
+  async function getQuestions() {
+    const databaseQuestions = await QuestionsService.get();
 
-    const [dbValue] = useObjectVal<DB>(ref(db, '/'));
+    if (databaseQuestions) {
+      setQuestions(databaseQuestions);
+    }
+  }
 
-    useEffect(() => {
-        if (dbValue && dbValue.questions) {
-            setQuestions(dbValue.questions);
+  const handleChange = (event: SelectChangeEvent<typeof selected>) => {
+    setSelected(event.target.value);
+    setAnswers(questions[parseInt(event.target.value)].answers);
+  };
+
+  const handlePoints = (index: number, newValue: number) => {
+    if (isNaN(newValue)) {
+      return;
+    }
+    setAnswers((prevAnswers: DBAnswer[]) => {
+      return prevAnswers.map((answer, answerIndex) => {
+        if (answerIndex === index) {
+          return {
+            ...answer,
+            points: newValue,
+          };
         }
-    }, [dbValue])
+        return answer;
+      });
+    });
+  };
 
-    const handleChange = (event: SelectChangeEvent<typeof selected>) => {
-        if (dbValue && dbValue.questions) {
-            setAnswers(dbValue.questions[+event.target.value].answers);
-            setSelected(event.target.value);
+  const handleText = (index: number, newValue: string) => {
+    setAnswers((prevAnswers: DBAnswer[]) => {
+      return prevAnswers.map((answer, answerIndex) => {
+        if (answerIndex === index) {
+          return {
+            ...answer,
+            answer: newValue,
+          };
         }
+        return answer;
+      });
+    });
+  };
+
+  const pushNewAnswer = () => {
+    if (answers.length < 8) {
+      setAnswers((prevAnswers: DBAnswer[]) => [
+        ...prevAnswers,
+        {
+          answer: '',
+          points: 0,
+        },
+      ]);
     }
+  };
 
-    const handlePuncte = (index: number, newValue: number) => {
-        const newAnswers = answers.map((answer, answerIndex) => {
-            if (answerIndex === index) {
-                return {
-                    text: answer.text,
-                    points: newValue,
-                    revealed: answer.revealed,
-                }
-            }
-            return answer;
-        })
-        setAnswers(newAnswers);
-    }
+  const saveAnswers = async () => {
+    await QuestionsService.update(questions[parseInt(selected)].id, {
+      ...questions[parseInt(selected)],
+      answers,
+    });
+    getQuestions();
+  };
 
-    const handleText = (index: number, newValue: string) => {
-        const newAnswers = answers.map((answer, answerIndex) => {
-            if (answerIndex === index) {
-                return {
-                    text: newValue,
-                    points: answer.points,
-                    revealed: answer.revealed
-                }
-            }
-            return answer;
-        });
-        setAnswers(newAnswers);
-    }
+  const deleteItem = async (index: number) => {
+    const newAnswers = answers.filter((answer, answerIndex) => {
+      if (answerIndex === index) {
+        return null;
+      }
+      return answer;
+    });
+    await QuestionsService.update(questions[parseInt(selected)].id, {
+      ...questions[parseInt(selected)],
+      answers: newAnswers,
+    });
+    setAnswers(newAnswers);
+  };
 
-    const pushNewAnswer = () => {
-        if (answers.length < 8) {
-            //do some stuff
-            setAnswers([...answers, {points: 0, text: "", revealed: false}]);
-        }
-    }
+  return (
+    <div>
+      <Grid container spacing={2} sx={{ width: 1 / 2 }}>
+        <Grid item xs={12}>
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="demo-simple-select-label">Intrebare</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={selected}
+              label="Intrebare"
+              onChange={handleChange}
+            >
+              {questions.map((q: DBQuestion, index) => {
+                return (
+                  <MenuItem key={index} value={index}>
+                    {q.text}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+        </Grid>
 
-    const saveAnswers = () => {
-        update(ref(db, '/questions/' + selected), {
-            answers: answers,
-        })
-    }
+        {answers.map((answer, index) => {
+          return (
+            <>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  id={'R' + index.toString()}
+                  label={`Raspuns ${index + 1}`}
+                  value={answer.answer}
+                  onChange={(event) => handleText(index, event.target.value)}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={3}>
+                <TextField
+                  fullWidth
+                  id={'P' + index.toString()}
+                  label={`Puncte ${index + 1}`}
+                  value={answer.points}
+                  onChange={(event) => handlePoints(index, +event.target.value)}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={3} sx={{ width: 1 }}>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => {
+                    deleteItem(index);
+                  }}
+                >
+                  Delete
+                </Button>
+              </Grid>
+            </>
+          );
+        })}
 
-    const deleteItem = (index: number) => {
-        answers.splice(index, 1);
-        setNewChange(!newChange);
-    }
-
-    return (
-        <div>
-            <Grid container spacing={2} sx={{ width: 1 / 2 }}>
-                <Grid item xs={12}>
-                    <FormControl fullWidth margin="normal">
-                        <InputLabel id="demo-simple-select-label">Intrebare</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={selected}
-                            label="Intrebare"
-                            onChange={handleChange}
-
-                        >
-                            {questions.map((q: DBQuestion, index) => {
-                                return (
-                                    <MenuItem key={index} value={index}>{q.text}</MenuItem>
-                                )
-                            })}
-                        </Select>
-
-                    </FormControl>
-                </Grid>
-
-                {answers.map((answer, index) => {
-                    return (
-                        <>
-                            <Grid item xs={6}>
-                                <TextField fullWidth id={"R"+index.toString()} label={`Raspuns ${index+1}`} value={answer.text} onChange={(event) => handleText(index, event.target.value)} variant="outlined" />
-                            </Grid>
-                            <Grid item xs={3}>
-                                <TextField fullWidth id={"P"+index.toString()} label={`Puncte ${index+1}`} value={answer.points} onChange={(event) => handlePuncte(index, +event.target.value)} variant="outlined" />
-                            </Grid>
-                            <Grid item xs={3} sx={{width: 1}}>
-                                <Button variant="outlined" color="error" onClick={() => {
-                                    deleteItem(index);
-                                }}>Delete</Button>
-                            </Grid>
-                        </>
-                    )
-                })}
-
-            <Grid item xs={8}>
-                <Button variant="outlined" onClick={() => pushNewAnswer()}>Adauga un raspuns</Button>
-            </Grid>
-            <Grid item xs={4}>
-                <Button variant="outlined" onClick={() => saveAnswers()}>Salveaza</Button>
-            </Grid>
-
-            </Grid>
-
-
-        </div>
-    )
-}
+        <Grid item xs={8}>
+          <Button variant="outlined" onClick={() => pushNewAnswer()}>
+            Adauga un raspuns
+          </Button>
+        </Grid>
+        <Grid item xs={4}>
+          <Button variant="outlined" onClick={() => saveAnswers()}>
+            Salveaza
+          </Button>
+        </Grid>
+      </Grid>
+    </div>
+  );
+};
 
 export default AddAnswers;
