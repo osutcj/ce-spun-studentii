@@ -1,3 +1,6 @@
+import React, { useEffect, useState } from 'react';
+import QuestionsService from '../../../services/questions.service';
+import { DBQuestion } from '../../types/questions';
 import {
   Button,
   FormControl,
@@ -10,10 +13,6 @@ import {
   Select,
   Switch,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-
-import QuestionsService from '../../../services/questions.service';
-import { DBQuestion } from '../../types/questions';
 
 import useGame from '../../../hooks/useGame';
 import GamesService from '../../../services/games.service';

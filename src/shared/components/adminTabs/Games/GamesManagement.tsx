@@ -7,6 +7,7 @@ import { EmptyGame } from '../../../models/game';
 
 function GamesManagement() {
   const [games, setGames] = useState<NormalGame[]>([]);
+  const [newChange, setNewChange] = useState<boolean>(false);
 
   useEffect(() => {
     getAllGames();
@@ -58,6 +59,17 @@ function GamesManagement() {
   };
 
   const handleGameUpdate = () => {
+    games.map((game) => {
+      if (game.name == '') {
+        GamesService.remove(game.id);
+      }
+    });
+    let names = [];
+    let k = 0;
+    for (let game of games) {
+      names[k] = game.name;
+      k++;
+    }
     games.map((game) => {
       GamesService.update(game.id, game).catch((error) => console.error(error));
     });

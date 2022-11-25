@@ -45,19 +45,35 @@ const Teams = () => {
 
   const saveChanges = () => {
     const currentGameItem = games.find((item) => item.id === currentGame);
-    GamesService.update(currentGame, {
-      ...currentGameItem,
-      team1: {
-        name: team1Name,
-        points: team1Points,
-      },
-      team2: {
-        name: team2Name,
-        points: team2Points,
-      },
-    })
-      .then(() => updateGamesList())
-      .catch((error) => console.error(error));
+
+    if (
+      team1Name.length > 1 &&
+      team1Name.length < 40 &&
+      team1Points >= 0 &&
+      team1Points < 3000 &&
+      team2Name.length > 1 &&
+      team2Name.length < 40 &&
+      team2Points >= 0 &&
+      team2Points < 3000
+    ) {
+      GamesService.update(currentGame, {
+        ...currentGameItem,
+        team1: {
+          name: team1Name,
+          points: team1Points,
+        },
+        team2: {
+          name: team2Name,
+          points: team2Points,
+        },
+      })
+        .then(() => updateGamesList())
+        .catch((error) => console.error(error));
+
+      alert('Succes!');
+    } else {
+      alert('Nume sau puncte invalide!');
+    }
   };
 
   const handleGameChange = (event: any) => {
@@ -105,7 +121,12 @@ const Teams = () => {
             label="Punctele echipei 1"
             variant="standard"
             value={team1Points}
-            onChange={(e) => setTeam1Points(+e.target.value)}
+            onChange={(e) => {
+              console.log(parseInt(e.target.value));
+              if (!isNaN(+e.target.value)) {
+                setTeam1Points(+e.target.value);
+              }
+            }}
           />
         </Grid>
 
@@ -126,7 +147,11 @@ const Teams = () => {
             label="Punctele echipei 2"
             variant="standard"
             value={team2Points}
-            onChange={(e) => setTeam2Points(+e.target.value)}
+            onChange={(e) => {
+              if (!isNaN(+e.target.value)) {
+                setTeam2Points(+e.target.value);
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12}>
