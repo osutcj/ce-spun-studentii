@@ -1,24 +1,17 @@
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   FormControl,
-  FormControlLabel,
   Grid,
   InputLabel,
-  Menu,
   MenuItem,
-  Paper,
   Select,
-  Switch,
   Container,
   TextField,
 } from '@mui/material';
-import { ref, update } from 'firebase/database';
-import React, { useEffect, useState } from 'react';
-import { useObjectVal } from 'react-firebase-hooks/database';
 import GamesService from '../../../../services/games.service';
-import { db } from '../../../../utils/firebase/firebase';
-import { DB } from '../../../models/db';
-import { EmptyGame, NormalGame } from '../../../models/game';
+import { NormalGame } from '../../../types/game';
+import { EmptyGame } from '../../../models/game';
 
 const Teams = () => {
   const [games, setGames] = useState<NormalGame[]>([]);
@@ -128,7 +121,12 @@ const Teams = () => {
             label="Punctele echipei 1"
             variant="standard"
             value={team1Points}
-            onChange={(e) => setTeam1Points(+e.target.value)}
+            onChange={(e) => {
+              console.log(parseInt(e.target.value));
+              if (!isNaN(+e.target.value)) {
+                setTeam1Points(+e.target.value);
+              }
+            }}
           />
         </Grid>
 
@@ -149,7 +147,11 @@ const Teams = () => {
             label="Punctele echipei 2"
             variant="standard"
             value={team2Points}
-            onChange={(e) => setTeam2Points(+e.target.value)}
+            onChange={(e) => {
+              if (!isNaN(+e.target.value)) {
+                setTeam2Points(+e.target.value);
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12}>

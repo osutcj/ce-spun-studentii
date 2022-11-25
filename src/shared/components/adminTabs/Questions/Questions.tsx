@@ -1,70 +1,88 @@
 import React, { useEffect, useState } from 'react';
-import { Question } from '../../../models/question';
-import { getDatabase, ref, onValue, set, update } from "firebase/database";
-import TextField from '@mui/material/TextField';
 import { Button, Grid } from '@mui/material';
 import QuestionField from './QuestionField';
+import { DBQuestion } from '../../../types/questions';
+import QuestionsService from '../../../../services/questions.service';
 
-let questions: Array<Question> = new Array<Question>();
-const Questions = (props: any) => {
+const Questions = () => {
+  const [gameQuestions, setGameQuestions] = useState<DBQuestion[]>([]);
 
-    const [newChange, setNewChange] = useState(false);
-    const database = getDatabase();
+  useEffect(() => {
+    async function getGameQuestions() {
+      const questions = await QuestionsService.get();
 
-    useEffect(() => {
-        const dbQuestions = ref(database, '/');
-        onValue(dbQuestions, (snapshot) => {
-            const data = snapshot.val();
-            if (data.questions !== undefined) {
-                questions = data.questions;
-                setNewChange(!newChange);
-            }
-        })
-    }, [])
-
-
-
-    const addNewQuestion = () => {
-        let newQuestions = questions;
-        newQuestions.push(new Question());
-        setNewChange(!newChange);
+      if (questions) {
+        setGameQuestions(questions);
+      }
     }
+    getGameQuestions();
+  }, []);
 
-    const handleQuestionsUpdate = () => {
-        update(ref(database, "/"), {
-            questions: questions,
-        });
-    }
+  const addNewQuestion = async () => {
+    const newQuestionId = await QuestionsService.insert({
+      text: '',
+      answers: [],
+      id: '',
+    });
+    setGameQuestions([
+      ...gameQuestions,
+      { id: newQuestionId, text: '', answers: [] },
+    ]);
+  };
 
-    const deleteItem = (index: number) => {
-        questions.splice(index, 1);
-        setNewChange(!newChange);
-    }
+  const handleQuestionsUpdate = async () => {
+    gameQuestions.forEach(async (question, index) => {
+      await QuestionsService.update(question.id, question);
+    });
+  };
 
+  const deleteItem = (index: number) => {
+    setGameQuestions((prevQuestions: DBQuestion[]) => {
+      return prevQuestions.filter((question, questionIndex) => {
+        if (questionIndex !== index) {
+          return question;
+        } else {
+          QuestionsService.remove(question.id);
+        }
+      });
+    });
+  };
 
-    return (
-        <Grid container spacing={2} sx={{ width: 1 / 2 }}>
-            {questions.map((q, index) => {
-                return (
+  return (
+    <Grid container spacing={2} sx={{ width: 1 / 2 }}>
+      {gameQuestions.map((q, index) => {
+        return (
+          <QuestionField
+            text={q.text}
+            updateQuestionText={(newText: string) => {
+              setGameQuestions(
+                gameQuestions.map((question) => {
+                  if (question.id === q.id) {
+                    return {
+                      ...q,
+                      text: newText,
+                    };
+                  }
+                  return question;
+                })
+              );
+            }}
+            deleteItem={() => deleteItem(index)}
+          />
+        );
+      })}
+      <Grid item xs={8}>
+        <Button variant="outlined" onClick={() => addNewQuestion()}>
+          Adauga o intrebare
+        </Button>
+      </Grid>
+      <Grid item xs={4}>
+        <Button variant="outlined" onClick={() => handleQuestionsUpdate()}>
+          Salveaza
+        </Button>
+      </Grid>
+    </Grid>
+  );
+};
 
-
-                    <QuestionField text={q.text} updateQuestionText={(newText: string) => {
-                        questions[index].text = newText;
-                        setNewChange(!newChange);
-                    }} deleteItem={() => deleteItem(index)} />
-
-                )
-
-            })}
-            <Grid item xs={8}>
-                <Button variant="outlined" onClick={() => addNewQuestion()}>Adauga o intrebare</Button>
-            </Grid>
-            <Grid item xs={4}>
-                <Button variant="outlined" onClick={() => handleQuestionsUpdate()}>Salveaza</Button>
-            </Grid>
-        </Grid>
-
-    )
-}
-
-export default Questions
+export default Questions;

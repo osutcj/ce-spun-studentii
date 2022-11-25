@@ -1,8 +1,9 @@
 import { Button, Container, Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import GamesService from '../../../../services/games.service';
-import { EmptyGame, NormalGame } from '../../../models/game';
+import { NormalGame } from '../../../types/game';
 import GameField from './GameField';
+import { EmptyGame } from '../../../models/game';
 
 function GamesManagement() {
   const [games, setGames] = useState<NormalGame[]>([]);

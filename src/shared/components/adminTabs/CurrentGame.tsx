@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import QuestionsService from '../../../services/questions.service';
+import { DBQuestion } from '../../types/questions';
 import {
   Button,
   FormControl,
@@ -12,12 +14,9 @@ import {
   Switch,
 } from '@mui/material';
 
-import QuestionsService from '../../../services/questions.service';
-import { DBQuestion } from '../../models/questions';
-
 import useGame from '../../../hooks/useGame';
 import GamesService from '../../../services/games.service';
-import { NormalGame } from '../../models/game';
+import { NormalGame } from '../../types/game';
 
 const CurrentGame = (props: any) => {
   const [questions, setQuestions] = useState<DBQuestion[]>([]);
