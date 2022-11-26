@@ -7,7 +7,6 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "deploy": "npm run build && firebase deploy",
-    "seed:new": "ts-node -O '{\"module\":\"commonjs\"}' src/utils/scripts/seed.ts",
     "seed:firestore": "ts-node --project tsconfig.node.json src/utils/scripts/seedFirestore.ts",
     "csv:firestore": "node src/utils/scripts/csvToJSON.js"
   },
