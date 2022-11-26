@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Grid } from '@mui/material';
+import { Button, Grid, Input } from '@mui/material';
 import QuestionField from './QuestionField';
 import { DBQuestion } from '../../../types/questions';
 import QuestionsService from '../../../../services/questions.service';
+import convert from '../../../../helpers/csv-convertor.helper';
+import convertFirebaseToCsv from '../../../../helpers/firebase-to-csv.helper';
 
 const Questions = () => {
   const [gameQuestions, setGameQuestions] = useState<DBQuestion[]>([]);
+  const [fileContent, setFileContent] = useState<string>('');
+
+  let fileReader: FileReader;
 
   useEffect(() => {
     async function getGameQuestions() {
@@ -48,8 +53,72 @@ const Questions = () => {
     });
   };
 
+  const readFileContents = () => {
+    const content: string | undefined = fileReader.result?.toString();
+
+    if (!content) {
+      return;
+    }
+
+    setFileContent(content);
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = event.target.files;
+
+    if (!fileList) {
+      return;
+    }
+    fileReader = new FileReader();
+    fileReader.onloadend = readFileContents;
+    fileReader.readAsText(fileList[0]);
+  };
+
+  const handleBulkUpdate = async () => {
+    if (!fileContent) {
+      alert('Prima data trebuie incarcat un fisier');
+      return;
+    }
+    const firestoreData: DBQuestion[] = convert(fileContent);
+    firestoreData.forEach(async (question) => {
+      const questionId = await QuestionsService.insert(question);
+      setGameQuestions((previousQuestions) => [
+        ...previousQuestions,
+        {
+          ...question,
+          id: questionId,
+        },
+      ]);
+    });
+
+    await handleQuestionsUpdate();
+  };
+
+  const downloadCSV = () => {
+    const csvContent = convertFirebaseToCsv(gameQuestions);
+
+    const file = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+    const element = document.createElement('a');
+    element.href = URL.createObjectURL(file);
+    element.download = 'ce-spun-studentii.csv';
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+  };
+
   return (
     <Grid container spacing={2} sx={{ width: 1 / 2 }}>
+      <Grid item xs={6}>
+        <Button variant="outlined" onClick={() => downloadCSV()}>
+          Download
+        </Button>
+      </Grid>
+      <Grid item xs={6} style={{ display: 'flex', gap: 5 }}>
+        <Input title="CSV" type="file" onChange={handleFileUpload}></Input>
+        <Button variant="outlined" onClick={() => handleBulkUpdate()}>
+          Upload
+        </Button>
+      </Grid>
       {gameQuestions.map((q, index) => {
         return (
           <QuestionField
