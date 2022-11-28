@@ -72,7 +72,10 @@ const Home = (props: any) => {
     if (game) {
       let totalPoints = 0;
       currentQuestion?.answers.map((answer: DBAnswer, index: number) => {
-        if (indexOfAnswer(index)) {
+        const answerRevealed = game.revealedAnswers.find(
+          (answerEntry: number) => answerEntry === index
+        );
+        if (answerRevealed !== undefined) {
           totalPoints += answer.points;
         }
       });
@@ -89,7 +92,9 @@ const Home = (props: any) => {
         (answerEntry: number) => answerEntry === index
       );
       if (answerRevealed !== undefined) {
-        return currentQuestion.answers[index].answer;
+        return `${currentQuestion.answers[index].answer} - ${currentQuestion.answers[index].points}`;
+      } else if (index < currentQuestion.answers.length) {
+        return `${index + 1}`;
       }
     }
     return '';
@@ -154,22 +159,22 @@ const Home = (props: any) => {
               <Item>{indexOfAnswer(0)}</Item>
             </Grid>
             <Grid item xs={6}>
-              <Item>{indexOfAnswer(1)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(2)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(3)}</Item>
-            </Grid>
-            <Grid item xs={6}>
               <Item>{indexOfAnswer(4)}</Item>
+            </Grid>
+            <Grid item xs={6}>
+              <Item>{indexOfAnswer(1)}</Item>
             </Grid>
             <Grid item xs={6}>
               <Item>{indexOfAnswer(5)}</Item>
             </Grid>
             <Grid item xs={6}>
+              <Item>{indexOfAnswer(2)}</Item>
+            </Grid>
+            <Grid item xs={6}>
               <Item>{indexOfAnswer(6)}</Item>
+            </Grid>
+            <Grid item xs={6}>
+              <Item>{indexOfAnswer(3)}</Item>
             </Grid>
             <Grid item xs={6}>
               <Item>{indexOfAnswer(7)}</Item>

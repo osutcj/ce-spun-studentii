@@ -121,6 +121,7 @@ const CurrentGame = (props: any) => {
         ...game,
         revealedAnswers: [],
         currentQuestion: '',
+        questionRevealed: false,
         team1: {
           name: game.team1.name,
           points,
@@ -133,6 +134,7 @@ const CurrentGame = (props: any) => {
         ...game,
         revealedAnswers: [],
         currentQuestion: '',
+        questionRevealed: false,
         team2: {
           name: game.team2.name,
           points,
