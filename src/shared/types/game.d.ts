@@ -15,3 +15,8 @@ export interface NormalGame {
   pointsMultiplier: number;
   wrongAnswer: number;
 }
+
+export interface AlertType {
+  message: string;
+  errorType: number;
+}

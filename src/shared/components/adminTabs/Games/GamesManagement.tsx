@@ -4,6 +4,9 @@ import GamesService from '../../../../services/games.service';
 import { NormalGame } from '../../../types/game';
 import GameField from './GameField';
 import { EmptyGame } from '../../../models/game';
+import Checkbox from '@mui/material/Checkbox';
+
+
 
 function GamesManagement() {
   const [games, setGames] = useState<NormalGame[]>([]);

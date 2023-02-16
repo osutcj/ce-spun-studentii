@@ -3,6 +3,7 @@ import QuestionsService from '../../../services/questions.service';
 import { DBQuestion } from '../../types/questions';
 import {
   Button,
+  Checkbox,
   FormControl,
   FormControlLabel,
   Grid,
@@ -30,6 +31,27 @@ const CurrentGame = (props: any) => {
   const [gamesList, setGamesList] = useState<NormalGame[]>([]);
 
   const game: NormalGame = useGame(selectedGame || '');
+  const [checked, setChecked] = useState<boolean[]>([false, false, false]);
+
+  const handleChecked = (index:0|1|2) => {
+    setChecked((prevState) => { 
+      return prevState.map((value, idx) => {
+        if (idx === index){
+          return !value
+        }
+        return value
+      })
+    })
+  }
+
+  useEffect(() => { 
+    const wrongAnswers = checked.filter((value) => value).length
+    GamesService.update(selectedGame, {
+      ...game,
+      wrongAnswer: wrongAnswers,
+    });
+  
+  }, [checked]);
 
   useEffect(() => {
     QuestionsService.get()
@@ -175,13 +197,6 @@ const CurrentGame = (props: any) => {
     );
   };
 
-  const wrongAnswer = () => {
-    GamesService.update(selectedGame, {
-      ...game,
-      wrongAnswer: game.wrongAnswer + 1,
-    });
-  };
-
   return (
     <Grid container spacing={2} sx={{ width: 1 / 2 }}>
       <Grid item xs={12}>
@@ -318,9 +333,11 @@ const CurrentGame = (props: any) => {
           </FormControl>
 
           <div style={{ marginTop: 10, width: '100%' }}>
-            <Button color="error" variant="outlined" onClick={wrongAnswer}>
-              Raspuns gresit
-            </Button>
+            <p style={{textAlign:'center'}}>Wrong answers</p>
+            <Checkbox checked={checked[0]} onChange={() => handleChecked(0)} />
+            <Checkbox checked={checked[1]} onChange={() => handleChecked(1)} />
+            <Checkbox checked={checked[2]} onChange={() => handleChecked(2)} />
+
           </div>
 
           <div style={{ marginTop: 10, width: '100%' }}>

@@ -8,10 +8,13 @@ import {
   Select,
   Container,
   TextField,
+  Alert
 } from '@mui/material';
 import GamesService from '../../../../services/games.service';
-import { NormalGame } from '../../../types/game';
+import { NormalGame, AlertType } from '../../../types/game';
 import { EmptyGame } from '../../../models/game';
+import BasicAlerts from '../BasicAlerts';
+
 
 const Teams = () => {
   const [games, setGames] = useState<NormalGame[]>([]);
@@ -21,6 +24,8 @@ const Teams = () => {
 
   const [team1Points, setTeam1Points] = useState<number>(0);
   const [team2Points, setTeam2Points] = useState<number>(0);
+  
+  const [alert, setAlerts] = useState<AlertType>({message:'', errorType:0});
 
   useEffect(() => {
     updateGamesList();
@@ -70,9 +75,9 @@ const Teams = () => {
         .then(() => updateGamesList())
         .catch((error) => console.error(error));
 
-      alert('Succes!');
+      // key:value in obj
+      setAlerts({message:"Succes", errorType:0});
     } else {
-      alert('Nume sau puncte invalide!');
     }
   };
 
@@ -160,6 +165,7 @@ const Teams = () => {
           </Button>
         </Grid>
       </Grid>
+      {alert.message ?  <BasicAlerts message = {alert.message} errorType={alert.errorType} /> : `` }
     </Container>
   );
 };
