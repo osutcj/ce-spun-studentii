@@ -15,6 +15,8 @@ import { FlashRoundAnswers, FlashRound } from '../../../types/flashRound';
 import RoundAnswer from './RoundAnswer';
 import useFlashRound from '../../../../hooks/useFlashRound';
 import FlashRoundService from '../../../../services/flash.service';
+import BasicAlerts from '../BasicAlerts';
+import { AlertType } from '../../../types/game';
 
 const FlashRoundAdmin = () => {
   const [game, selectGame] = useState<string>('');
@@ -23,6 +25,7 @@ const FlashRoundAdmin = () => {
   const [answers2, setAnswers2] = useState<FlashRoundAnswers[]>([]);
   const [round, setRound] = useState<number>(1);
   const flash = useFlashRound(game);
+  const [alert, setAlerts] = useState<AlertType>({message:'', errorType:1});
 
   useEffect(() => {
     FlashRoundService.get()
@@ -67,12 +70,12 @@ const FlashRoundAdmin = () => {
   const renderTextFields = (round: number) => {
     let answersArray = [];
     if (answers1.length > 0 && answers2.length > 0) {
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < 5; i++) {
         if (round === 1) {
           answersArray.push(
             <RoundAnswer
-              answer={answers1[i].answer}
-              points={answers1[i].points}
+              answer={answers1[i]?.answer}
+              points={answers1[i]?.points}
               updateFields={(newObject: FlashRoundAnswers) =>
                 updateTextFields(round, i, newObject)
               }
@@ -81,8 +84,8 @@ const FlashRoundAdmin = () => {
         } else {
           answersArray.push(
             <RoundAnswer
-              answer={answers2[i].answer}
-              points={answers2[i].points}
+              answer={answers2[i]?.answer}
+              points={answers2[i]?.points}
               updateFields={(newObject: FlashRoundAnswers) =>
                 updateTextFields(round, i, newObject)
               }
@@ -111,10 +114,10 @@ const FlashRoundAdmin = () => {
         sumPoints += answers1[i].points;
         if (
           !(
-            answers1[i].answer.length > 1 &&
+            answers1[i].answer.length >= 0 &&
             answers1[i].answer.length < 50 &&
             answers1[i].points >= 0 &&
-            answers1[i].points < 1001
+            answers1[i].points < 101
           )
         ) {
           allGood = 0;
@@ -122,13 +125,13 @@ const FlashRoundAdmin = () => {
       }
     } else {
       for (let i = 0; i < answers2.length; i++) {
-        sumPoints += answers1[i].points;
+        sumPoints += answers2[i].points;
         if (
           !(
-            answers2[i].answer.length > 1 &&
+            answers2[i].answer.length >= 0 &&
             answers2[i].answer.length < 50 &&
             answers2[i].points >= 0 &&
-            answers2[i].points < 1001
+            answers2[i].points < 101
           )
         ) {
           allGood = 0;
@@ -136,7 +139,7 @@ const FlashRoundAdmin = () => {
       }
     }
 
-    if (sumPoints > 400) {
+    if (sumPoints > 1000) {
       allGood = 0;
     }
 
@@ -148,8 +151,9 @@ const FlashRoundAdmin = () => {
         type: 2,
         currentRound: round,
       }).catch((error) => console.error(error));
+      setAlerts({message:"Succes", errorType:1});
     } else {
-      alert(`Input invalid al rundei ${round}!`);
+      setAlerts({message:"Invalid data, check the answer or points", errorType:0});
     }
   };
 
@@ -163,6 +167,7 @@ const FlashRoundAdmin = () => {
 
   return (
     <Container>
+      {alert.message ?  <BasicAlerts message = {alert.message} errorType={alert.errorType} /> : `` }
       {game && (
         <p style={{ color: 'black' }}>
           Link-ul pentru accesarea rundei flash:&nbsp;

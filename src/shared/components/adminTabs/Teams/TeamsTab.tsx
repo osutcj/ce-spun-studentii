@@ -8,7 +8,6 @@ import {
   Select,
   Container,
   TextField,
-  Alert
 } from '@mui/material';
 import GamesService from '../../../../services/games.service';
 import { NormalGame, AlertType } from '../../../types/game';
@@ -25,7 +24,7 @@ const Teams = () => {
   const [team1Points, setTeam1Points] = useState<number>(0);
   const [team2Points, setTeam2Points] = useState<number>(0);
   
-  const [alert, setAlerts] = useState<AlertType>({message:'', errorType:0});
+  const [alert, setAlerts] = useState<AlertType>({message:'', errorType:1});
 
   useEffect(() => {
     updateGamesList();
@@ -59,7 +58,8 @@ const Teams = () => {
       team2Name.length > 1 &&
       team2Name.length < 40 &&
       team2Points >= 0 &&
-      team2Points < 3000
+      team2Points < 3000 &&
+      team1Name !== team2Name
     ) {
       GamesService.update(currentGame, {
         ...currentGameItem,
@@ -75,9 +75,9 @@ const Teams = () => {
         .then(() => updateGamesList())
         .catch((error) => console.error(error));
 
-      // key:value in obj
-      setAlerts({message:"Succes", errorType:0});
+      setAlerts({message:"Succes", errorType:1});
     } else {
+      setAlerts({message:"Invalid data, check the name or points", errorType:0});
     }
   };
 
@@ -87,6 +87,7 @@ const Teams = () => {
 
   return (
     <Container>
+      {alert.message ?  <BasicAlerts message = {alert.message} errorType={alert.errorType} /> : `` }
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <FormControl fullWidth margin="normal">
@@ -127,7 +128,6 @@ const Teams = () => {
             variant="standard"
             value={team1Points}
             onChange={(e) => {
-              console.log(parseInt(e.target.value));
               if (!isNaN(+e.target.value)) {
                 setTeam1Points(+e.target.value);
               }
@@ -165,7 +165,6 @@ const Teams = () => {
           </Button>
         </Grid>
       </Grid>
-      {alert.message ?  <BasicAlerts message = {alert.message} errorType={alert.errorType} /> : `` }
     </Container>
   );
 };
