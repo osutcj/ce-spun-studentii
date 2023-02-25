@@ -24,5 +24,3 @@ public
 *.njsproj
 *.sln
 *.sw?
-
-src/static/secrets.ts
