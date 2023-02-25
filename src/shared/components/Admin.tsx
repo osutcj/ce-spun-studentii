@@ -14,14 +14,12 @@ import FlashRoundAdmin from './adminTabs/FlashRound/FlashRoundAdmin';
 import GamesManagement from './adminTabs/Games/GamesManagement';
 import convert from '../../helpers/csv-convertor.helper';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { loginEmail, loginPassword } from '../../static/secrets';
 
 type userType = {
   email: string;
   password: string;
 };
-
-const loginEmail = 'osut@osut.ro';
-const loginPassword = 'ce-spun-studentii-23';
 
 const Admin = () => {
   const [loggedIn, setLoggedIn] = useState(false);
