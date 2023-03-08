@@ -1,0 +1,41 @@
+.slider-background {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+
+    justify-content: center;
+    align-items: center;
+
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: #000000c0;
+}
+
+.slider-title {
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.rec.rec-arrow:disabled {
+    visibility: hidden;
+}
+
+img.slider-image {
+    max-width: 30vmin;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+button.rec-dot {
+    display: none;
+}
+
+.rec-arrow {
+    
+    background-color: var(--blue) !important;
+    font-size: 4rem !important;
+    margin: 10px;
+    color: white !important;
+    min-width: 1.7rem !important;
+    line-height: 1.7rem !important;   
+}
