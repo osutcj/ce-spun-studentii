@@ -23,6 +23,7 @@ const FlashRoundAdmin = () => {
   const [flashRounds, setFlashRounds] = useState<FlashRound[]>();
   const [answers1, setAnswers1] = useState<FlashRoundAnswers[]>([]);
   const [answers2, setAnswers2] = useState<FlashRoundAnswers[]>([]);
+  const [questionNumber, setQuestionNumber] = useState<number>(5)
   const [round, setRound] = useState<number>(1);
   const flash = useFlashRound(game);
   const [alert, setAlerts] = useState<AlertType>({message:'', errorType:1});
@@ -70,7 +71,7 @@ const FlashRoundAdmin = () => {
   const renderTextFields = (round: number) => {
     let answersArray = [];
     if (answers1.length > 0 && answers2.length > 0) {
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < questionNumber; i++) {
         if (round === 1) {
           answersArray.push(
             <RoundAnswer

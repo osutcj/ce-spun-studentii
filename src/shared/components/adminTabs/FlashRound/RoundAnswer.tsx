@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Container, Grid, TextField, Button } from '@mui/material';
 
 const RoundAnswer = (props: any) => {
   const { updateFields } = props;
 
-  const [answer, setAnswer] = useState('');
-  const [points, setPoints] = useState(0);
+  const [answer, setAnswer] = useState<string>('');
+  const [points, setPoints] = useState<number>();
 
   useEffect(() => {
     if (props.answer) {
