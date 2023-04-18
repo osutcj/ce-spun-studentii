@@ -14,7 +14,6 @@ import FlashRoundAdmin from './adminTabs/FlashRound/FlashRoundAdmin';
 import GamesManagement from './adminTabs/Games/GamesManagement';
 import convert from '../../helpers/csv-convertor.helper';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
-import { loginEmail, loginPassword } from '../../static/secrets';
 
 type userType = {
   email: string;
@@ -25,6 +24,9 @@ const Admin = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [currentTab, changeCurrentTab] = useState(0);
   const [user, setUser] = useLocalStorage<userType>('user', {} as userType);
+
+  const loginEmail = 'osut@osut.ro';
+  const loginPassword = 'ce-spun-studentii-23';
 
   const handleLogin = () => {
     if (user.email === loginEmail && user.password === loginPassword) {

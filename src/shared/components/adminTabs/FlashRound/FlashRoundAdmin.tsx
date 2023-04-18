@@ -17,6 +17,7 @@ import useFlashRound from '../../../../hooks/useFlashRound';
 import FlashRoundService from '../../../../services/flash.service';
 import BasicAlerts from '../BasicAlerts';
 import { AlertType } from '../../../types/game';
+import Timer from '../../Timer';
 
 const FlashRoundAdmin = () => {
   const [game, selectGame] = useState<string>('');
@@ -166,6 +167,17 @@ const FlashRoundAdmin = () => {
     return fields;
   };
 
+  const resetRounds = () => {
+    FlashRoundService.update(game, {
+      ...flash,
+      answers1: createEmptyTextFields(),
+      answers2: createEmptyTextFields(),
+      currentRound: 1,
+    }).catch((error) => console.error(error));
+    setAnswers1([]);
+    setAnswers2([]);
+  }
+
   return (
     <Container>
       {alert.message ?  <BasicAlerts message = {alert.message} errorType={alert.errorType} /> : `` }
@@ -209,9 +221,10 @@ const FlashRoundAdmin = () => {
       {game && (
         <>
           <Grid item xs={12}>
-            <Button fullWidth variant="contained" onClick={() => saveChanges()}>
+            <Button style={{marginTop:'5px;'}} fullWidth variant="contained" onClick={() => saveChanges()}>
               Salveaza prima runda
             </Button>
+            
           </Grid>
 
           {renderTextFields(2).map((field) => {
@@ -235,6 +248,9 @@ const FlashRoundAdmin = () => {
           </Grid>
         </>
       )}
+      <Timer initialTime={20} /><br/><br/><br/>
+      <p className='nice'>Need to refresh page if clicked erases all round :(</p><br/>
+      <Button variant="outlined" color='warning' style={{marginTop: "20px;"}} onClick={() => resetRounds()}>Ciao meci fulger</Button>
     </Container>
   );
 };
