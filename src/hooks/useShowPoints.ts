@@ -19,20 +19,6 @@ const useShowPoints = () => {
     fetchShowPoints();
   }, []);
 
-  useEffect(() => {
-    const showPointsListener = onSnapshot(
-      ShowPointsService.getCollection(),
-      (snapshot) => {
-        const showPointsData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setShowPoints(showPointsData[0].showPoints);
-      }
-    );
-
-    return () => showPointsListener();
-  }, []);
 
   const updateShowPoints = async (newShowPoints: boolean[]) => {
     const showPointsData = await ShowPointsService.get();
