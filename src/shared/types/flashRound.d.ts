@@ -10,4 +10,5 @@ export interface FlashRound {
   answers2: FlashRoundAnswers[];
   type: number;
   currentRound: number;
+  showPoints?: boolean[];
 }
