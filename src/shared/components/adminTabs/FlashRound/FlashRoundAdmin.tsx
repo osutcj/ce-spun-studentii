@@ -20,8 +20,7 @@ import { AlertType, NormalGame } from '../../../types/game';
 import Timer from '../../Timer';
 import GamesService from '../../../../services/games.service';
 import useGame from '../../../../hooks/useGame';
-
-
+import  useShowPoints  from '../../../../hooks/useShowPoints';
 
 const FlashRoundAdmin = () => {
   const [game, selectGame] = useState<string>('');
@@ -35,7 +34,8 @@ const FlashRoundAdmin = () => {
   const [checked, setChecked] = useState<boolean[]>([false, false, false]);
   const [selectedGame, setSelectedGame] = useState('');
   const gamez: NormalGame = useGame(selectedGame || '');
-  
+  const { showPoints, updateShowPoints, setAllTrue } = useShowPoints();
+
   useEffect(() => {
     FlashRoundService.get()
       .then((response) => {
@@ -283,7 +283,7 @@ const FlashRoundAdmin = () => {
         </>
       )}
       <Timer initialTime={20} /><br/>
-      <Button variant="outlined" color='info' onClick={() => setAllWrong()}>Throw 3x's</Button>
+      <Button variant="outlined" color='info' onClick={() => setAllWrong()}>Throw 3Xs</Button>
       <br/><br/>
       <p className='nice'>Need to refresh page if clicked erases all round :(</p><br/>
       <Button variant="outlined" color='warning' style={{marginTop: "20px;"}} onClick={() => resetRounds()}>Ciao meci fulger</Button>
