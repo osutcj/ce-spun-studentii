@@ -14,7 +14,7 @@
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
     "@mui/icons-material": "^5.5.1",
-    "@mui/material": "^5.4.4",
+    "@mui/material": "^5.14.6",
     "@mui/styled-engine-sc": "^5.4.2",
     "@types/styled-components": "^5.1.24",
     "eslint-config-airbnb-typescript": "^17.1.0",
