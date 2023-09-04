@@ -14,7 +14,7 @@
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
     "@mui/icons-material": "^5.5.1",
-    "@mui/material": "^5.4.4",
+    "@mui/material": "^5.14.7",
     "@mui/styled-engine-sc": "^5.4.2",
     "@rollup/plugin-node-resolve": "^15.1.0",
     "@types/styled-components": "^5.1.24",
