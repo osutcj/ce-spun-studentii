@@ -12,14 +12,20 @@ import useGame from '../../hooks/useGame';
 import QuestionsService from '../../services/questions.service';
 import wrongAnswerSound from '../../static/x.mp3';
 import wrongAnswerPng from '../../static/x.png';
-import useSound from 'use-sound';
 
 const Home = (props: any) => {
   const [currentQuestion, setCurrentQuestion] = useState<DBQuestion>();
   const [questions, setQuestions] = useState<DBQuestion[]>([]);
   const [points, setPoints] = useState(0);
   const [wrongAnswers, setWrongAnswers] = useState<number>(0);
-  const [play, { stop }] = useSound(wrongAnswerSound);
+
+  const play = (audio: HTMLAudioElement) => {
+    audio.play();
+  };
+
+  const stop = (audio: HTMLAudioElement) => {
+    audio.pause();
+  };
 
   const urlParams = useParams();
 
@@ -35,12 +41,13 @@ const Home = (props: any) => {
 
   useEffect(() => {
     if (game?.wrongAnswer !== 0) {
-      play();
+      const audio = new Audio(wrongAnswerSound);
+      play(audio);
       setWrongAnswers(Math.min(3, game.wrongAnswer));
 
       setTimeout(() => {
         setWrongAnswers(0);
-        stop();
+        stop(audio);
       }, 2000);
     }
   }, [game?.wrongAnswer]);
@@ -54,7 +61,7 @@ const Home = (props: any) => {
     }
   }, [game]);
 
-  const Item = styled(Paper)(({ theme }) => ({
+  const Item = styled(Paper)(({ theme }: any) => ({
     background:
       'linear-gradient(to bottom,#cedbe9 0%,#aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%,#4bb8f0 71%, #3A8BC2 84%, #26558B 100%)',
     ...theme.typography.body2,
