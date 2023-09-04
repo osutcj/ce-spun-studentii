@@ -80,19 +80,26 @@ const Questions = () => {
       return;
     }
     const firestoreData: DBQuestion[] = convert(fileContent);
-    firestoreData.forEach(async (question) => {
-      const questionId = await QuestionsService.insert(question);
-      setGameQuestions((previousQuestions) => [
-        ...previousQuestions,
-        {
+  
+    try {
+      await QuestionsService.removeCollection();
+  
+      const insertPromises = firestoreData.map(async (question) => {
+        const questionId = await QuestionsService.insert(question);
+        return {
           ...question,
           id: questionId,
-        },
-      ]);
-    });
-
-    await handleQuestionsUpdate();
+        };
+      });
+  
+      const insertedQuestions = await Promise.all(insertPromises);
+  
+      setGameQuestions(insertedQuestions);
+    } catch (error) {
+      console.error('Error handling bulk update:', error);
+    }
   };
+  
 
   const downloadCSV = () => {
     const csvContent = convertFirebaseToCsv(gameQuestions);
