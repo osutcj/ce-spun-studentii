@@ -49,6 +49,15 @@ const QuestionsService = {
   remove: async (id: string) => {
     await deleteDoc(doc(firestore, QUESTIONS_COLLECTION, id));
   },
+  removeCollection: async () => {
+    const querySnapshot = await getDocs(collection(firestore, QUESTIONS_COLLECTION));
+  
+    const deletePromises = querySnapshot.docs.map(async (doc) => {
+      await deleteDoc(doc.ref);
+    });
+  
+    await Promise.all(deletePromises);
+  }
 };
 
 export default QuestionsService;

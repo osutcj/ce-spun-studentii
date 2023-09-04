@@ -8,7 +8,6 @@ import {
   FormControlLabel,
   Grid,
   InputLabel,
-  Menu,
   MenuItem,
   Paper,
   Select,
