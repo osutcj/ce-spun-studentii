@@ -16,7 +16,11 @@ import RoundAnswer from './RoundAnswer';
 import useFlashRound from '../../../../hooks/useFlashRound';
 import FlashRoundService from '../../../../services/flash.service';
 import BasicAlerts from '../BasicAlerts';
-import { AlertType } from '../../../types/game';
+import { AlertType, NormalGame } from '../../../types/game';
+import Timer from '../../Timer';
+import GamesService from '../../../../services/games.service';
+import useGame from '../../../../hooks/useGame';
+import  useShowPoints  from '../../../../hooks/useShowPoints';
 
 const FlashRoundAdmin = () => {
   const [game, selectGame] = useState<string>('');
@@ -27,6 +31,10 @@ const FlashRoundAdmin = () => {
   const [round, setRound] = useState<number>(1);
   const flash = useFlashRound(game);
   const [alert, setAlerts] = useState<AlertType>({message:'', errorType:1});
+  const [checked, setChecked] = useState<boolean[]>([false, false, false]);
+  const [selectedGame, setSelectedGame] = useState('');
+  const gamez: NormalGame = useGame(selectedGame || '');
+  const { showPoints, updateShowPoints, setAllTrue } = useShowPoints();
 
   useEffect(() => {
     FlashRoundService.get()
@@ -37,6 +45,15 @@ const FlashRoundAdmin = () => {
         console.error(error);
       });
   }, []);
+
+  useEffect(() => { 
+    const wrongAnswers = checked.filter((value) => value).length
+    GamesService.update(selectedGame, {
+      ...gamez,
+      wrongAnswer: wrongAnswers,
+    });
+  
+  }, [checked]);
 
   useEffect(() => {
     if (flash) {
@@ -67,6 +84,24 @@ const FlashRoundAdmin = () => {
       setAnswers2(answers2);
     }
   };
+
+  const resetWrongAnswers = () => { 
+    console.log('resetting wrong answers')
+    GamesService.update(selectedGame, {
+      ...gamez,
+      wrongAnswer: 0,
+    });
+    setChecked([false, false, false])
+  }
+
+  const setAllWrong = () => {
+    console.log('setting all wrong')
+    GamesService.update(selectedGame, {
+      ...gamez,
+      wrongAnswer: 3,
+    });
+    setChecked([true, true, true])
+  }
 
   const renderTextFields = (round: number) => {
     let answersArray = [];
@@ -166,6 +201,17 @@ const FlashRoundAdmin = () => {
     return fields;
   };
 
+  const resetRounds = () => {
+    FlashRoundService.update(game, {
+      ...flash,
+      answers1: createEmptyTextFields(),
+      answers2: createEmptyTextFields(),
+      currentRound: 1,
+    }).catch((error) => console.error(error));
+    setAnswers1([]);
+    setAnswers2([]);
+  }
+
   return (
     <Container>
       {alert.message ?  <BasicAlerts message = {alert.message} errorType={alert.errorType} /> : `` }
@@ -209,9 +255,10 @@ const FlashRoundAdmin = () => {
       {game && (
         <>
           <Grid item xs={12}>
-            <Button fullWidth variant="contained" onClick={() => saveChanges()}>
+            <Button style={{marginTop:'5px;'}} fullWidth variant="contained" onClick={() => saveChanges()}>
               Salveaza prima runda
             </Button>
+            
           </Grid>
 
           {renderTextFields(2).map((field) => {
@@ -235,6 +282,11 @@ const FlashRoundAdmin = () => {
           </Grid>
         </>
       )}
+      <Timer initialTime={20} /><br/>
+      <Button variant="outlined" color='info' onClick={() => setAllWrong()}>Throw 3Xs</Button>
+      <br/><br/>
+      <p className='nice'>Need to refresh page if clicked erases all round :(</p><br/>
+      <Button variant="outlined" color='warning' style={{marginTop: "20px;"}} onClick={() => resetRounds()}>Ciao meci fulger</Button>
     </Container>
   );
 };

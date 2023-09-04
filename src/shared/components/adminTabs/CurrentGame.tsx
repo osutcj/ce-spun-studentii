@@ -77,6 +77,24 @@ const CurrentGame = (props: any) => {
     });
   };
 
+  const resetWrongAnswers = () => { 
+    console.log('resetting wrong answers')
+    GamesService.update(selectedGame, {
+      ...game,
+      wrongAnswer: 0,
+    });
+    setChecked([false, false, false])
+  }
+
+  const setAllWrong = () => {
+    console.log('setting all wrong')
+    GamesService.update(selectedGame, {
+      ...game,
+      wrongAnswer: 3,
+    });
+    setChecked([true, true, true])
+  }
+
   const resetStates = () => {
     setSelected(undefined);
     setDoublePoints(false);
@@ -334,10 +352,15 @@ const CurrentGame = (props: any) => {
 
           <div style={{ marginTop: 10, width: '100%' }}>
             <p style={{textAlign:'center'}}>Wrong answers</p>
+            <Button variant="outlined" onClick={() => setAllWrong()}>
+              Set All wrong
+            </Button>
             <Checkbox checked={checked[0]} onChange={() => handleChecked(0)} />
             <Checkbox checked={checked[1]} onChange={() => handleChecked(1)} />
             <Checkbox checked={checked[2]} onChange={() => handleChecked(2)} />
-
+            <Button  variant="outlined" onClick={() => resetWrongAnswers()}>
+              Reset Wrong Answers
+            </Button>
           </div>
 
           <div style={{ marginTop: 10, width: '100%' }}>

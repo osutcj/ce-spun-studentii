@@ -8,10 +8,12 @@ import './styles/home.css';
 import useFlashRound from '../../hooks/useFlashRound';
 import { useParams } from 'react-router-dom';
 import { FlashRoundAnswers } from '../types/flashRound';
+import useShowPoints from '../../hooks/useShowPoints';
 
 const FlashRound = () => {
   const [answers, setAnswers] = useState<FlashRoundAnswers[]>([]);
   const [points, setPoints] = useState(0);
+  const { showPoints, updateShowPoints, setAllTrue } = useShowPoints();
 
   const urlParams = useParams();
 
@@ -46,8 +48,9 @@ const FlashRound = () => {
 
   const computePoints = (answers: FlashRoundAnswers[]) => {
     let totalPoints = 0;
-    answers.map((answer) => {
-      totalPoints += answer.points;
+    answers.map((answer, index) => {
+      if (showPoints[index])
+        totalPoints += answer.points;
     });
     setPoints(totalPoints);
   };
@@ -59,7 +62,7 @@ const FlashRound = () => {
       answers.length > index &&
       answers[index].answer
     ) {
-      return `${answers[index].answer} - ${answers[index].points}`;
+      return showPoints[index] ? `${answers[index].answer} - ${answers[index].points}` : `${answers[index].answer} ` ;
     }
     return '';
   };
