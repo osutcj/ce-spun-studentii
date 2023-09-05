@@ -125,24 +125,14 @@ const Home = (props: any) => {
     return <Grid container>{photos.map((photo) => photo)}</Grid>;
   };
 
-  const getWrongAnswersOffset = () => {
-    switch (wrongAnswers) {
-      case 1:
-        return '44%';
-      case 2:
-        return '37%';
-      default:
-        return '30%';
-    }
-  };
-
   return (
     <div className={'board'}>
       <div
         style={{
-          position: 'absolute',
-          top: '30%',
-          left: getWrongAnswersOffset(),
+            position: 'absolute',
+            top: '50%', // Center vertically
+            left: '50%', // Center horizontally
+            transform: 'translate(-50%, -50%)'
         }}
       >
         <RenderWrongAnswers />
