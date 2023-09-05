@@ -77,7 +77,6 @@ const CurrentGame = (props: any) => {
   };
 
   const resetWrongAnswers = () => { 
-    console.log('resetting wrong answers')
     GamesService.update(selectedGame, {
       ...game,
       wrongAnswer: 0,
@@ -86,7 +85,6 @@ const CurrentGame = (props: any) => {
   }
 
   const setAllWrong = () => {
-    console.log('setting all wrong')
     GamesService.update(selectedGame, {
       ...game,
       wrongAnswer: 3,

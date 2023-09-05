@@ -8,15 +8,11 @@ import './styles/home.css';
 import useFlashRound from '../../hooks/useFlashRound';
 import { useParams } from 'react-router-dom';
 import { FlashRoundAnswers } from '../types/flashRound';
-import useShowPoints from '../../hooks/useShowPoints';
 
 const FlashRound = () => {
   const [answers, setAnswers] = useState<FlashRoundAnswers[]>([]);
   const [points, setPoints] = useState(0);
-  const { showPoints, updateShowPoints, setAllTrue } = useShowPoints();
-
   const urlParams = useParams();
-
   const flash = useFlashRound(urlParams.id || '');
 
   const Item = styled(Paper)(({ theme }) => ({
@@ -34,38 +30,43 @@ const FlashRound = () => {
   }));
 
   useEffect(() => {
-    if (flash) {
-      if (flash.currentRound === 1) {
-        setAnswers(flash.answers1);
-        computePoints(flash.answers1);
-      }
-      if (flash.currentRound === 2) {
-        setAnswers(flash.answers2);
-        computePoints(flash.answers2);
-      }
+    if (!flash) {
+      return;
     }
+    setAnswers(flash.answers);
+    computePoints(flash.answers);
   }, [flash]);
 
   const computePoints = (answers: FlashRoundAnswers[]) => {
-    let totalPoints = 0;
-    answers.map((answer, index) => {
-      if (showPoints[index])
-        totalPoints += answer.points;
-    });
-    setPoints(totalPoints);
+    let points = 0;
+    for (let i = 0; i < answers.length; i++) {
+      if (answers[i].points && answers[i].showPoints) {
+        points += answers[i].points;
+      }
+    }
+    setPoints(points);
   };
 
   const indexOfAnswer = (index: number) => {
+    const answer = answers[index];
+
+    if (
+      answer === undefined || answer.answer === ''
+    ){
+      return '';
+    }
+
     if (
       answers &&
       answers.length > 0 &&
-      answers.length > index &&
-      answers[index].answer
+      answers.length > index
     ) {
-      return showPoints[index] ? `${answers[index].answer} - ${answers[index].points}` : `${answers[index].answer} ` ;
+     console.log(index)
+      return answer.showPoints ? `${answer.answer} - ${answer.points}` : `${answer.answer} ` ;
     }
-    return '';
+    return 'Waiting for answer';
   };
+
 
   return (
     <div className={'board'}>

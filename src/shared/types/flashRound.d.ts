@@ -1,14 +1,12 @@
 export interface FlashRoundAnswers {
   answer: string;
   points: number;
+  showPoints?: boolean;
 }
 
 export interface FlashRound {
   id: string;
   name: string;
-  answers1: FlashRoundAnswers[];
-  answers2: FlashRoundAnswers[];
+  answers: FlashRoundAnswers[];
   type: number;
-  currentRound: number;
-  showPoints?: boolean[];
 }
