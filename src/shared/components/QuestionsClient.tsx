@@ -12,8 +12,9 @@ import useGame from '../../hooks/useGame';
 import QuestionsService from '../../services/questions.service';
 import wrongAnswerSound from '../../static/x.mp3';
 import wrongAnswerPng from '../../static/x.png';
+import { truncateQuestion } from "../../helpers/truncate-question";
 
-const Home = (props: any) => {
+const QuestionsClient = () => {
   const [currentQuestion, setCurrentQuestion] = useState<DBQuestion>();
   const [questions, setQuestions] = useState<DBQuestion[]>([]);
   const [points, setPoints] = useState(0);
@@ -28,8 +29,8 @@ const Home = (props: any) => {
   };
 
   const urlParams = useParams();
-
   const game: NormalGame = useGame(urlParams.id || '');
+  const formatedQuestion = truncateQuestion(game.currentQuestion);
 
   useEffect(() => {
     QuestionsService.get()
@@ -130,8 +131,8 @@ const Home = (props: any) => {
       <div
         style={{
             position: 'absolute',
-            top: '50%', // Center vertically
-            left: '50%', // Center horizontally
+            top: '50%',
+            left: '50%',
             transform: 'translate(-50%, -50%)'
         }}
       >
@@ -147,7 +148,7 @@ const Home = (props: any) => {
           <div className={'questions'}>
             <h1 className="question">
               {game && game.questionRevealed
-                ? game.currentQuestion
+                ? formatedQuestion
                 : 'Coming...'}
             </h1>
           </div>
@@ -195,4 +196,4 @@ const Home = (props: any) => {
   );
 };
 
-export default Home;
+export default QuestionsClient;
