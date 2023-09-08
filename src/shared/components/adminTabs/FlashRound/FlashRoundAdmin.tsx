@@ -12,9 +12,8 @@ import { FlashRoundAnswers, FlashRound } from '../../../types/flashRound';
 import RoundAnswer from './RoundAnswer';
 import useFlashRound from '../../../../hooks/useFlashRound';
 import FlashRoundService from '../../../../services/flash.service';
-import BasicAlerts from '../BasicAlerts';
 import { AlertType } from '../../../types/game';
-import Timer from '../../Timer';
+import Timer from './Timer';
 
 const FlashRoundAdmin = () => {
   const [game, selectGame] = useState<string>('');
@@ -24,7 +23,9 @@ const FlashRoundAdmin = () => {
   const [resetChild, setResetChild] = useState(false);
   const flash = useFlashRound(game);
   const [alert, setAlerts] = useState<AlertType>({message:'', errorType:1});
-  const [toggleWrong, setToggleWrong] = useState<boolean>(flash?.toggleWrongSound || false)
+  let currentToggle = flash?.toggleWrongSound
+  if (currentToggle === undefined) currentToggle = false
+  const [toggleWrong, setToggleWrong] = useState<boolean>(currentToggle)
 
   useEffect(() => {
     FlashRoundService.get()
@@ -173,7 +174,6 @@ const FlashRoundAdmin = () => {
 
   return (
     <Container>
-      {alert.message ?  <BasicAlerts message = {alert.message} errorType={alert.errorType} /> : `` }
       {game && (
         <p style={{ color: 'black' }}>
           Link-ul pentru accesarea rundei flash:&nbsp;

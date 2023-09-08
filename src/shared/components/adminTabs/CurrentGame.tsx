@@ -30,27 +30,16 @@ const CurrentGame = (props: any) => {
   const [gamesList, setGamesList] = useState<NormalGame[]>([]);
 
   const game: NormalGame = useGame(selectedGame || '');
-  const [checked, setChecked] = useState<boolean[]>([false, false, false]);
+  const [counterWrongAnswers, setCounterWrongAnswers] = useState<number>(0);
 
-  const handleChecked = (index:0|1|2) => {
-    setChecked((prevState) => { 
-      return prevState.map((value, idx) => {
-        if (idx === index){
-          return !value
-        }
-        return value
-      })
-    })
-  }
 
-  useEffect(() => { 
-    const wrongAnswers = checked.filter((value) => value).length
+  useEffect(() => {
     GamesService.update(selectedGame, {
       ...game,
-      wrongAnswer: wrongAnswers,
+      wrongAnswer: counterWrongAnswers,
     });
-  
-  }, [checked]);
+
+  }, [counterWrongAnswers]);
 
   useEffect(() => {
     QuestionsService.get()
@@ -81,7 +70,7 @@ const CurrentGame = (props: any) => {
       ...game,
       wrongAnswer: 0,
     });
-    setChecked([false, false, false])
+    setCounterWrongAnswers(0)
   }
 
   const setAllWrong = () => {
@@ -89,7 +78,7 @@ const CurrentGame = (props: any) => {
       ...game,
       wrongAnswer: 3,
     });
-    setChecked([true, true, true])
+    setCounterWrongAnswers(3)
   }
 
   const resetStates = () => {
@@ -349,12 +338,12 @@ const CurrentGame = (props: any) => {
 
           <div style={{ marginTop: 10, width: '100%' }}>
             <p style={{textAlign:'center'}}>Wrong answers</p>
-            <Button variant="outlined" onClick={() => setAllWrong()}>
+            <Button variant="outlined" onClick={() => setAllWrong()} style={{ marginRight: 10 }}>
               Set All wrong
             </Button>
-            <Checkbox checked={checked[0]} onChange={() => handleChecked(0)} />
-            <Checkbox checked={checked[1]} onChange={() => handleChecked(1)} />
-            <Checkbox checked={checked[2]} onChange={() => handleChecked(2)} />
+            <Button variant="outlined" onClick={() => setCounterWrongAnswers((prevState) => (Math.min(prevState+1, 3)))} style={{ marginRight: 10 }}>
+              {counterWrongAnswers} wrong (click for +1)
+            </Button>
             <Button  variant="outlined" onClick={() => resetWrongAnswers()}>
               Reset Wrong Answers
             </Button>

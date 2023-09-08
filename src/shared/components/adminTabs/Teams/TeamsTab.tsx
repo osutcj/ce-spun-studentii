@@ -12,7 +12,6 @@ import {
 import GamesService from '../../../../services/games.service';
 import { NormalGame, AlertType } from '../../../types/game';
 import { EmptyGame } from '../../../models/game';
-import BasicAlerts from '../BasicAlerts';
 
 
 const Teams = () => {
@@ -87,7 +86,6 @@ const Teams = () => {
 
   return (
     <Container>
-      {alert.message ?  <BasicAlerts message = {alert.message} errorType={alert.errorType} /> : `` }
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <FormControl fullWidth margin="normal">
