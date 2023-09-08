@@ -8,12 +8,16 @@ import './styles/home.css';
 import useFlashRound from '../../hooks/useFlashRound';
 import { useParams } from 'react-router-dom';
 import { FlashRoundAnswers } from '../types/flashRound';
+import wrongAnswerSound from "../../static/x.mp3";
+import { useSounds } from "../../hooks/useSounds.hook";
+import wrongAnswerPng from "../../static/x.png";
 
 const FlashRoundClient = () => {
   const [answers, setAnswers] = useState<FlashRoundAnswers[]>([]);
   const [points, setPoints] = useState(0);
   const urlParams = useParams();
   const flash = useFlashRound(urlParams.id || '');
+  const [isPlayingSound, setIsPlayingSound] = useState(false);
 
   const Item = styled(Paper)(({ theme }) => ({
     background:
@@ -28,6 +32,18 @@ const FlashRoundClient = () => {
     marginLeft: '15%',
     fontSize: 15,
   }));
+
+  useEffect(() => {
+      const audio = new Audio(wrongAnswerSound);
+      const {play, stop} = useSounds(audio);
+      play(audio);
+      setIsPlayingSound(true);
+
+      setTimeout(() => {
+        stop(audio);
+        setIsPlayingSound(false)
+      }, 2000);
+  }, [flash?.toggleWrongSound]);
 
   useEffect(() => {
     if (!flash) {
@@ -67,9 +83,26 @@ const FlashRoundClient = () => {
     return 'Waiting for answer';
   };
 
+  const RenderWrongAnswers = () => {
+    return(
+      <Grid item xs={12}>
+        <img src={wrongAnswerPng} width={200} height={200} />
+      </Grid>
+    )
+  };
 
   return (
     <div className={'board'}>
+      {isPlayingSound && <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)'
+        }}
+      >
+        <RenderWrongAnswers />
+      </div>}
       <Container maxWidth="lg" style={{ paddingTop: 30, paddingBottom: 20 }}>
         <Box sx={{ flexGrow: 2 }}>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
