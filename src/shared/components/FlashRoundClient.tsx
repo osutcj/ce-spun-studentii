@@ -18,6 +18,7 @@ const FlashRoundClient = () => {
   const urlParams = useParams();
   const flash = useFlashRound(urlParams.id || '');
   const [isPlayingSound, setIsPlayingSound] = useState(false);
+  const [isInitialRender, setIsInitialRender] = useState(true);
 
   const Item = styled(Paper)(({ theme }) => ({
     background:
@@ -34,15 +35,27 @@ const FlashRoundClient = () => {
   }));
 
   useEffect(() => {
+    if (flash?.toggleWrongSound === undefined) return;
+
+    // I hate to do this but unless I make the action unusable the first second
+    // it will always render the X and play the sound, this was the only workaround I was able to find
+    if (isInitialRender) {
+      setTimeout(() => {
+        setIsInitialRender(false);
+      }, 1000);
+    } else {
       const audio = new Audio(wrongAnswerSound);
-      const {play, stop} = useSounds(audio);
+      const { play, stop } = useSounds(audio);
+      console.log(flash?.toggleWrongSound);
+
       play(audio);
       setIsPlayingSound(true);
 
       setTimeout(() => {
         stop(audio);
-        setIsPlayingSound(false)
+        setIsPlayingSound(false);
       }, 2000);
+    }
   }, [flash?.toggleWrongSound]);
 
   useEffect(() => {
