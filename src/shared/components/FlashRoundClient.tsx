@@ -9,7 +9,7 @@ import useFlashRound from '../../hooks/useFlashRound';
 import { useParams } from 'react-router-dom';
 import { FlashRoundAnswers } from '../types/flashRound';
 
-const FlashRound = () => {
+const FlashRoundClient = () => {
   const [answers, setAnswers] = useState<FlashRoundAnswers[]>([]);
   const [points, setPoints] = useState(0);
   const urlParams = useParams();
@@ -115,4 +115,4 @@ const FlashRound = () => {
   );
 };
 
-export default FlashRound;
+export default FlashRoundClient;

@@ -14,7 +14,7 @@ import wrongAnswerSound from '../../static/x.mp3';
 import wrongAnswerPng from '../../static/x.png';
 import { truncateQuestion } from "../../helpers/truncate-question";
 
-const Home = () => {
+const QuestionsClient = () => {
   const [currentQuestion, setCurrentQuestion] = useState<DBQuestion>();
   const [questions, setQuestions] = useState<DBQuestion[]>([]);
   const [points, setPoints] = useState(0);
@@ -196,4 +196,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default QuestionsClient;
