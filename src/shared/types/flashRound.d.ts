@@ -9,4 +9,5 @@ export interface FlashRound {
   name: string;
   answers: FlashRoundAnswers[];
   type: number;
+  toggleWrongSound: boolean;
 }

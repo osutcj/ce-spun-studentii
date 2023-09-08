@@ -13,20 +13,13 @@ import QuestionsService from '../../services/questions.service';
 import wrongAnswerSound from '../../static/x.mp3';
 import wrongAnswerPng from '../../static/x.png';
 import { truncateQuestion } from "../../helpers/truncate-question";
+import { useSounds } from "../../hooks/useSounds.hook";
 
 const QuestionsClient = () => {
   const [currentQuestion, setCurrentQuestion] = useState<DBQuestion>();
   const [questions, setQuestions] = useState<DBQuestion[]>([]);
   const [points, setPoints] = useState(0);
   const [wrongAnswers, setWrongAnswers] = useState<number>(0);
-
-  const play = (audio: HTMLAudioElement) => {
-    audio.play();
-  };
-
-  const stop = (audio: HTMLAudioElement) => {
-    audio.pause();
-  };
 
   const urlParams = useParams();
   const game: NormalGame = useGame(urlParams.id || '');
@@ -41,16 +34,18 @@ const QuestionsClient = () => {
   }, []);
 
   useEffect(() => {
-    if (game?.wrongAnswer !== 0) {
-      const audio = new Audio(wrongAnswerSound);
-      play(audio);
-      setWrongAnswers(Math.min(3, game.wrongAnswer));
+    if (game?.wrongAnswer === 0) {
+      return;
+    }
+    const audio = new Audio(wrongAnswerSound);
+    const {play, stop} = useSounds(audio);
+    play(audio);
+    setWrongAnswers(Math.min(3, game.wrongAnswer));
 
       setTimeout(() => {
         setWrongAnswers(0);
         stop(audio);
       }, 2000);
-    }
   }, [game?.wrongAnswer]);
 
   useEffect(() => {

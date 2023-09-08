@@ -13,7 +13,7 @@ import RoundAnswer from './RoundAnswer';
 import useFlashRound from '../../../../hooks/useFlashRound';
 import FlashRoundService from '../../../../services/flash.service';
 import BasicAlerts from '../BasicAlerts';
-import { AlertType, NormalGame } from '../../../types/game';
+import { AlertType } from '../../../types/game';
 import Timer from '../../Timer';
 
 const FlashRoundAdmin = () => {
@@ -24,6 +24,7 @@ const FlashRoundAdmin = () => {
   const [resetChild, setResetChild] = useState(false);
   const flash = useFlashRound(game);
   const [alert, setAlerts] = useState<AlertType>({message:'', errorType:1});
+  const [toggleWrong, setToggleWrong] = useState<boolean>(flash?.toggleWrongSound || false)
 
   useEffect(() => {
     FlashRoundService.get()
@@ -156,8 +157,18 @@ const FlashRoundAdmin = () => {
     }
   }, [resetChild]);
   
-  const setAllWrong = () => {
-    // logic to display Xs
+  const setWrong = () => {
+    setToggleWrong((prev) => !prev)
+    FlashRoundService.update(game, {
+      ...flash,
+      toggleWrongSound: toggleWrong
+    }).then(() => {
+      setAlerts({ message: 'Cleared points and answers', errorType: 1 });
+      setResetChild(true);
+    }).catch((error) => {
+      console.error(error);
+      setAlerts({ message: 'Error clearing points and answers', errorType: 0 });
+    });
   }
 
   return (
@@ -202,7 +213,7 @@ const FlashRoundAdmin = () => {
       <div style={{marginTop: '24px'}}>
       <Timer initialTime={20} /><br/>
       <Button variant="outlined" color='info' onClick={() => clearPointsAndAnswers()}>Clear Points and Answers</Button>
-      <Button variant="outlined" color='info' onClick={() => setAllWrong()}>Throw 3Xs</Button>
+      <Button variant="outlined" color='info' onClick={() => setWrong()} style={{marginLeft: '20px'}}>Show X</Button>
       </div>  
     </Container>
   );
