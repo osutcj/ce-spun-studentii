@@ -1,11 +1,11 @@
-const fs = require('fs');
+import fs from "fs";
 
 const MAX_ANSWERS = 8;
 
 const inputFilename = 'input.txt';
 const outputFilename = 'output.csv';
 
-function writeOutputFile(filename, data) {
+function writeOutputFile(filename: string, data: any) {
     const header = ['question'];
 
     for (let fileParserIndex = 0; fileParserIndex < MAX_ANSWERS; fileParserIndex++) {
@@ -19,11 +19,11 @@ function writeOutputFile(filename, data) {
     fs.writeFileSync(filename, csvContent, 'utf8');
 }
 
-function readInputFile(file) {
+function readInputFile(file: string) {
     return fs.readFileSync(file, 'utf8').split('\n');
 }
 
-function processLines(lines) {
+function processLines(lines: string[]) {
     const outputData = [];
     let fileParserIndex = 0;
 
