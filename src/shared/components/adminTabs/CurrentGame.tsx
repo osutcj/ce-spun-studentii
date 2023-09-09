@@ -17,6 +17,7 @@ import {
 import useGame from '../../../hooks/useGame';
 import GamesService from '../../../services/games.service';
 import { NormalGame } from '../../types/game';
+import { useSounds } from '../../../hooks/useSounds.hook';
 
 const CurrentGame = (props: any) => {
   const [questions, setQuestions] = useState<DBQuestion[]>([]);
@@ -54,6 +55,19 @@ const CurrentGame = (props: any) => {
       })
       .catch((error) => console.error(error));
   }, []);
+  
+
+  
+  const playSound = (audioPath: string, timeout: number) => {
+    const audio = new Audio(audioPath)   
+    const {play, stop} = useSounds(audio)    
+    play(audio)    
+    setTimeout(() => {      
+      stop(audio)    
+    }, timeout) 
+    return audio
+  }  
+
 
   const resetDbValues = (newQuestion: string) => {
     GamesService.update(selectedGame, {
@@ -110,7 +124,9 @@ const CurrentGame = (props: any) => {
 
   const handleRevealAnswer = (event: any, index: number) => {
     const revealedAnswers = game.revealedAnswers;
+   
     if (event.target.checked) {
+      playSound("src\\static\\correct_answer.mp3", 4000)
       revealedAnswers.push(index);
     } else {
       revealedAnswers.splice(revealedAnswers.indexOf(index), 1);
@@ -335,7 +351,11 @@ const CurrentGame = (props: any) => {
               label="Puncte triple"
             />
           </FormControl>
-
+          <div style={{ marginTop: 10, width: '100%' }}>
+            <Button variant="outlined" onClick={() => {playSound("src\\static\\round_start.mp3", 15000)}}>      
+            Play intro theme song
+            </Button>
+          </div>
           <div style={{ marginTop: 10, width: '100%' }}>
             <p style={{textAlign:'center'}}>Wrong answers</p>
             <Button variant="outlined" onClick={() => setAllWrong()} style={{ marginRight: 10 }}>
