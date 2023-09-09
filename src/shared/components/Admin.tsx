@@ -12,7 +12,6 @@ import AddAnswers from './adminTabs/Answers/AddAnswers';
 import Teams from './adminTabs/Teams/TeamsTab';
 import FlashRoundAdmin from './adminTabs/FlashRound/FlashRoundAdmin';
 import GamesManagement from './adminTabs/Games/GamesManagement';
-import convert from '../../helpers/csv-convertor.helper';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 type userType = {
