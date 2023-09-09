@@ -8,7 +8,7 @@ const outputFilename = 'output.csv';
 function writeOutputFile(filename, data) {
     const header = ['question'];
 
-    for (let i = 0; i < MAX_ANSWERS; i++) {
+    for (let fileParserIndex = 0; fileParserIndex < MAX_ANSWERS; fileParserIndex++) {
         header.push('answer');
         header.push('points');
     }
@@ -25,19 +25,19 @@ function readInputFile(file) {
 
 function processLines(lines) {
     const outputData = [];
-    let i = 0;
+    let fileParserIndex = 0;
 
-    while (i < lines.length) {
-        if (lines[i].includes('.')) {
-            const question = lines[i].trim().replace(',', '');
+    while (fileParserIndex < lines.length) {
+        if (lines[fileParserIndex].includes('.')) {
+            const question = lines[fileParserIndex].trim().replace(',', '');
             console.log(`Question detected: ${question}`);
 
             const answers = [];
             const points = [];
 
-            for (let j = i + 1; j < i + MAX_ANSWERS; j++) {
+            for (let i = fileParserIndex + 1; i < fileParserIndex + MAX_ANSWERS; i++) {
                 try {
-                    let line = lines[j].trim().replace('—', '').replace('â€”', '').replace('""', '').replace(',', '').replace("   ", '');
+                    let line = lines[i].trim().replace('—', '').replace('â€”', '').replace('""', '').replace(',', '').replace("   ", '');
                     const parts = line.split(' ');
 
                     let answer, point;
@@ -57,7 +57,7 @@ function processLines(lines) {
                     answers.push(answer);
                     points.push(parseInt(point));
                 } catch (error) {
-                    console.log("Function processLines caught an error: "+ error);
+                    console.log("Function processLines() from formatting-doc-to-txt.ts caught an error: "+ error);
                     break;
                 }
             }
@@ -81,20 +81,17 @@ function processLines(lines) {
             console.log('Inserting row: ', row);
             outputData.push(row);
 
-            i += 2;
+            fileParserIndex += 2;
         } else {
-            i++;
+            fileParserIndex++;
         }
     }
 
     return outputData;
 }
 
-// Read the input file and split it into lines
 const lines = readInputFile(inputFilename);
 
-// Process the lines to get the output data
 const outputData = processLines(lines);
 
-// Write the output data to the CSV file
 writeOutputFile(outputFilename, outputData);
