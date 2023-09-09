@@ -14,6 +14,7 @@ import useFlashRound from '../../../../hooks/useFlashRound';
 import FlashRoundService from '../../../../services/flash.service';
 import { AlertType } from '../../../types/game';
 import Timer from './Timer';
+import { useSounds } from '../../../../hooks/useSounds.hook';
 
 const FlashRoundAdmin = () => {
   const [game, selectGame] = useState<string>('');
@@ -43,6 +44,7 @@ const FlashRoundAdmin = () => {
     }
     if (flash.answers) {
       setAnswers(flash.answers);
+      
     } else {
       setAnswers(createEmptyTextFields());
     }
@@ -54,6 +56,8 @@ const FlashRoundAdmin = () => {
   ) => {
     answers[questionIndex] = newObject;
     setAnswers(answers);
+    playSound("src\\static\\question_revealed.mp3", 1000)
+
   };
 
   const renderTextFields = () => {
@@ -148,6 +152,16 @@ const FlashRoundAdmin = () => {
     });
   };
 
+  const playSound = (audioPath: string, timeout: number) => {
+    const audio = new Audio(audioPath)   
+    const {play, stop} = useSounds(audio)    
+    play(audio)    
+    setTimeout(() => {      
+      stop(audio)    
+    }, timeout) 
+    return audio
+  }  
+
   useEffect(() => {
     if (resetChild) {
       const timeout = setTimeout(() => {
@@ -171,6 +185,9 @@ const FlashRoundAdmin = () => {
       setAlerts({ message: 'Error clearing points and answers', errorType: 0 });
     });
   }
+
+
+
 
   return (
     <Container>
@@ -215,6 +232,11 @@ const FlashRoundAdmin = () => {
       <Button variant="outlined" color='info' onClick={() => clearPointsAndAnswers()}>Clear Points and Answers</Button>
       <Button variant="outlined" color='info' onClick={() => setWrong()} style={{marginLeft: '20px'}}>Show X</Button>
       </div>  
+      <div style={{ marginTop: 10, width: '100%' }}>
+            <Button variant="outlined" onClick={() => {playSound("src\\static\\round_start.mp3", 15000)}}>      
+            Play intro theme song
+            </Button>
+          </div>
     </Container>
   );
 };
