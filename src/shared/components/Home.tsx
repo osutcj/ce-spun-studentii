@@ -137,70 +137,31 @@ const Home = (props: any) => {
   };
 
   return (
-    <div className={'board'}>
-      <div
-        style={{
-          position: 'absolute',
-          top: '30%',
-          left: getWrongAnswersOffset(),
-        }}
-      >
-        <RenderWrongAnswers />
+    <div className="soto1">
+      <div className="board"> 
+        <div className='echipa1'>{game?.team1?.name}: {game?.team1?.points} </div>
+        <div className='puncteRunda'> {points} </div>
+        <div className='echipa2'>{game?.team2?.name}: {game?.team2?.points} </div>
       </div>
-      <Container maxWidth="lg" style={{ paddingTop: 30, paddingBottom: 50 }}>
-        <Box sx={{ flexGrow: 2 }}>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <div className="scor" id={'boardScore'}>
-              <p style={{ fontSize: 25 }}>{points}</p>
+      <div className='intrebare'>{currentQuestion?.text}</div>
+      <div className='tablaRaspunsuri'> 
+        
+            <div className='coloana1'>
+              <div className='raspunsuri'>{indexOfAnswer(0)}</div>
+              <div className='raspunsuri'> {indexOfAnswer(1)} </div>
+              <div className='raspunsuri'>{indexOfAnswer(2)} </div>
+              <div className='raspunsuri'>{indexOfAnswer(3)} </div>
             </div>
+              
+            <div className='coloana2'>
+            
+              <div className='raspunsuri'> {indexOfAnswer(4)} </div>        
+              <div className='raspunsuri'>  {indexOfAnswer(5)} </div>
+              <div className='raspunsuri'>{indexOfAnswer(6)} </div>
+              <div className='raspunsuri'> {indexOfAnswer(7)} </div>
+             
           </div>
-          <div className={'questions'}>
-            <h1 className="question">
-              {game && game.questionRevealed
-                ? game.currentQuestion
-                : 'Coming...'}
-            </h1>
-          </div>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(0)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(4)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(1)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(5)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(2)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(6)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(3)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(7)}</Item>
-            </Grid>
-          </Grid>
-          <div className={'btnHolder'}>
-            <div id="awardTeam1" className="button">
-              <p>
-                {game?.team1?.name}: {game?.team1?.points}
-              </p>
-            </div>
-            <div id="awardTeam2" className="button">
-              <p>
-                {game?.team2?.name}: {game?.team2?.points}
-              </p>
-            </div>
-          </div>
-        </Box>
-      </Container>
+      </div>
     </div>
   );
 };
