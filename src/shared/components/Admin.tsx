@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { Container, Grid, Box, Avatar } from '@mui/material';
 import './styles/admin.css';
@@ -12,30 +11,41 @@ import AddAnswers from './adminTabs/Answers/AddAnswers';
 import Teams from './adminTabs/Teams/TeamsTab';
 import FlashRoundAdmin from './adminTabs/FlashRound/FlashRoundAdmin';
 import GamesManagement from './adminTabs/Games/GamesManagement';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
-
-type userType = {
-  email: string;
-  password: string;
-};
+import { currEnvironment, firestore } from '../../utils/firebase/firebase';
+import { auth} from '../../utils/firebase/firebase';
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { collection, getDocs, query, where } from 'firebase/firestore';
 
 const Admin = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [currentTab, changeCurrentTab] = useState(0);
-  const [user, setUser] = useLocalStorage<userType>('user', {} as userType);
-
-  const loginEmail = 'osut@osut.ro';
-  const loginPassword = 'ce-spun-studentii-23';
-
-  const handleLogin = () => {
-    if (user.email === loginEmail && user.password === loginPassword) {
-      setLoggedIn(true);
-    }
-  };
 
   useEffect(() => {
-    handleLogin();
-  }, [user]);
+    if (currEnvironment == 'localhost') {
+      setLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogin = () => {
+    const provider = new GoogleAuthProvider();
+
+    signInWithPopup(auth,provider).then((result) => {
+      const user = result.user;
+      const whiteListRef = collection(firestore, 'whitelistedUsers');
+      const emailQuery = query(whiteListRef, where('email', 'array-contains', user?.email));
+
+      getDocs(emailQuery)
+        .then((querySnapshot) => {
+          if (!querySnapshot.empty) {
+            setLoggedIn(true);
+          } else {
+            alert(
+              "Nu ai acces la aceasta aplicatie! Pentru mai multe detalii contacteaza OSUT | Serviciul IT sau OSUT | Serviciul Divertisment !"
+            );
+          }
+        })
+    });
+  };
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     changeCurrentTab(newValue);
@@ -49,7 +59,7 @@ const Admin = () => {
 
   function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
-
+    
     return (
       <div
         role="tabpanel"
@@ -115,40 +125,17 @@ const Admin = () => {
           padding: 5,
         }}
       >
-        <Avatar alt="OSUT" sx={{ width: 48, height: 48 }} />
+        <Avatar alt="OSUT" sx={{ width: 48, height: 48 }}/>
         <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Email"
-              type={'email'}
-              variant="standard"
-              onChange={(e) =>
-                setUser((prev) => ({ ...prev, email: e.target.value }))
-              }
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              id="standard-basic"
-              label="Password"
-              type={'password'}
-              variant="standard"
-              onChange={(e) =>
-                setUser((prev) => ({ ...prev, password: e.target.value }))
-              }
-            />
-          </Grid>
           <Grid item xs={12}>
             <Button
               fullWidth
               className="login-button"
               variant="contained"
               onClick={handleLogin}
+              sx = {{marginTop: 5}}
             >
-              Login
+              Sign in with Google
             </Button>
           </Grid>
         </Grid>
