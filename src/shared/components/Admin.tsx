@@ -15,13 +15,14 @@ import { currEnvironment, firestore } from '../../utils/firebase/firebase';
 import { auth} from '../../utils/firebase/firebase';
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { collection, getDocs, query, where } from 'firebase/firestore';
+import { environmentType } from "../../utils/contants";
 
 const Admin = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [currentTab, changeCurrentTab] = useState(0);
 
   useEffect(() => {
-    if (currEnvironment == 'localhost') {
+    if (currEnvironment == environmentType.development) {
       setLoggedIn(true);
     }
   }, []);
