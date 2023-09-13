@@ -137,13 +137,13 @@ const Home = (props: any) => {
   };
 
   return (
-    <div className="soto1">
+    <div className="ce-spun-studentii">
       <div className="board"> 
         <div className='echipa1'>{game?.team1?.name}: {game?.team1?.points} </div>
         <div className='puncteRunda'> {points} </div>
         <div className='echipa2'>{game?.team2?.name}: {game?.team2?.points} </div>
       </div>
-      <div className='intrebare'>{currentQuestion?.text}</div>
+      <div className='intrebare'>{game && game.questionRevealed ? currentQuestion?.text : 'Coming...'}</div>
       <div className='tablaRaspunsuri'> 
         
             <div className='coloana1'>

@@ -79,7 +79,7 @@
     background-color: #991a1a;
     width: 1500px;
     height: 635px;
-    border: 5px solid white; /* Combined border shorthand */
+    border: 5px solid white; 
     border-radius: 50px;
     margin-top: 20px;
     margin-left: auto;
@@ -114,9 +114,8 @@
     margin: auto;
     width: 700px;
     height: 125px;
-    border: 5px solid white; /* You can adjust the border width as needed */
-    border-radius: 25px; /* Adjust the border-radius as needed */
-    /* Add content or specify dimensions to make the borders visible */
+    border: 5px solid white; 
+    border-radius: 25px;
     display: flex;
     justify-content: center;
     align-items: center;
