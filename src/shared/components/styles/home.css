@@ -79,7 +79,7 @@
     background-color: #991a1a;
     width: 1500px;
     height: 635px;
-    border: 5px solid white; /* Combined border shorthand */
+    border: 5px solid white; 
     border-radius: 50px;
     margin-top: 20px;
     margin-left: auto;
@@ -125,7 +125,7 @@
     
 }
 
-.soto1 {
+.ce-spun-studentii {
     background: url("src/static/background.png") no-repeat center center;
     background-size: cover;
     height: 100vh;
