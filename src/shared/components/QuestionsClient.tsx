@@ -128,7 +128,7 @@ const QuestionsClient = () => {
         <div className='puncteRunda'> {points} </div>
         <div className='echipa2'>{game?.team2?.name}: {game?.team2?.points} </div>
       </div>
-      <div className='intrebare'>{currentQuestion?.text}</div>
+      <div className='intrebare'>{game && game.questionRevealed ? game.currentQuestion : 'Coming...'}</div>
       <div className='tablaRaspunsuri'> 
         
             <div className='coloana1'>
