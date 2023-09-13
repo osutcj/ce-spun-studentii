@@ -123,6 +123,16 @@ const QuestionsClient = () => {
 
   return (
     <div className="ce-spun-studentii">
+      <div
+        style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)'
+        }}
+      >
+        <RenderWrongAnswers />
+      </div>
       <div className="board"> 
         <div className='echipa1'>{game?.team1?.name}: {game?.team1?.points} </div>
         <div className='puncteRunda'> {points} </div>
