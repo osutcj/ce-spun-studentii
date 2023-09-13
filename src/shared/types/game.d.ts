@@ -1,3 +1,5 @@
+import { DBQuestion } from "./questions";
+
 export interface DBTeam {
   name: string;
   points: number;
@@ -14,6 +16,7 @@ export interface NormalGame {
   type: number;
   pointsMultiplier: number;
   wrongAnswer: number;
+  questions?: DBQuestion[];
 }
 
 export interface AlertType {

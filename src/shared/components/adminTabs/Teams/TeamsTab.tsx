@@ -12,7 +12,9 @@ import {
 import GamesService from '../../../../services/games.service';
 import { NormalGame, AlertType } from '../../../types/game';
 import { EmptyGame } from '../../../models/game';
-
+import QuestionsService from '../../../../services/questions.service';
+import { DBQuestion } from "../../../types/questions";
+import useGame from "../../../../hooks/useGame";
 
 const Teams = () => {
   const [games, setGames] = useState<NormalGame[]>([]);
@@ -22,12 +24,31 @@ const Teams = () => {
 
   const [team1Points, setTeam1Points] = useState<number>(0);
   const [team2Points, setTeam2Points] = useState<number>(0);
-  
+  const [gameQuestions, setGameQuestions] = useState<DBQuestion[]>([]);
+  const game: NormalGame = useGame(currentGame || '');
   const [alert, setAlerts] = useState<AlertType>({message:'', errorType:1});
+
+  useEffect(() => {
+    async function getGameQuestions() {
+      const questions = await QuestionsService.get();
+
+      if (questions) {
+        setGameQuestions(questions);
+      }
+    }
+    getGameQuestions();
+  }, []);
 
   useEffect(() => {
     updateGamesList();
   }, []);
+
+  const onChecked = (question: DBQuestion) => {
+    GamesService.update(currentGame, {
+      ...game,
+      questions: game.questions?.push(question)
+    });
+  }
 
   useEffect(() => {
     const currentGameItem =
