@@ -7,8 +7,8 @@ import {
   MenuItem,
   Select,
   Container,
-  TextField,
-} from '@mui/material';
+  TextField, List, Typography, ListItem, ListItemText
+} from "@mui/material";
 import GamesService from '../../../../services/games.service';
 import { NormalGame, AlertType } from '../../../types/game';
 import { EmptyGame } from '../../../models/game';
@@ -27,6 +27,26 @@ const Teams = () => {
   const [gameQuestions, setGameQuestions] = useState<DBQuestion[]>([]);
   const game: NormalGame = useGame(currentGame || '');
   const [alert, setAlerts] = useState<AlertType>({message:'', errorType:1});
+  const [selectedQuestions, setSelectedQuestions] = useState<DBQuestion[]>([]);
+  const [availableQuestions, setAvailableQuestions] = useState<DBQuestion[]>([]);
+
+  useEffect(() => {
+    const filteredQuestions = gameQuestions.filter(
+      (question) => !selectedQuestions.includes(question)
+    );
+    setAvailableQuestions(filteredQuestions);
+  }, [selectedQuestions, gameQuestions]);
+
+  const handleAddQuestion = (question: DBQuestion) => {
+    setSelectedQuestions((prevQuestions) => [...prevQuestions, question]);
+  };
+
+  const handleRemoveQuestion = (question: DBQuestion) => {
+    setSelectedQuestions((prevQuestions) =>
+      prevQuestions.filter((q) => q !== question)
+    );
+  };
+
 
   useEffect(() => {
     async function getGameQuestions() {
@@ -43,12 +63,6 @@ const Teams = () => {
     updateGamesList();
   }, []);
 
-  const onChecked = (question: DBQuestion) => {
-    GamesService.update(currentGame, {
-      ...game,
-      questions: game.questions?.push(question)
-    });
-  }
 
   useEffect(() => {
     const currentGameItem =
@@ -91,6 +105,7 @@ const Teams = () => {
           name: team2Name,
           points: team2Points,
         },
+        questions: selectedQuestions
       })
         .then(() => updateGamesList())
         .catch((error) => console.error(error));
@@ -101,9 +116,20 @@ const Teams = () => {
     }
   };
 
-  const handleGameChange = (event: any) => {
-    setCurrentGame(event.target.value);
-  };
+    const handleGameChange = async (event:  any) => {
+      const newGameId = event.target.value;
+
+      const newGame = await GamesService.getById(newGameId);
+      if (newGame === undefined) return;
+
+      setSelectedQuestions(newGame.questions || []);
+      setCurrentGame(newGameId);
+      setTeam1Name(newGame.team1.name);
+      setTeam1Points(newGame.team1.points);
+      setTeam2Name(newGame.team2.name);
+      setTeam2Points(newGame.team2.points);
+    };
+
 
   return (
     <Container>
@@ -178,6 +204,53 @@ const Teams = () => {
             }}
           />
         </Grid>
+        {currentGame && (<>
+        <Grid item xs={12}>
+          <Typography variant="h6">Selected Questions:</Typography>
+          <List>
+            {selectedQuestions.map((question) => (
+              <ListItem key={question.id}>
+                <ListItemText primary={question.text} />
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => handleRemoveQuestion(question)}
+                >
+                  Remove
+                </Button>
+              </ListItem>
+            ))}
+          </List>
+        </Grid>
+        <Grid item xs={12}>
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="select-question-label">
+              Select a Question
+            </InputLabel>
+            <Select
+              labelId="select-question-label"
+              id="select-question"
+              value=""
+              label="Select another question"
+              onChange={(e) => {
+                const selectedQuestionId = e.target.value as string;
+                const selectedQuestion = availableQuestions.find(
+                  (question) => question.id === selectedQuestionId
+                );
+                if (selectedQuestion) {
+                  handleAddQuestion(selectedQuestion);
+                }
+              }}
+            >
+              {availableQuestions.map((question) => (
+                <MenuItem key={question.id} value={question.id}>
+                  {question.text}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        </>)}
         <Grid item xs={12}>
           <Button fullWidth variant="contained" onClick={saveChanges}>
             Salveaza

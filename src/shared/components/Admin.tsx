@@ -87,7 +87,7 @@ const Admin = () => {
             <Tab label="Joc curent" id={'1'} />
             <Tab label="Adaugare intrebari" id={'2'} />
             <Tab label="Adaugare raspunsuri" id={'3'} />
-            <Tab label="Modifica echipe" id={'4'} />
+            <Tab label="Modifica echipe & Atribuie intrebari" id={'4'} />
             <Tab label="Runda fulger" id={'5'} />
             <Tab label="Manageriere jocuri" id={'6'} />
           </Tabs>
