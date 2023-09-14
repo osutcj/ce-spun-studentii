@@ -291,6 +291,7 @@ const CurrentGame = (props: any) => {
 
       {questions[selected] && selectedGame
         ? questions[selected].answers.map((answer, index) => {
+            if (answer.answer === '' || answer.answer === undefined) return;
             return (
               <Grid container spacing={2} key={index}>
                 <Grid item xs={8}>

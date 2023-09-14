@@ -90,6 +90,10 @@ const QuestionsClient = () => {
   };
 
   const indexOfAnswer = (index: number) => {
+    if (currentQuestion === undefined) return;
+    if (currentQuestion.answers[index].answer === '' || currentQuestion.answers[index].answer === undefined ){
+      return ''
+    }
     if (currentQuestion && game && game.revealedAnswers) {
       const answerRevealed = game.revealedAnswers.find(
         (answerEntry: number) => answerEntry === index
@@ -138,7 +142,7 @@ const QuestionsClient = () => {
         <div className='puncteRunda'> {points} </div>
         <div className='echipa2'>{game?.team2?.name}: {game?.team2?.points} </div>
       </div>
-      <div className='intrebare'>{game && game.questionRevealed ? game.currentQuestion : 'Coming...'}</div>
+      <div className='intrebare'>{game && game.questionRevealed ? formatedQuestion : 'Coming...'}</div>
       <div className='tablaRaspunsuri'> 
         
             <div className='coloana1'>
