@@ -61,7 +61,7 @@ const CurrentGame = (props: any) => {
   }, []);
 
   useEffect(() => {
-    setQuestions(game.questions || allQuestions)
+    setQuestions(game.questions?.length ? game.questions : allQuestions)
     }, [game]);
 
   
@@ -263,21 +263,13 @@ const CurrentGame = (props: any) => {
                 label="Numar Intrebare"
                 onChange={handleChange}
               >
-                {questions.length > 0 ?
-                  (questions.map((q: DBQuestion, index) => {
+                {questions.map((q: DBQuestion, index) => {
                   return (
                     <MenuItem key={index} value={index}>
                       {q.text}
                     </MenuItem>
                   );
-                })) :
-                  (allQuestions.map((q: DBQuestion, index) => {
-                    return (
-                      <MenuItem key={index} value={index}>
-                        {q.text}
-                      </MenuItem>
-                    );
-                  }))}
+                })}
               </Select>
             </FormControl>
           </>
