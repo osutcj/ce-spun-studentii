@@ -31,19 +31,16 @@ const Teams = () => {
   const [availableQuestions, setAvailableQuestions] = useState<DBQuestion[]>([]);
 
   useEffect(() => {
-    // Filter available questions based on the questions that are not selected
     const filteredQuestions = gameQuestions.filter(
       (question) => !selectedQuestions.includes(question)
     );
     setAvailableQuestions(filteredQuestions);
   }, [selectedQuestions, gameQuestions]);
 
-  // Function to handle adding a question to the selected questions
   const handleAddQuestion = (question: DBQuestion) => {
     setSelectedQuestions((prevQuestions) => [...prevQuestions, question]);
   };
 
-  // Function to handle removing a question from the selected questions
   const handleRemoveQuestion = (question: DBQuestion) => {
     setSelectedQuestions((prevQuestions) =>
       prevQuestions.filter((q) => q !== question)
@@ -209,7 +206,6 @@ const Teams = () => {
         </Grid>
         {currentGame && (<>
         <Grid item xs={12}>
-          {/* Display the selected questions */}
           <Typography variant="h6">Selected Questions:</Typography>
           <List>
             {selectedQuestions.map((question) => (
@@ -227,7 +223,6 @@ const Teams = () => {
           </List>
         </Grid>
         <Grid item xs={12}>
-          {/* Selector field for available questions */}
           <FormControl fullWidth margin="normal">
             <InputLabel id="select-question-label">
               Select a Question
