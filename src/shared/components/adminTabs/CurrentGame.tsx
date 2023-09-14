@@ -35,7 +35,7 @@ const CurrentGame = (props: any) => {
 
   const game: NormalGame = useGame(selectedGame || '');
   const [counterWrongAnswers, setCounterWrongAnswers] = useState<number>(0);
-
+  const [allQuestions, setAllQuestions] = useState<DBQuestion[]>([]);
 
   useEffect(() => {
     GamesService.update(selectedGame, {
@@ -48,7 +48,8 @@ const CurrentGame = (props: any) => {
   useEffect(() => {
     QuestionsService.get()
       .then((response) => {
-        setQuestions(response);
+        setQuestions(game.questions || response);
+        setAllQuestions(response)
       })
       .catch((error) => console.error(error));
 
@@ -58,7 +59,10 @@ const CurrentGame = (props: any) => {
       })
       .catch((error) => console.error(error));
   }, []);
-  
+
+  useEffect(() => {
+    setQuestions(game.questions || allQuestions)
+    }, [game]);
 
   
   const playSound = (audioPath: string, timeout: number) => {
@@ -259,13 +263,21 @@ const CurrentGame = (props: any) => {
                 label="Numar Intrebare"
                 onChange={handleChange}
               >
-                {questions.map((q: DBQuestion, index) => {
+                {questions.length > 0 ?
+                  (questions.map((q: DBQuestion, index) => {
                   return (
                     <MenuItem key={index} value={index}>
                       {q.text}
                     </MenuItem>
                   );
-                })}
+                })) :
+                  (allQuestions.map((q: DBQuestion, index) => {
+                    return (
+                      <MenuItem key={index} value={index}>
+                        {q.text}
+                      </MenuItem>
+                    );
+                  }))}
               </Select>
             </FormControl>
           </>

@@ -17,4 +17,5 @@ export const EmptyGame: NormalGame = {
   type: 1,
   pointsMultiplier: 1,
   wrongAnswer: 0,
+  questions: []
 };
