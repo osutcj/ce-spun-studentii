@@ -27,8 +27,8 @@ function GamesManagement() {
           ...games,
           {
             ...EmptyGame,
-            id: response.id,
-          },
+            id: response.id
+          }
         ]);
       })
       .catch((error) => console.error(error));
@@ -49,28 +49,28 @@ function GamesManagement() {
         if (game === item) {
           return {
             ...game,
-            name: newText,
+            name: newText
           };
         }
         return game;
-      }),
+      })
     ]);
   };
 
-  const handleGameQuestionsCapacityChange = ( newValue: number, item: NormalGame) => {
+  const handleGameQuestionsCapacityChange = (newValue: number, item: NormalGame) => {
     if (isNaN(newValue)) newValue = 5;
     setGames([
       ...games.map((game) => {
         if (game === item) {
           return {
             ...game,
-            questionsCapacity: newValue,
+            questionsCapacity: newValue
           };
         }
         return game;
-      }),
+      })
     ]);
-  }
+  };
 
   const handleGameUpdate = () => {
     games.map((game) => {
@@ -94,7 +94,7 @@ function GamesManagement() {
       <Grid container spacing={2} sx={{ width: 1 / 2 }}>
         {games.length > 0 &&
           games.map((game) => (
-            <div style={{display: "flex", flexDirection: "row", marginTop: '30px'}}>
+            <div style={{ display: 'flex', flexDirection: 'row', marginTop: '30px' }}>
               <GameField
                 name={game.name}
                 changeText={(text: string) => handleFieldChange(text, game)}
@@ -102,11 +102,15 @@ function GamesManagement() {
               />
               <GameField
                 name={game?.questionsCapacity?.toString() || '5'}
-                changeText={(text: string) => handleGameQuestionsCapacityChange(parseInt(text), game)}
+                changeText={(text: string) =>
+                  handleGameQuestionsCapacityChange(parseInt(text), game)
+                }
                 label={'Capacitate joc'}
               />
               <Grid item xs={4} sx={{ width: 1 }}>
-                <Button variant="outlined" color="error" onClick={() => deleteGame(game)}>Delete</Button>
+                <Button variant="outlined" color="error" onClick={() => deleteGame(game)}>
+                  Delete
+                </Button>
               </Grid>
             </div>
           ))}
