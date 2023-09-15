@@ -17,7 +17,7 @@ import Timer from './Timer';
 import round_start from "../../../../static/round_start.mp3";
 import { useSounds } from '../../../../hooks/useSounds.hook';
 import question_revealed from "../../../../static/question_revealed.mp3";
-
+import wrongAnswerSound from '../../../../static/x.mp3';
 
 const FlashRoundAdmin = () => {
   const [game, selectGame] = useState<string>('');
@@ -59,8 +59,6 @@ const FlashRoundAdmin = () => {
   ) => {
     answers[questionIndex] = newObject;
     setAnswers(answers);
-    playSound(question_revealed, 1000)
-
   };
 
   const renderTextFields = () => {
@@ -70,7 +68,7 @@ const FlashRoundAdmin = () => {
     let answersArray = [];
     for (let i = 0; i < questionNumber; i++) {
       answersArray.push(
-        <Grid container spacing={2} key={i}> {/* Wrap elements in a Grid */}
+        <Grid container spacing={2} key={i}>
           <Grid item xs={12}>
             <RoundAnswer
               answer={answers[i]?.answer}
@@ -121,6 +119,9 @@ const FlashRoundAdmin = () => {
         console.error(error);
         setAlerts({ message: 'Error saving answer', errorType: 0 });
       });
+    if (answerToSave.showPoints === true) {
+      playSound(question_revealed, 4000)
+    }
   };
 
   const createEmptyTextFields = () => {
@@ -181,16 +182,12 @@ const FlashRoundAdmin = () => {
       ...flash,
       toggleWrongSound: toggleWrong
     }).then(() => {
-      setAlerts({ message: 'Cleared points and answers', errorType: 1 });
-      setResetChild(true);
+      playSound(wrongAnswerSound, 5000);
     }).catch((error) => {
       console.error(error);
-      setAlerts({ message: 'Error clearing points and answers', errorType: 0 });
+      setAlerts({ message: 'Error when displaying X', errorType: 0 });
     });
   }
-
-
-
 
   return (
     <Container>
