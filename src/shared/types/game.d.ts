@@ -17,6 +17,7 @@ export interface NormalGame {
   pointsMultiplier: number;
   wrongAnswer: number;
   questions?: DBQuestion[];
+  questionsCapacity?: number;
 }
 
 export interface AlertType {

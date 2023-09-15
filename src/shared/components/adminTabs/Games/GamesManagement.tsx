@@ -4,13 +4,9 @@ import GamesService from '../../../../services/games.service';
 import { NormalGame } from '../../../types/game';
 import GameField from './GameField';
 import { EmptyGame } from '../../../models/game';
-import Checkbox from '@mui/material/Checkbox';
-
-
 
 function GamesManagement() {
   const [games, setGames] = useState<NormalGame[]>([]);
-  const [newChange, setNewChange] = useState<boolean>(false);
 
   useEffect(() => {
     getAllGames();
@@ -61,6 +57,21 @@ function GamesManagement() {
     ]);
   };
 
+  const handleGameQuestionsCapacityChange = ( newValue: number, item: NormalGame) => {
+    if (isNaN(newValue)) newValue = 5;
+    setGames([
+      ...games.map((game) => {
+        if (game === item) {
+          return {
+            ...game,
+            questionsCapacity: newValue,
+          };
+        }
+        return game;
+      }),
+    ]);
+  }
+
   const handleGameUpdate = () => {
     games.map((game) => {
       if (game.name == '') {
@@ -83,13 +94,21 @@ function GamesManagement() {
       <Grid container spacing={2} sx={{ width: 1 / 2 }}>
         {games.length > 0 &&
           games.map((game) => (
-            <>
+            <div style={{display: "flex", flexDirection: "row", marginTop: '30px'}}>
               <GameField
                 name={game.name}
                 changeText={(text: string) => handleFieldChange(text, game)}
-                onDelete={() => deleteGame(game)}
+                label={'Nume joc'}
               />
-            </>
+              <GameField
+                name={game?.questionsCapacity?.toString() || '5'}
+                changeText={(text: string) => handleGameQuestionsCapacityChange(parseInt(text), game)}
+                label={'Capacitate joc'}
+              />
+              <Grid item xs={4} sx={{ width: 1 }}>
+                <Button variant="outlined" color="error" onClick={() => deleteGame(game)}>Delete</Button>
+              </Grid>
+            </div>
           ))}
         <Grid item xs={8}>
           <Button variant="outlined" onClick={() => addNewGame()}>
