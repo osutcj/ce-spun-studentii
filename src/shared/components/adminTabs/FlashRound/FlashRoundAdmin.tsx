@@ -14,7 +14,10 @@ import useFlashRound from '../../../../hooks/useFlashRound';
 import FlashRoundService from '../../../../services/flash.service';
 import { AlertType } from '../../../types/game';
 import Timer from './Timer';
+import round_start from "../../../../static/round_start.mp3";
 import { useSounds } from '../../../../hooks/useSounds.hook';
+import question_revealed from "../../../../static/question_revealed.mp3";
+
 
 const FlashRoundAdmin = () => {
   const [game, selectGame] = useState<string>('');
@@ -56,7 +59,7 @@ const FlashRoundAdmin = () => {
   ) => {
     answers[questionIndex] = newObject;
     setAnswers(answers);
-    playSound("src\\static\\question_revealed.mp3", 1000)
+    playSound(question_revealed, 1000)
 
   };
 
@@ -233,7 +236,7 @@ const FlashRoundAdmin = () => {
       <Button variant="outlined" color='info' onClick={() => setWrong()} style={{marginLeft: '20px'}}>Show X</Button>
       </div>  
       <div style={{ marginTop: 10, width: '100%' }}>
-            <Button variant="outlined" onClick={() => {playSound("src\\static\\round_start.mp3", 15000)}}>      
+            <Button variant="outlined" onClick={() => {playSound(round_start, 15000)}}>      
             Play intro theme song
             </Button>
           </div>
