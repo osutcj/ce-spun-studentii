@@ -3,12 +3,7 @@ module.exports = {
     browser: true,
     es2021: true
   },
-  extends: [
-    'plugin:react/recommended',
-    'airbnb',
-    'airbnb-typescript',
-    'plugin:prettier/recommended'
-  ],
+  extends: ['plugin:prettier/recommended'],
   ignorePatterns: ['lint-staged.config.js'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -17,8 +12,5 @@ module.exports = {
     },
     ecmaVersion: 2021,
     project: './tsconfig.json'
-  },
-  rules: {
-    'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx', '.ts', '.tsx'] }]
   }
 };
