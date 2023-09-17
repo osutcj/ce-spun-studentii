@@ -2,122 +2,132 @@
     background-color: #26558B;
 }
 
-.board {
-    background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/40041/bgFF.svg");
-    background-color: #003c7b;
-    background-repeat: repeat;
-    background-size: 20px 20px;
-    background-position: center center;
-    box-shadow: 0 1px 24px 1px rgba(0, 0, 0,0.48);
-    border-radius: 50%;
-    max-width: 1500px;
-    max-height: 2000px;
-    min-width: 305px;
-    margin: auto;
-    margin-top: 100px;
-}
-
-#boardScore {
-    background: linear-gradient(to bottom,#7db9eb 0%,#207cca 49%,#2989d8 50%,#1e5799 100%);
-}
-
-.board .scor#boardScore{
-    height: 75px;
-    line-height: 75px;
-    width: 125px !important;
-    font-size: 65px;
-	left: 0;
-	right: 0;
-	top: 20px;
-    margin-bottom: 20px;
-}
-
-.board .card {
-    display: inline-block;
-    width: 470px;
-    margin: 8px;
-    margin-bottom: 8px;
-    margin-top: 8px;
-    height: 40px;
-    font-size: 28px;
-    background: #cedbe9;
-    background: linear-gradient(to bottom,#cedbe9 0%,#aac5de 17%, #6199c7 50%, #3a84c3 51%, #419ad6 59%,#4bb8f0 71%, #3A8BC2 84%, #26558B 100%);
-    text-transform: uppercase;
+.ce-spun-studentii
+{
+    font: 'Montserrat';
+    font-weight: bold;
     color: white;
-    z-index: -1;
 }
 
-/* .board .btnHolder {
-    position: absolute;
-    margin: auto;
-    left: 0;
-    right: 0;
-    bottom: -10px;
-} */
-
-.board .btnHolder .button#awardTeam1 {
-    border-radius: 50px 0 0 50px;
+.board {
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 40px;
 }
 
-.board .btnHolder .button#awardTeam2 {
-    border-radius: 0 50px 50px 0;
+
+.echipa1 
+{
+    background-color: #323231;
+    border-style: solid;
+    border-color: white;
+    border-width: 10px;
+    border-radius: 0 0 50px 50px;
+    border-top: none;
+    width: 350px;
+    height: 185px;
+    font-size: 46px;
 }
 
-.board .scor, .board .button {
-    background: #7db9eb;
-    background: -moz-linear-gradient(top,#7db9eb 0%,#207cca 49%,#2989d8 50%,#1e5799 100%);
-    background: -webkit-linear-gradient(top,#7db9eb 0%,#207cca 49%,#2989d8 50%,#1e5799 100%);
-    background: linear-gradient(to bottom,#7db9eb 0%,#207cca 49%,#2989d8 50%,#1e5799 100%);
+.puncteRunda
+{
+    background-color: #323231;
+    border-style: solid;
+    border-color: white;
+    border-width: 10px;
+    border-radius: 0 0 50px 50px;
+    border-top: none;
+    width: 300px;
+    height: 155px;
+    font-size: 60px;
+    padding-top: 20px;
+
 }
 
-.board .questions span {
-    display: inline-block;
-    vertical-align: middle;
-    line-height: normal;
-}
-.question {
-    color: black;
-    /* padding: 15px; */
-    font-size: 20px;
-    line-height: 1;
+
+.echipa2
+{
+    background-color: #323231;
+    border-style: solid;
+    border-color: white;
+    border-width: 10px;
+    border-radius: 0 0 50px 50px;
+    border-top: none;
+    width: 350px;
+    height: 185px;
+    font-size: 46px;
 }
 
-.questions {
+.intrebare
+{
+    background-color: #323231;
+    width: 1500px;
+    height: 125px;
+    border-style: solid;
+    border-color: white;
+    border-width: 5px;
+    border-radius: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin:auto;
+    font-size: 42px;
+
 }
 
-.board .questions {
-    width: 80%;
+.tablaRaspunsuri {
+    background-color: #991a1a;
+    width: 1500px;
+    height: 635px;
+    border: 5px solid white; 
+    border-radius: 50px;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    
+    
+}
+
+.coloana1
+{
     margin: auto;
-    height: 70px;
-    line-height: 100px;
-    text-align: center;
-    font-size: 30px;
-    color: #ffffff;
-    font-weight: bold;
-    text-shadow: initial;
-    text-align: center;
-    border: 1px solid black;
-    background: #deeeff;
-    /* padding: 10px; */
-    margin-bottom: 15px;
-    box-shadow: inset 0 1px 24px 1px rgb(0 0 0 / 48%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    row-gap: 20px;
 }
 
-.board .btnHolder .button {
-    display: inline-block;
-    font-size: 20px;
-    margin: 10px;
-    height: 50px;
-    line-height: 50px;
-    width: 360px;
-    border: 3px solid white;
-    box-shadow: 0 1px 24px 1px rgb(0 0 0 / 48%);
+.coloana2
+{
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    row-gap: 20px;
 }
 
-body {
-    background-color: #a7cfdf;
-    color: white;
+.tablaRaspunsuri .raspunsuri {
+    margin: auto;
+    width: 700px;
+    height: 125px;
+    border: 5px solid white;
+    border-radius: 25px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    background: rgb(50,50,49);
+    background: linear-gradient(180deg, rgba(50,50,49,1) 0%, rgba(50,50,49,1) 80%, rgba(153,26,26,1) 100%);
+    
 }
+
+.ce-spun-studentii {
+    background: url("src/static/background.png") no-repeat center center;
+    background-size: cover;
+    height: 100vh;
+  }
+  

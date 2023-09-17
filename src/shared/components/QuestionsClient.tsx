@@ -12,24 +12,18 @@ import useGame from '../../hooks/useGame';
 import QuestionsService from '../../services/questions.service';
 import wrongAnswerSound from '../../static/x.mp3';
 import wrongAnswerPng from '../../static/x.png';
+import { truncateQuestion } from "../../helpers/truncate-question";
+import { useSounds } from "../../hooks/useSounds.hook";
 
-const Home = (props: any) => {
+const QuestionsClient = () => {
   const [currentQuestion, setCurrentQuestion] = useState<DBQuestion>();
   const [questions, setQuestions] = useState<DBQuestion[]>([]);
   const [points, setPoints] = useState(0);
   const [wrongAnswers, setWrongAnswers] = useState<number>(0);
 
-  const play = (audio: HTMLAudioElement) => {
-    audio.play();
-  };
-
-  const stop = (audio: HTMLAudioElement) => {
-    audio.pause();
-  };
-
   const urlParams = useParams();
-
   const game: NormalGame = useGame(urlParams.id || '');
+  const formatedQuestion = truncateQuestion(game.currentQuestion);
 
   useEffect(() => {
     QuestionsService.get()
@@ -40,16 +34,18 @@ const Home = (props: any) => {
   }, []);
 
   useEffect(() => {
-    if (game?.wrongAnswer !== 0) {
-      const audio = new Audio(wrongAnswerSound);
-      play(audio);
-      setWrongAnswers(Math.min(3, game.wrongAnswer));
+    if (game?.wrongAnswer === 0) {
+      return;
+    }
+    const audio = new Audio(wrongAnswerSound);
+    const {play, stop} = useSounds(audio);
+    play(audio);
+    setWrongAnswers(Math.min(3, game.wrongAnswer));
 
       setTimeout(() => {
         setWrongAnswers(0);
         stop(audio);
       }, 2000);
-    }
   }, [game?.wrongAnswer]);
 
   useEffect(() => {
@@ -94,6 +90,10 @@ const Home = (props: any) => {
   };
 
   const indexOfAnswer = (index: number) => {
+    if (currentQuestion === undefined) return;
+    if (currentQuestion.answers[index].answer === '' || currentQuestion.answers[index].answer === undefined ){
+      return ''
+    }
     if (currentQuestion && game && game.revealedAnswers) {
       const answerRevealed = game.revealedAnswers.find(
         (answerEntry: number) => answerEntry === index
@@ -125,84 +125,44 @@ const Home = (props: any) => {
     return <Grid container>{photos.map((photo) => photo)}</Grid>;
   };
 
-  const getWrongAnswersOffset = () => {
-    switch (wrongAnswers) {
-      case 1:
-        return '44%';
-      case 2:
-        return '37%';
-      default:
-        return '30%';
-    }
-  };
-
   return (
-    <div className={'board'}>
+    <div className="ce-spun-studentii">
       <div
         style={{
-          position: 'absolute',
-          top: '30%',
-          left: getWrongAnswersOffset(),
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)'
         }}
       >
         <RenderWrongAnswers />
       </div>
-      <Container maxWidth="lg" style={{ paddingTop: 30, paddingBottom: 50 }}>
-        <Box sx={{ flexGrow: 2 }}>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <div className="scor" id={'boardScore'}>
-              <p style={{ fontSize: 25 }}>{points}</p>
+      <div className="board"> 
+        <div className='echipa1'>{game?.team1?.name}: {game?.team1?.points} </div>
+        <div className='puncteRunda'> {points} </div>
+        <div className='echipa2'>{game?.team2?.name}: {game?.team2?.points} </div>
+      </div>
+      <div className='intrebare'>{game && game.questionRevealed ? formatedQuestion : 'Coming...'}</div>
+      <div className='tablaRaspunsuri'> 
+        
+            <div className='coloana1'>
+              <div className='raspunsuri'>{indexOfAnswer(0)}</div>
+              <div className='raspunsuri'> {indexOfAnswer(1)} </div>
+              <div className='raspunsuri'>{indexOfAnswer(2)} </div>
+              <div className='raspunsuri'>{indexOfAnswer(3)} </div>
             </div>
+              
+            <div className='coloana2'>
+            
+              <div className='raspunsuri'> {indexOfAnswer(4)} </div>        
+              <div className='raspunsuri'>  {indexOfAnswer(5)} </div>
+              <div className='raspunsuri'>{indexOfAnswer(6)} </div>
+              <div className='raspunsuri'> {indexOfAnswer(7)} </div>
+             
           </div>
-          <div className={'questions'}>
-            <h1 className="question">
-              {game && game.questionRevealed
-                ? game.currentQuestion
-                : 'Coming...'}
-            </h1>
-          </div>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(0)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(4)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(1)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(5)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(2)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(6)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(3)}</Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(7)}</Item>
-            </Grid>
-          </Grid>
-          <div className={'btnHolder'}>
-            <div id="awardTeam1" className="button">
-              <p>
-                {game?.team1?.name}: {game?.team1?.points}
-              </p>
-            </div>
-            <div id="awardTeam2" className="button">
-              <p>
-                {game?.team2?.name}: {game?.team2?.points}
-              </p>
-            </div>
-          </div>
-        </Box>
-      </Container>
+      </div>
     </div>
   );
 };
 
-export default Home;
+export default QuestionsClient;

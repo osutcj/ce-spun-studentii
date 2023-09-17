@@ -8,16 +8,17 @@ import './styles/home.css';
 import useFlashRound from '../../hooks/useFlashRound';
 import { useParams } from 'react-router-dom';
 import { FlashRoundAnswers } from '../types/flashRound';
-import useShowPoints from '../../hooks/useShowPoints';
+import wrongAnswerSound from "../../static/x.mp3";
+import { useSounds } from "../../hooks/useSounds.hook";
+import wrongAnswerPng from "../../static/x.png";
 
-const FlashRound = () => {
+const FlashRoundClient = () => {
   const [answers, setAnswers] = useState<FlashRoundAnswers[]>([]);
   const [points, setPoints] = useState(0);
-  const { showPoints, updateShowPoints, setAllTrue } = useShowPoints();
-
   const urlParams = useParams();
-
   const flash = useFlashRound(urlParams.id || '');
+  const [isPlayingSound, setIsPlayingSound] = useState(false);
+  const [isInitialRender, setIsInitialRender] = useState(true);
 
   const Item = styled(Paper)(({ theme }) => ({
     background:
@@ -34,41 +35,87 @@ const FlashRound = () => {
   }));
 
   useEffect(() => {
-    if (flash) {
-      if (flash.currentRound === 1) {
-        setAnswers(flash.answers1);
-        computePoints(flash.answers1);
-      }
-      if (flash.currentRound === 2) {
-        setAnswers(flash.answers2);
-        computePoints(flash.answers2);
-      }
+    if (flash?.toggleWrongSound === undefined) return;
+
+    // I hate to do this but unless I make the action unusable the first second
+    // it will always render the X and play the sound, this was the only workaround I was able to find
+    if (isInitialRender) {
+      setTimeout(() => {
+        setIsInitialRender(false);
+      }, 1000);
+    } else {
+      const audio = new Audio(wrongAnswerSound);
+      const { play, stop } = useSounds(audio);
+      console.log(flash?.toggleWrongSound);
+
+      play(audio);
+      setIsPlayingSound(true);
+
+      setTimeout(() => {
+        stop(audio);
+        setIsPlayingSound(false);
+      }, 2000);
     }
+  }, [flash?.toggleWrongSound]);
+
+  useEffect(() => {
+    if (!flash) {
+      return;
+    }
+    setAnswers(flash.answers);
+    computePoints(flash.answers);
   }, [flash]);
 
   const computePoints = (answers: FlashRoundAnswers[]) => {
-    let totalPoints = 0;
-    answers.map((answer, index) => {
-      if (showPoints[index])
-        totalPoints += answer.points;
-    });
-    setPoints(totalPoints);
+    let points = 0;
+    for (let i = 0; i < answers.length; i++) {
+      if (answers[i].points && answers[i].showPoints) {
+        points += answers[i].points;
+      }
+    }
+    setPoints(points);
   };
 
   const indexOfAnswer = (index: number) => {
+    const answer = answers[index];
+
+    if (
+      answer === undefined || answer.answer === ''
+    ){
+      return '';
+    }
+
     if (
       answers &&
       answers.length > 0 &&
-      answers.length > index &&
-      answers[index].answer
+      answers.length > index
     ) {
-      return showPoints[index] ? `${answers[index].answer} - ${answers[index].points}` : `${answers[index].answer} ` ;
+     console.log(index)
+      return answer.showPoints ? `${answer.answer} - ${answer.points}` : `${answer.answer} ` ;
     }
-    return '';
+    return 'Waiting for answer';
+  };
+
+  const RenderWrongAnswers = () => {
+    return(
+      <Grid item xs={12}>
+        <img src={wrongAnswerPng} width={200} height={200} />
+      </Grid>
+    )
   };
 
   return (
     <div className={'board'}>
+      {isPlayingSound && <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)'
+        }}
+      >
+        <RenderWrongAnswers />
+      </div>}
       <Container maxWidth="lg" style={{ paddingTop: 30, paddingBottom: 20 }}>
         <Box sx={{ flexGrow: 2 }}>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -114,4 +161,4 @@ const FlashRound = () => {
   );
 };
 
-export default FlashRound;
+export default FlashRoundClient;

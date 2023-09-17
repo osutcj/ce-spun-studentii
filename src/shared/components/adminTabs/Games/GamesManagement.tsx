@@ -1,16 +1,13 @@
-import { Button, Container, Grid } from '@mui/material';
+import { Button, Container, Grid, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import GamesService from '../../../../services/games.service';
 import { NormalGame } from '../../../types/game';
 import GameField from './GameField';
 import { EmptyGame } from '../../../models/game';
-import Checkbox from '@mui/material/Checkbox';
-
-
 
 function GamesManagement() {
   const [games, setGames] = useState<NormalGame[]>([]);
-  const [newChange, setNewChange] = useState<boolean>(false);
+  const [localChanges, setLocalChanges] = useState<Record<string, any>>({});
 
   useEffect(() => {
     getAllGames();
@@ -31,8 +28,8 @@ function GamesManagement() {
           ...games,
           {
             ...EmptyGame,
-            id: response.id,
-          },
+            id: response.id
+          }
         ]);
       })
       .catch((error) => console.error(error));
@@ -47,49 +44,73 @@ function GamesManagement() {
       .catch((error) => console.error(error));
   };
 
-  const handleFieldChange = (newText: string, item: NormalGame) => {
-    setGames([
-      ...games.map((game) => {
-        if (game === item) {
-          return {
-            ...game,
-            name: newText,
-          };
-        }
-        return game;
-      }),
-    ]);
+  const handleFieldChange = (newText: string, item: NormalGame, fieldName: string) => {
+    setLocalChanges({
+      ...localChanges,
+      [item.id]: {
+        ...localChanges[item.id],
+        [fieldName]: newText === '' ? null : newText
+      }
+    });
+  };
+
+  const handleGameQuestionsCapacityChange = (newValue: string, item: NormalGame) => {
+    setLocalChanges({
+      ...localChanges,
+      [item.id]: {
+        ...localChanges[item.id],
+        questionsCapacity: newValue === '' ? null : newValue
+      }
+    });
   };
 
   const handleGameUpdate = () => {
-    games.map((game) => {
-      if (game.name == '') {
-        GamesService.remove(game.id);
+    const promises = [];
+
+    for (const gameId in localChanges) {
+      const changedFields = localChanges[gameId];
+      const game = games.find((g) => g.id === gameId);
+      if (game && Object.keys(changedFields).length > 0) {
+        const updatedGame = { ...game, ...changedFields };
+        promises.push(GamesService.update(gameId, updatedGame));
       }
-    });
-    let names = [];
-    let k = 0;
-    for (let game of games) {
-      names[k] = game.name;
-      k++;
     }
-    games.map((game) => {
-      GamesService.update(game.id, game).catch((error) => console.error(error));
-    });
+
+    Promise.all(promises)
+      .then(() => {
+        setLocalChanges({});
+        getAllGames();
+      })
+      .catch((error) => console.error(error));
   };
 
   return (
     <Container>
       <Grid container spacing={2} sx={{ width: 1 / 2 }}>
+        <Typography variant="body2" color="textSecondary">
+          You can't delete some field values. This constraint arises from the legacy codebase, which
+          restricts the ability to delete field values. Instead, you can only overwrite them by
+          selecting the existing content (Ctrl + A) and then making changes
+        </Typography>
         {games.length > 0 &&
           games.map((game) => (
-            <>
+            <div style={{ display: 'flex', flexDirection: 'row', marginTop: '30px' }}>
               <GameField
-                name={game.name}
-                changeText={(text: string) => handleFieldChange(text, game)}
-                onDelete={() => deleteGame(game)}
+                name={localChanges[game.id]?.name ?? game.name ?? ''}
+                changeText={(text: string) => handleFieldChange(text, game, 'name')}
+                label={'Nume joc'}
               />
-            </>
+              <GameField
+                name={localChanges[game.id]?.questionsCapacity ?? game.questionsCapacity ?? ''}
+                changeText={(text: string) => handleGameQuestionsCapacityChange(text, game)}
+                label={'Capacitate joc'}
+              />
+              <Grid item xs={4} sx={{ width: 1 }}>
+                <Button variant="outlined" color="error" onClick={() => deleteGame(game)}>
+                  Delete
+                </Button>
+              </Grid>
+            </div>
           ))}
         <Grid item xs={8}>
           <Button variant="outlined" onClick={() => addNewGame()}>

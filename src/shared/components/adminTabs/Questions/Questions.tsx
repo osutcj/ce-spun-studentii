@@ -5,6 +5,8 @@ import { DBQuestion } from '../../../types/questions';
 import QuestionsService from '../../../../services/questions.service';
 import convert from '../../../../helpers/csv-convertor.helper';
 import convertFirebaseToCsv from '../../../../helpers/firebase-to-csv.helper';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Questions = () => {
   const [gameQuestions, setGameQuestions] = useState<DBQuestion[]>([]);
@@ -80,10 +82,16 @@ const Questions = () => {
       return;
     }
     const firestoreData: DBQuestion[] = convert(fileContent);
-  
+    
+    const loadingToastId = toast.info('Se initializeaza incarcarea intrebarilor...', {
+      autoClose: false,
+    });
+
     try {
       await QuestionsService.removeCollection();
-  
+
+      toast.dismiss(loadingToastId);
+      
       const insertPromises = firestoreData.map(async (question) => {
         const questionId = await QuestionsService.insert(question);
         return {
@@ -91,10 +99,18 @@ const Questions = () => {
           id: questionId,
         };
       });
-  
-      const insertedQuestions = await Promise.all(insertPromises);
+      
+      const allPromises = Promise.all(insertPromises);
+
+      toast.promise(allPromises, {
+        pending: 'Se incarca intrebarile...',
+        success: 'Intrebarile au fost incarcate cu succes!',
+      });
+
+      const insertedQuestions = await allPromises;
   
       setGameQuestions(insertedQuestions);
+
     } catch (error) {
       console.error('Error handling bulk update:', error);
     }

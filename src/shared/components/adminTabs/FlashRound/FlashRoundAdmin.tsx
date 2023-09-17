@@ -1,40 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import {
   Container,
-  Grid,
   Button,
   InputLabel,
   FormControl,
   Select,
   MenuItem,
-  ToggleButtonGroup,
-  ToggleButton,
+  Grid,
 } from '@mui/material';
-import { EmptyFlashRound } from '../../../models/flash-round';
 import { FlashRoundAnswers, FlashRound } from '../../../types/flashRound';
 import RoundAnswer from './RoundAnswer';
 import useFlashRound from '../../../../hooks/useFlashRound';
 import FlashRoundService from '../../../../services/flash.service';
-import BasicAlerts from '../BasicAlerts';
-import { AlertType, NormalGame } from '../../../types/game';
-import Timer from '../../Timer';
-import GamesService from '../../../../services/games.service';
-import useGame from '../../../../hooks/useGame';
-import  useShowPoints  from '../../../../hooks/useShowPoints';
+import { AlertType } from '../../../types/game';
+import Timer from './Timer';
+import round_start from "../../../../static/round_start.mp3";
+import { useSounds } from '../../../../hooks/useSounds.hook';
+import question_revealed from "../../../../static/question_revealed.mp3";
+import wrongAnswerSound from '../../../../static/x.mp3';
 
 const FlashRoundAdmin = () => {
   const [game, selectGame] = useState<string>('');
   const [flashRounds, setFlashRounds] = useState<FlashRound[]>();
-  const [answers1, setAnswers1] = useState<FlashRoundAnswers[]>([]);
-  const [answers2, setAnswers2] = useState<FlashRoundAnswers[]>([]);
-  const [questionNumber, setQuestionNumber] = useState<number>(5)
-  const [round, setRound] = useState<number>(1);
+  const [answers, setAnswers] = useState<FlashRoundAnswers[]>([]);
+  const [questionNumber, setQuestionNumber] = useState<number>(5);
+  const [resetChild, setResetChild] = useState(false);
   const flash = useFlashRound(game);
   const [alert, setAlerts] = useState<AlertType>({message:'', errorType:1});
-  const [checked, setChecked] = useState<boolean[]>([false, false, false]);
-  const [selectedGame, setSelectedGame] = useState('');
-  const gamez: NormalGame = useGame(selectedGame || '');
-  const { showPoints, updateShowPoints, setAllTrue } = useShowPoints();
+  let currentToggle = flash?.toggleWrongSound
+  if (currentToggle === undefined) currentToggle = false
+  const [toggleWrong, setToggleWrong] = useState<boolean>(currentToggle)
 
   useEffect(() => {
     FlashRoundService.get()
@@ -46,175 +41,156 @@ const FlashRoundAdmin = () => {
       });
   }, []);
 
-  useEffect(() => { 
-    const wrongAnswers = checked.filter((value) => value).length
-    GamesService.update(selectedGame, {
-      ...gamez,
-      wrongAnswer: wrongAnswers,
-    });
-  
-  }, [checked]);
-
   useEffect(() => {
-    if (flash) {
-      if (flash.answers1) {
-        setAnswers1(flash.answers1);
-      } else {
-        setAnswers1(createEmptyTextFields());
-      }
-      if (flash.answers2) {
-        setAnswers2(flash.answers2);
-      } else {
-        setAnswers2(createEmptyTextFields());
-      }
+    if (!flash) {
+      return;
+    }
+    if (flash.answers) {
+      setAnswers(flash.answers);
+      
+    } else {
+      setAnswers(createEmptyTextFields());
     }
   }, [flash]);
 
   const updateTextFields = (
-    round: number,
     questionIndex: number,
     newObject: FlashRoundAnswers
   ) => {
-    if (round == 1 && answers1 !== undefined) {
-      answers1[questionIndex] = newObject;
-      setAnswers1(answers1);
-    }
-    if (round === 2 && answers2 !== undefined) {
-      answers2[questionIndex] = newObject;
-      setAnswers2(answers2);
-    }
+    answers[questionIndex] = newObject;
+    setAnswers(answers);
   };
 
-  const resetWrongAnswers = () => { 
-    console.log('resetting wrong answers')
-    GamesService.update(selectedGame, {
-      ...gamez,
-      wrongAnswer: 0,
-    });
-    setChecked([false, false, false])
-  }
-
-  const setAllWrong = () => {
-    console.log('setting all wrong')
-    GamesService.update(selectedGame, {
-      ...gamez,
-      wrongAnswer: 3,
-    });
-    setChecked([true, true, true])
-  }
-
-  const renderTextFields = (round: number) => {
+  const renderTextFields = () => {
+    if (answers.length <= 0) {
+      return [];
+    }
     let answersArray = [];
-    if (answers1.length > 0 && answers2.length > 0) {
-      for (let i = 0; i < questionNumber; i++) {
-        if (round === 1) {
-          answersArray.push(
+    for (let i = 0; i < questionNumber; i++) {
+      answersArray.push(
+        <Grid container spacing={2} key={i}>
+          <Grid item xs={12}>
             <RoundAnswer
-              answer={answers1[i]?.answer}
-              points={answers1[i]?.points}
-              updateFields={(newObject: FlashRoundAnswers) =>
-                updateTextFields(round, i, newObject)
-              }
+              answer={answers[i]?.answer}
+              points={answers[i]?.points}
+              showPoints={answers[i]?.showPoints}
+              updateFields={(newObject: FlashRoundAnswers) => updateTextFields(i, newObject)}
+              reset={resetChild}
             />
-          );
-        } else {
-          answersArray.push(
-            <RoundAnswer
-              answer={answers2[i]?.answer}
-              points={answers2[i]?.points}
-              updateFields={(newObject: FlashRoundAnswers) =>
-                updateTextFields(round, i, newObject)
-              }
-            />
-          );
-        }
-      }
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => saveAnswer(i)}
+            >
+              Save Answer {i + 1}
+            </Button>
+          </Grid>
+        </Grid>
+      );
     }
     return answersArray;
   };
 
-  const handleRoundChange = (event: React.SyntheticEvent, newRound: number) => {
-    setRound(newRound);
+  const saveAnswer = (questionIndex: number) => {
+    const answerToSave = answers[questionIndex];
+    console.log(answerToSave)
+    if(answerToSave.points === undefined && answerToSave.answer !== undefined){
+      answerToSave.points = 0;
+    }
+    if (!(
+        answerToSave.answer.length >= 0 &&
+        answerToSave.answer.length < 50 &&
+        answerToSave.points >= 0 &&
+        answerToSave.points < 101
+      )){
+        setAlerts({ message: 'Invalid data, check the answer or points', errorType: 0 });
+        return;
+      }
     FlashRoundService.update(game, {
       ...flash,
-      currentRound: newRound,
-    });
-  };
-
-  const saveChanges = () => {
-    let allGood = 1;
-    let sumPoints = 0;
-
-    if (round == 1) {
-      for (let i = 0; i < answers1.length; i++) {
-        sumPoints += answers1[i].points;
-        if (
-          !(
-            answers1[i].answer.length >= 0 &&
-            answers1[i].answer.length < 50 &&
-            answers1[i].points >= 0 &&
-            answers1[i].points < 101
-          )
-        ) {
-          allGood = 0;
-        }
-      }
-    } else {
-      for (let i = 0; i < answers2.length; i++) {
-        sumPoints += answers2[i].points;
-        if (
-          !(
-            answers2[i].answer.length >= 0 &&
-            answers2[i].answer.length < 50 &&
-            answers2[i].points >= 0 &&
-            answers2[i].points < 101
-          )
-        ) {
-          allGood = 0;
-        }
-      }
-    }
-
-    if (sumPoints > 1000) {
-      allGood = 0;
-    }
-
-    if (allGood) {
-      FlashRoundService.update(game, {
-        ...flash,
-        answers1,
-        answers2,
-        type: 2,
-        currentRound: round,
-      }).catch((error) => console.error(error));
-      setAlerts({message:"Succes", errorType:1});
-    } else {
-      setAlerts({message:"Invalid data, check the answer or points", errorType:0});
+      answers: [...answers],
+      type: 1,
+    }).then(() => {
+      setAlerts({ message: 'Succes', errorType: 1 });
+      })
+      .catch((error) => {
+        console.error(error);
+        setAlerts({ message: 'Error saving answer', errorType: 0 });
+      });
+    if (answerToSave.showPoints === true) {
+      playSound(question_revealed, 4000)
     }
   };
 
   const createEmptyTextFields = () => {
     const fields: FlashRoundAnswers[] = [];
     for (let i = 0; i < 4; i++) {
-      fields.push(EmptyFlashRound);
+      fields.push({ answer: '', points: 0, showPoints: false }); 
     }
     return fields;
   };
 
-  const resetRounds = () => {
+
+  const clearPointsAndAnswers = () => {
+    const clearedAnswers = answers.map(answer => ({
+      ...answer,
+      answer: '', 
+      points: 0, 
+      showPoints: false 
+    }));
+
+    setAnswers(clearedAnswers);
+
     FlashRoundService.update(game, {
       ...flash,
-      answers1: createEmptyTextFields(),
-      answers2: createEmptyTextFields(),
-      currentRound: 1,
-    }).catch((error) => console.error(error));
-    setAnswers1([]);
-    setAnswers2([]);
+      answers: clearedAnswers,
+      type: 1,
+    }).then(() => {
+      setAlerts({ message: 'Cleared points and answers', errorType: 1 });
+      setResetChild(true);
+    }).catch((error) => {
+      console.error(error);
+      setAlerts({ message: 'Error clearing points and answers', errorType: 0 });
+    });
+  };
+
+  const playSound = (audioPath: string, timeout: number) => {
+    const audio = new Audio(audioPath)   
+    const {play, stop} = useSounds(audio)    
+    play(audio)    
+    setTimeout(() => {      
+      stop(audio)    
+    }, timeout) 
+    return audio
+  }  
+
+  useEffect(() => {
+    if (resetChild) {
+      const timeout = setTimeout(() => {
+        setResetChild(false);
+      }, 1000); 
+
+      return () => clearTimeout(timeout);
+    }
+  }, [resetChild]);
+  
+  const setWrong = () => {
+    setToggleWrong((prev) => !prev)
+    FlashRoundService.update(game, {
+      ...flash,
+      toggleWrongSound: toggleWrong
+    }).then(() => {
+      playSound(wrongAnswerSound, 5000);
+    }).catch((error) => {
+      console.error(error);
+      setAlerts({ message: 'Error when displaying X', errorType: 0 });
+    });
   }
 
   return (
     <Container>
-      {alert.message ?  <BasicAlerts message = {alert.message} errorType={alert.errorType} /> : `` }
       {game && (
         <p style={{ color: 'black' }}>
           Link-ul pentru accesarea rundei flash:&nbsp;
@@ -247,46 +223,20 @@ const FlashRoundAdmin = () => {
             ))}
         </Select>
       </FormControl>
-
       {game &&
-        renderTextFields(1).map((field) => {
+        renderTextFields().map((field) => {
           return <div>{field}</div>;
         })}
-      {game && (
-        <>
-          <Grid item xs={12}>
-            <Button style={{marginTop:'5px;'}} fullWidth variant="contained" onClick={() => saveChanges()}>
-              Salveaza prima runda
-            </Button>
-            
-          </Grid>
-
-          {renderTextFields(2).map((field) => {
-            return <div>{field}</div>;
-          })}
-          <Grid item xs={12}>
-            <Button fullWidth variant="contained" onClick={() => saveChanges()}>
-              Salveaza a doua runda
-            </Button>
-          </Grid>
-          <Grid item xs={12} spacing={4} style={{ margin: 20 }}>
-            <ToggleButtonGroup
-              color="primary"
-              value={round}
-              exclusive
-              onChange={handleRoundChange}
-            >
-              <ToggleButton value={1}>Runda 1</ToggleButton>
-              <ToggleButton value={2}>Runda 2</ToggleButton>
-            </ToggleButtonGroup>
-          </Grid>
-        </>
-      )}
+      <div style={{marginTop: '24px'}}>
       <Timer initialTime={20} /><br/>
-      <Button variant="outlined" color='info' onClick={() => setAllWrong()}>Throw 3Xs</Button>
-      <br/><br/>
-      <p className='nice'>Need to refresh page if clicked erases all round :(</p><br/>
-      <Button variant="outlined" color='warning' style={{marginTop: "20px;"}} onClick={() => resetRounds()}>Ciao meci fulger</Button>
+      <Button variant="outlined" color='info' onClick={() => clearPointsAndAnswers()}>Clear Points and Answers</Button>
+      <Button variant="outlined" color='info' onClick={() => setWrong()} style={{marginLeft: '20px'}}>Show X</Button>
+      </div>  
+      <div style={{ marginTop: 10, width: '100%' }}>
+            <Button variant="outlined" onClick={() => {playSound(round_start, 15000)}}>      
+            Play intro theme song
+            </Button>
+          </div>
     </Container>
   );
 };
