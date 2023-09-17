@@ -8,6 +8,7 @@ import {
   Grid,
   TextField,
   Button,
+  Typography
 } from '@mui/material';
 import { DBQuestion, DBAnswer } from '../../../types/questions';
 import QuestionsService from '../../../../services/questions.service';
@@ -44,7 +45,7 @@ const AddAnswers = () => {
         if (answerIndex === index) {
           return {
             ...answer,
-            points: newValue,
+            points: newValue
           };
         }
         return answer;
@@ -58,7 +59,7 @@ const AddAnswers = () => {
         if (answerIndex === index) {
           return {
             ...answer,
-            answer: newValue,
+            answer: newValue
           };
         }
         return answer;
@@ -72,8 +73,8 @@ const AddAnswers = () => {
         ...prevAnswers,
         {
           answer: '',
-          points: 0,
-        },
+          points: 0
+        }
       ]);
     }
   };
@@ -81,7 +82,7 @@ const AddAnswers = () => {
   const saveAnswers = async () => {
     await QuestionsService.update(questions[parseInt(selected)].id, {
       ...questions[parseInt(selected)],
-      answers,
+      answers
     });
     getQuestions();
   };
@@ -95,7 +96,7 @@ const AddAnswers = () => {
     });
     await QuestionsService.update(questions[parseInt(selected)].id, {
       ...questions[parseInt(selected)],
-      answers: newAnswers,
+      answers: newAnswers
     });
     setAnswers(newAnswers);
   };
@@ -104,6 +105,11 @@ const AddAnswers = () => {
     <div>
       <Grid container spacing={2} sx={{ width: 1 / 2 }}>
         <Grid item xs={12}>
+          <Typography variant="body2" color="textSecondary">
+            You can't delete some field values. This constraint arises from the legacy codebase,
+            which restricts the ability to delete field values. Instead, you can only overwrite them
+            by selecting the existing content (Ctrl + A) and then making changes
+          </Typography>
           <FormControl fullWidth margin="normal">
             <InputLabel id="demo-simple-select-label">Intrebare</InputLabel>
             <Select
