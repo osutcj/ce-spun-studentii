@@ -8,9 +8,9 @@ import './styles/home.css';
 import useFlashRound from '../../hooks/useFlashRound';
 import { useParams } from 'react-router-dom';
 import { FlashRoundAnswers } from '../types/flashRound';
-import wrongAnswerSound from "../../static/x.mp3";
-import { useSounds } from "../../hooks/useSounds.hook";
-import wrongAnswerPng from "../../static/x.png";
+import wrongAnswerSound from '../../static/x.mp3';
+import { useSounds } from '../../hooks/useSounds.hook';
+import wrongAnswerPng from '../../static/x.png';
 
 const FlashRoundClient = () => {
   const [answers, setAnswers] = useState<FlashRoundAnswers[]>([]);
@@ -31,7 +31,7 @@ const FlashRoundClient = () => {
     minHeight: 40,
     maxWidth: 400,
     marginLeft: '15%',
-    fontSize: 15,
+    fontSize: 15
   }));
 
   useEffect(() => {
@@ -46,7 +46,6 @@ const FlashRoundClient = () => {
     } else {
       const audio = new Audio(wrongAnswerSound);
       const { play, stop } = useSounds(audio);
-      console.log(flash?.toggleWrongSound);
 
       play(audio);
       setIsPlayingSound(true);
@@ -79,43 +78,38 @@ const FlashRoundClient = () => {
   const indexOfAnswer = (index: number) => {
     const answer = answers[index];
 
-    if (
-      answer === undefined || answer.answer === ''
-    ){
+    if (answer === undefined || answer.answer === '') {
       return '';
     }
 
-    if (
-      answers &&
-      answers.length > 0 &&
-      answers.length > index
-    ) {
-     console.log(index)
-      return answer.showPoints ? `${answer.answer} - ${answer.points}` : `${answer.answer} ` ;
+    if (answers && answers.length > 0 && answers.length > index) {
+      return answer.showPoints ? `${answer.answer} - ${answer.points}` : `${answer.answer} `;
     }
     return 'Waiting for answer';
   };
 
   const RenderWrongAnswers = () => {
-    return(
+    return (
       <Grid item xs={12}>
         <img src={wrongAnswerPng} width={200} height={200} />
       </Grid>
-    )
+    );
   };
 
   return (
     <div className={'board'}>
-      {isPlayingSound && <div
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)'
-        }}
-      >
-        <RenderWrongAnswers />
-      </div>}
+      {isPlayingSound && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)'
+          }}
+        >
+          <RenderWrongAnswers />
+        </div>
+      )}
       <Container maxWidth="lg" style={{ paddingTop: 30, paddingBottom: 20 }}>
         <Box sx={{ flexGrow: 2 }}>
           <div style={{ display: 'flex', justifyContent: 'center' }}>

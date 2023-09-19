@@ -29,12 +29,9 @@ const Questions = () => {
     const newQuestionId = await QuestionsService.insert({
       text: '',
       answers: [],
-      id: '',
+      id: ''
     });
-    setGameQuestions([
-      ...gameQuestions,
-      { id: newQuestionId, text: '', answers: [] },
-    ]);
+    setGameQuestions([...gameQuestions, { id: newQuestionId, text: '', answers: [] }]);
   };
 
   const handleQuestionsUpdate = async () => {
@@ -82,40 +79,41 @@ const Questions = () => {
       return;
     }
     const firestoreData: DBQuestion[] = convert(fileContent);
-    
+
     const loadingToastId = toast.info('Se initializeaza incarcarea intrebarilor...', {
-      autoClose: false,
+      autoClose: false
     });
 
     try {
       await QuestionsService.removeCollection();
 
       toast.dismiss(loadingToastId);
-      
+
       const insertPromises = firestoreData.map(async (question) => {
         const questionId = await QuestionsService.insert(question);
         return {
           ...question,
-          id: questionId,
+          id: questionId
         };
       });
-      
+
       const allPromises = Promise.all(insertPromises);
 
       toast.promise(allPromises, {
         pending: 'Se incarca intrebarile...',
-        success: 'Intrebarile au fost incarcate cu succes!',
+        success: 'Intrebarile au fost incarcate cu succes!'
       });
 
       const insertedQuestions = await allPromises;
-  
-      setGameQuestions(insertedQuestions);
 
+      setGameQuestions(insertedQuestions);
     } catch (error) {
-      console.error('Error handling bulk update:', error);
+      toast.info('A aparut o eroare la incarcarea intrebarilor.', {
+        autoClose: false,
+        type: 'error'
+      });
     }
   };
-  
 
   const downloadCSV = () => {
     const csvContent = convertFirebaseToCsv(gameQuestions);
@@ -125,7 +123,7 @@ const Questions = () => {
     const element = document.createElement('a');
     element.href = URL.createObjectURL(file);
     element.download = 'ce-spun-studentii.csv';
-    document.body.appendChild(element); // Required for this to work in FireFox
+    document.body.appendChild(element);
     element.click();
   };
 
@@ -152,7 +150,7 @@ const Questions = () => {
                   if (question.id === q.id) {
                     return {
                       ...q,
-                      text: newText,
+                      text: newText
                     };
                   }
                   return question;
