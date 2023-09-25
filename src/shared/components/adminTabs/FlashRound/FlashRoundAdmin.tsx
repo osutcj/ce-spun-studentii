@@ -217,8 +217,9 @@ const FlashRoundAdmin = () => {
           return <div>{field}</div>;
         })}
       <div style={{ marginTop: '24px' }}>
-        <Timer initialTime={20} />
-        <br />
+        <Timer />
+      </div>
+      <div style={{ marginTop: '24px' }}>
         <Button variant="outlined" color="info" onClick={() => clearPointsAndAnswers()}>
           Clear Points and Answers
         </Button>

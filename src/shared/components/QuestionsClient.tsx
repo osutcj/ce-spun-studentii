@@ -12,8 +12,8 @@ import useGame from '../../hooks/useGame';
 import QuestionsService from '../../services/questions.service';
 import wrongAnswerSound from '../../static/x.mp3';
 import wrongAnswerPng from '../../static/x.png';
-import { truncateQuestion } from "../../helpers/truncate-question";
-import { useSounds } from "../../hooks/useSounds.hook";
+import { truncateQuestion } from '../../helpers/truncate-question';
+import { useSounds } from '../../hooks/useSounds.hook';
 
 const QuestionsClient = () => {
   const [currentQuestion, setCurrentQuestion] = useState<DBQuestion>();
@@ -38,14 +38,14 @@ const QuestionsClient = () => {
       return;
     }
     const audio = new Audio(wrongAnswerSound);
-    const {play, stop} = useSounds(audio);
+    const { play, stop } = useSounds(audio);
     play(audio);
     setWrongAnswers(Math.min(3, game.wrongAnswer));
 
-      setTimeout(() => {
-        setWrongAnswers(0);
-        stop(audio);
-      }, 2000);
+    setTimeout(() => {
+      setWrongAnswers(0);
+      stop(audio);
+    }, 2000);
   }, [game?.wrongAnswer]);
 
   useEffect(() => {
@@ -68,31 +68,33 @@ const QuestionsClient = () => {
     minHeight: 40,
     maxWidth: 400,
     marginLeft: '15%',
-    fontSize: 15,
+    fontSize: 15
   }));
 
   const computeTotalPoints = () => {
-    if (game) {
-      let totalPoints = 0;
-      currentQuestion?.answers.map((answer: DBAnswer, index: number) => {
-        const answerRevealed = game.revealedAnswers.find(
-          (answerEntry: number) => answerEntry === index
-        );
-        if (answerRevealed !== undefined) {
-          totalPoints += answer.points;
-        }
-      });
+    if (!game || !currentQuestion) return;
+    let totalPoints = 0;
+    currentQuestion?.answers.map((answer: DBAnswer, index: number) => {
+      const answerRevealed = game.revealedAnswers.find(
+        (answerEntry: number) => answerEntry === index
+      );
+      if (answerRevealed !== undefined) {
+        totalPoints += answer.points;
+      }
+    });
 
-      totalPoints *= game.pointsMultiplier;
+    totalPoints *= game.pointsMultiplier;
 
-      setPoints(totalPoints);
-    }
+    setPoints(totalPoints);
   };
 
   const indexOfAnswer = (index: number) => {
     if (currentQuestion === undefined) return;
-    if (currentQuestion.answers[index].answer === '' || currentQuestion.answers[index].answer === undefined ){
-      return ''
+    if (
+      currentQuestion.answers[index].answer === '' ||
+      currentQuestion.answers[index].answer === undefined
+    ) {
+      return '';
     }
     if (currentQuestion && game && game.revealedAnswers) {
       const answerRevealed = game.revealedAnswers.find(
@@ -108,9 +110,7 @@ const QuestionsClient = () => {
   };
 
   const findQuestionByName = (name: string) => {
-    return questions.find(
-      (questionEntry: DBQuestion) => questionEntry.text === name
-    );
+    return questions.find((questionEntry: DBQuestion) => questionEntry.text === name);
   };
 
   const RenderWrongAnswers = () => {
@@ -129,37 +129,40 @@ const QuestionsClient = () => {
     <div className="ce-spun-studentii">
       <div
         style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)'
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)'
         }}
       >
         <RenderWrongAnswers />
       </div>
-      <div className="board"> 
-        <div className='echipa1'>{game?.team1?.name}: {game?.team1?.points} </div>
-        <div className='puncteRunda'> {points} </div>
-        <div className='echipa2'>{game?.team2?.name}: {game?.team2?.points} </div>
+      <div className="board">
+        <div className="echipa1">
+          {game?.team1?.name}: {game?.team1?.points}{' '}
+        </div>
+        <div className="puncteRunda"> {points} </div>
+        <div className="echipa2">
+          {game?.team2?.name}: {game?.team2?.points}{' '}
+        </div>
       </div>
-      <div className='intrebare'>{game && game.questionRevealed ? formatedQuestion : 'Coming...'}</div>
-      <div className='tablaRaspunsuri'> 
-        
-            <div className='coloana1'>
-              <div className='raspunsuri'>{indexOfAnswer(0)}</div>
-              <div className='raspunsuri'> {indexOfAnswer(1)} </div>
-              <div className='raspunsuri'>{indexOfAnswer(2)} </div>
-              <div className='raspunsuri'>{indexOfAnswer(3)} </div>
-            </div>
-              
-            <div className='coloana2'>
-            
-              <div className='raspunsuri'> {indexOfAnswer(4)} </div>        
-              <div className='raspunsuri'>  {indexOfAnswer(5)} </div>
-              <div className='raspunsuri'>{indexOfAnswer(6)} </div>
-              <div className='raspunsuri'> {indexOfAnswer(7)} </div>
-             
-          </div>
+      <div className="intrebare">
+        {game && game.questionRevealed ? formatedQuestion : 'Coming...'}
+      </div>
+      <div className="tablaRaspunsuri">
+        <div className="coloana1">
+          <div className="raspunsuri">{indexOfAnswer(0)}</div>
+          <div className="raspunsuri"> {indexOfAnswer(1)} </div>
+          <div className="raspunsuri">{indexOfAnswer(2)} </div>
+          <div className="raspunsuri">{indexOfAnswer(3)} </div>
+        </div>
+
+        <div className="coloana2">
+          <div className="raspunsuri"> {indexOfAnswer(4)} </div>
+          <div className="raspunsuri"> {indexOfAnswer(5)} </div>
+          <div className="raspunsuri">{indexOfAnswer(6)} </div>
+          <div className="raspunsuri"> {indexOfAnswer(7)} </div>
+        </div>
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import { FlashRoundAnswers } from '../types/flashRound';
 import wrongAnswerSound from '../../static/x.mp3';
 import { useSounds } from '../../hooks/useSounds.hook';
 import wrongAnswerPng from '../../static/x.png';
+import { TIMER_LENGTH, TIMER_BONUS } from '../../utils/contants';
 
 const FlashRoundClient = () => {
   const [answers, setAnswers] = useState<FlashRoundAnswers[]>([]);
@@ -19,6 +20,24 @@ const FlashRoundClient = () => {
   const flash = useFlashRound(urlParams.id || '');
   const [isPlayingSound, setIsPlayingSound] = useState(false);
   const [isInitialRender, setIsInitialRender] = useState(true);
+  const [currentTime, setCurrentTime] = useState(
+    parseInt(localStorage.getItem('currentTime') || '20')
+  );
+
+  useEffect(() => {
+    const handldeCurrentTimeFromLocalStorage = () => {
+      const data = localStorage.getItem('currentTime');
+      if (!data) return;
+      setCurrentTime(parseInt(data));
+    };
+
+    handldeCurrentTimeFromLocalStorage();
+    const interval = setInterval(handldeCurrentTimeFromLocalStorage, 500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  console.log(currentTime);
 
   const Item = styled(Paper)(({ theme }) => ({
     background:
@@ -36,7 +55,6 @@ const FlashRoundClient = () => {
 
   useEffect(() => {
     if (flash?.toggleWrongSound === undefined) return;
-
     // I hate to do this but unless I make the action unusable the first second
     // it will always render the X and play the sound, this was the only workaround I was able to find
     if (isInitialRender) {
@@ -96,6 +114,39 @@ const FlashRoundClient = () => {
     );
   };
 
+  const RenderCountdownCircle = () => {
+    const percentage = (currentTime / TIMER_LENGTH) * 100;
+
+    const countdownCircleStyles: React.CSSProperties = {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: '200px',
+      height: '200px',
+      borderRadius: '50%',
+      backgroundColor: 'transparent',
+      border: '10px solid #fff',
+      clipPath: `polygon(0% 0%, 0% 100%, 100% 100%, 100% 0%, ${percentage}% 0%, ${percentage}% 100%)`
+    };
+
+    return (
+      <div style={countdownCircleStyles}>
+        <div
+          style={{
+            fontSize: '36px',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)'
+          }}
+        >
+          {currentTime}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className={'board'}>
       {isPlayingSound && (
@@ -117,7 +168,7 @@ const FlashRoundClient = () => {
               <p style={{ fontSize: 25 }}>{points}</p>
             </div>
           </div>
-
+          <RenderCountdownCircle />
           <Grid container spacing={2}>
             <Grid item xs={3}></Grid>
             <Grid item xs={6}>

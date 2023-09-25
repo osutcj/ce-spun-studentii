@@ -7,15 +7,13 @@ import FlashRoundClient from './shared/components/FlashRoundClient';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 function App() {
   return (
     <div className="App">
       <Routes>
         <Route path="/:id" element={<QuestionsClient />}></Route>
-        <Route path='/' element={<Admin />}></Route>
-        <Route path='/admin' element={<Admin />}></Route>
-        <Route path='/flash/:id' element={<FlashRoundClient />}></Route>
+        <Route path="/" element={<Admin />}></Route>
+        <Route path="/flash/:id" element={<FlashRoundClient />}></Route>
       </Routes>
       <ToastContainer autoClose={5000} />
     </div>
