@@ -143,23 +143,24 @@ const FlashRoundAdmin = () => {
       });
   };
 
-  var currentThemeSong = new Audio(round_start)
-  var playingCurrentThemeSong = false
+  let [currentThemeSong, setCurrentThemeSong] = useState(new Audio(round_start));
+  let [playingCurrentThemeSong, setPlayingCurrentThemeSong] = useState(false);
   const playSound = (audioPath: string, timeout: number) => {
+    if(playingCurrentThemeSong) return
     const audio = new Audio(audioPath)   
-    const {play, stop} = useSounds(audio)    
-    play(audio)    
-    playingCurrentThemeSong = true
+    const {play} = useSounds(audio)    
+    play(audio)
+    setCurrentThemeSong(audio)
+    setPlayingCurrentThemeSong(true) 
     setTimeout(() => {      
       stopSound(audio)  
     }, timeout) 
-    return audio
   }  
 
   const stopSound = (audio: any) => {
     const {stop} = useSounds(audio)
+    setPlayingCurrentThemeSong(false)
     stop(audio)
-    playingCurrentThemeSong = false
     }
 
   useEffect(() => {
@@ -241,7 +242,7 @@ const FlashRoundAdmin = () => {
         </Button>
       </div>
       <div style={{ marginTop: 10, width: '100%' }}>
-          <Button variant="outlined" onClick={() => {currentThemeSong = playSound(round_start, 15000)}}>      
+          <Button variant="outlined" onClick={() => {playSound(round_start, 15000)}}>      
             Play intro theme song
             </Button>
             <Button variant="outlined" onClick={() => {stopSound(currentThemeSong)}}>      
