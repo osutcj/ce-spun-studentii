@@ -143,15 +143,25 @@ const FlashRoundAdmin = () => {
       });
   };
 
+  let [currentThemeSong, setCurrentThemeSong] = useState(new Audio(round_start));
+  let [playingCurrentThemeSong, setPlayingCurrentThemeSong] = useState(false);
   const playSound = (audioPath: string, timeout: number) => {
-    const audio = new Audio(audioPath);
-    const { play, stop } = useSounds(audio);
-    play(audio);
-    setTimeout(() => {
-      stop(audio);
-    }, timeout);
-    return audio;
-  };
+    if(playingCurrentThemeSong) return
+    const audio = new Audio(audioPath)   
+    const {play} = useSounds(audio)    
+    play(audio)
+    setCurrentThemeSong(audio)
+    setPlayingCurrentThemeSong(true) 
+    setTimeout(() => {      
+      stopSound(audio)  
+    }, timeout) 
+  }  
+
+  const stopSound = (audio: any) => {
+    const {stop} = useSounds(audio)
+    setPlayingCurrentThemeSong(false)
+    stop(audio)
+    }
 
   useEffect(() => {
     if (resetChild) {
@@ -232,14 +242,13 @@ const FlashRoundAdmin = () => {
         </Button>
       </div>
       <div style={{ marginTop: 10, width: '100%' }}>
-        <Button
-          variant="outlined"
-          onClick={() => {
-            playSound(round_start, 15000);
-          }}
-        >
-          Play intro theme song
-        </Button>
+          <Button variant="outlined" onClick={() => {playSound(round_start, 15000)}}>      
+            Play intro theme song
+            </Button>
+            <Button variant="outlined" onClick={() => {stopSound(currentThemeSong)}}>      
+            Stop intro theme song
+            </Button>
+        
       </div>
     </Container>
   );
