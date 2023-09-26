@@ -7,8 +7,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "deploy": "npm run build && firebase deploy",
-    "seed:firestore": "ts-node --project tsconfig.node.json src/utils/scripts/seedFirestore.ts",
-    "csv:firestore": "node src/utils/scripts/csvToJSON.js",
+    "seed:firestore": "ts-node --project tsconfig.node.json src/scripts/seedFirestore.ts",
+    "csv:firestore": "node src/scripts/csvToJSON.js",
     "prepare": "husky install",
     "format": "prettier --write --ignore-unknown"
   },

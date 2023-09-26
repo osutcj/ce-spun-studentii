@@ -1,0 +1,14 @@
+[
+  {
+    "text": "Cine nu stie ce face?",
+    "answers": [
+      { "answer": "Mihoc", "points": 55 },
+      { "answer": "Rares", "points": 0 },
+      { "answer": "Hnq", "points": 40 },
+      { "answer": "Truta", "points": 5 }
+    ]
+  },
+  { "text": "Mai voi folosii React si TS?", "answers": [] },
+  { "text": "Ce framework nu seamana defapt cu react?", "answers": [] },
+  { "text": "", "answers": [] }
+]
