@@ -13,6 +13,11 @@ type TimerStore = {
   tick: () => void;
 };
 
+type Animate = {
+  started: boolean;
+  setStarted: (value: boolean) => void;
+};
+
 const useTimerStore = create<TimerStore>((set) => ({
   currentTime: TIMER_LENGTH,
   isRunning: false,
@@ -33,4 +38,10 @@ const useTimerStore = create<TimerStore>((set) => ({
     })
 }));
 
+const useAnimationStore = create<Animate>((set) => ({
+  started: false,
+  setStarted: (value) => set({ started: value })
+}));
+
 export default useTimerStore;
+export { useAnimationStore };

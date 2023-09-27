@@ -12,6 +12,7 @@ import wrongAnswerSound from '../static/x.mp3';
 import { useSounds } from '../hooks/useSounds.hook';
 import wrongAnswerPng from '../static/x.png';
 import { TIMER_LENGTH, TIMER_BONUS } from '../utils/contants';
+import CountdownTimer from '../shared/FlashRound/countDownTimer';
 
 const FlashRoundClient = () => {
   const [answers, setAnswers] = useState<FlashRoundAnswers[]>([]);
@@ -36,8 +37,6 @@ const FlashRoundClient = () => {
 
     return () => clearInterval(interval);
   }, []);
-
-  console.log(currentTime);
 
   const Item = styled(Paper)(({ theme }) => ({
     background:
@@ -115,34 +114,14 @@ const FlashRoundClient = () => {
   };
 
   const RenderCountdownCircle = () => {
-    const percentage = (currentTime / TIMER_LENGTH) * 100;
-
-    const countdownCircleStyles: React.CSSProperties = {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: '200px',
-      height: '200px',
-      borderRadius: '50%',
-      backgroundColor: 'transparent',
-      border: '10px solid #fff'
-    };
-
     return (
-      <div style={countdownCircleStyles}>
-        <div
-          style={{
-            fontSize: '36px',
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)'
-          }}
-        >
-          {currentTime}
-        </div>
-      </div>
+      <CountdownTimer
+        seconds={currentTime}
+        size={200}
+        strokeBgColor="#ffffff"
+        strokeColor="#000000"
+        strokeWidth={10}
+      />
     );
   };
 
