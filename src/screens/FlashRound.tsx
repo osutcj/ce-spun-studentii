@@ -139,15 +139,13 @@ const FlashRoundClient = () => {
             left: '50%',
             transform: 'translate(-50%, -50%)'
           }}
-        >
-          {currentTime}
-        </div>
+        ></div>
       </div>
     );
   };
 
   return (
-    <div className={'board'}>
+    <div className={'ce-spun-studentii'}>
       {isPlayingSound && (
         <div
           style={{
@@ -160,47 +158,20 @@ const FlashRoundClient = () => {
           <RenderWrongAnswers />
         </div>
       )}
-      <Container maxWidth="lg" style={{ paddingTop: 30, paddingBottom: 20 }}>
-        <Box sx={{ flexGrow: 2 }}>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <div className="scor" id={'boardScore'}>
-              <p style={{ fontSize: 25 }}>{points}</p>
-            </div>
+      <div className="board-flash">
+        <div className="timer"> {currentTime} </div>
+
+        <div className="tablaRaspunsuri-flash">
+          <div className="coloana1">
+            <div className="raspunsuri">{indexOfAnswer(0)}</div>
+            <div className="raspunsuri">{indexOfAnswer(1)}</div>
+            <div className="raspunsuri">{indexOfAnswer(2)}</div>
+            <div className="raspunsuri">{indexOfAnswer(3)}</div>
+            <div className="raspunsuri">{indexOfAnswer(4)}</div>
           </div>
-          <RenderCountdownCircle />
-          <Grid container spacing={2}>
-            <Grid item xs={3}></Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(0)}</Item>
-            </Grid>
-            <Grid item xs={3}></Grid>
-
-            <Grid item xs={3}></Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(1)}</Item>
-            </Grid>
-            <Grid item xs={3}></Grid>
-
-            <Grid item xs={3}></Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(2)}</Item>
-            </Grid>
-            <Grid item xs={3}></Grid>
-
-            <Grid item xs={3}></Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(3)}</Item>
-            </Grid>
-            <Grid item xs={3}></Grid>
-
-            <Grid item xs={3}></Grid>
-            <Grid item xs={6}>
-              <Item>{indexOfAnswer(4)}</Item>
-            </Grid>
-            <Grid item xs={3}></Grid>
-          </Grid>
-        </Box>
-      </Container>
+        </div>
+        <div className="puncteRunda-flash"> Total: {points} </div>
+      </div>
     </div>
   );
 };
