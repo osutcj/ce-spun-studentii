@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useAnimationStore } from '../../store/timerStore';
 
 type CountdownTimerProps = {
   seconds: number;
@@ -29,39 +28,43 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
     fontSize: size * 0.3
   };
 
-  const [remainingTime, setRemainingTime] = useState(seconds);
-  const { started, setStarted } = useAnimationStore();
+  const [remainingTime, setRemainingTime] = useState(
+    localStorage.getItem('startAnimation') ? seconds : 0
+  );
 
   useEffect(() => {
-    console.log(started);
-  }, [started]);
+    if (localStorage.getItem('startAnimation') === 'true') {
+      const timer = setInterval(() => {
+        // Decrease the remaining time by 1 second
+        setRemainingTime((prevRemainingTime) =>
+          prevRemainingTime > 0 ? prevRemainingTime - 1 : 0
+        );
+      }, 1000);
 
-  useEffect(() => {
-    // Create a timer to update the remaining time
-    const timer = setInterval(() => {
-      // Decrease the remaining time by 1 second
-      setRemainingTime((prevRemainingTime) => (prevRemainingTime > 0 ? prevRemainingTime - 1 : 0));
-    }, 1000);
-
-    // Clean up the timer when the component unmounts
-    return () => clearInterval(timer);
-  }, [started, seconds]);
+      // Clear the interval when component unmounts or when seconds reach 0
+      return () => {
+        clearInterval(timer);
+        if (remainingTime === 0) {
+          localStorage.setItem('startAnimation', 'false');
+        }
+      };
+    }
+  }, [localStorage.getItem('startAnimation'), remainingTime]);
 
   // Calculate the strokeDashoffset based on the remaining time
   const strokeDashoffset = () => {
-    if (started) {
-      const fractionElapsed = (seconds - remainingTime) / seconds;
-      return circumference * (1 - fractionElapsed);
-    } else {
-      return 0;
+    if (localStorage.getItem('startAnimation') != 'true') {
+      return 0; // Full stroke when not started
     }
+    const fractionElapsed = remainingTime / seconds;
+    return circumference * (1 - fractionElapsed);
   };
 
   return (
     <div>
       <div
         style={{
-          opacity: started ? 0.4 : 1
+          opacity: localStorage.getItem('startAnimation') ? 0.4 : 1
         }}
       ></div>
       <div style={{ ...styles.countdownContainer, ...countdownSizeStyles }}>

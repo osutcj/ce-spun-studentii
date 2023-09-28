@@ -3,7 +3,6 @@ import { Grid } from '@mui/material';
 import React, { useEffect } from 'react';
 import useTimerStore, { useAnimationStore } from '../../store/timerStore';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
-import { set } from 'firebase/database';
 
 const Timer = () => {
   const {
@@ -17,7 +16,10 @@ const Timer = () => {
   } = useTimerStore();
   const [storedCurrentTime, setStoredCurrentTime] = useLocalStorage('currentTime', currentTime);
   const [storedIsFirstRound, storedSetIsFirstRound] = useLocalStorage('isFirstRound', true);
-  const { started, setStarted } = useAnimationStore();
+
+  useEffect(() => {
+    localStorage.setItem('startAnimation', 'false');
+  }, []);
 
   useEffect(() => {
     let timer: any;
@@ -53,8 +55,7 @@ const Timer = () => {
 
   const handleButtonClick = () => {
     startTimer();
-    setStarted(true);
-    console.log(started);
+    localStorage.setItem('startAnimation', 'true');
   };
 
   return (
