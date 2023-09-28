@@ -38,13 +38,10 @@ const Game = () => {
       return;
     }
     const audio = new Audio(wrongAnswerSound);
-    const { play, stop } = useSounds(audio);
-    play(audio);
     setWrongAnswers(Math.min(3, game.wrongAnswer));
 
     setTimeout(() => {
       setWrongAnswers(0);
-      stop(audio);
     }, 2000);
   }, [game?.wrongAnswer]);
 

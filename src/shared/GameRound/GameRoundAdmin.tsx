@@ -20,6 +20,7 @@ import { NormalGame } from '../../types/game';
 import { useSounds } from '../../hooks/useSounds.hook';
 import round_start from '../../static/round_start.mp3';
 import correct_answer from '../../static/correct_answer.mp3';
+import wrongAnswerSound from '../../static/x.mp3';
 
 const GameRoundAdmin = (props: any) => {
   const [questions, setQuestions] = useState<DBQuestion[]>([]);
@@ -101,6 +102,9 @@ const GameRoundAdmin = (props: any) => {
   };
 
   const setAllWrong = () => {
+    if (counterWrongAnswers != 3){
+      playSound(wrongAnswerSound, 5000);
+    }
     GamesService.update(selectedGame, {
       ...game,
       wrongAnswer: 3
@@ -380,12 +384,20 @@ const GameRoundAdmin = (props: any) => {
           </div>
           <div style={{ marginTop: 10, width: '100%' }}>
             <p style={{ textAlign: 'center' }}>Wrong answers</p>
-            <Button variant="outlined" onClick={() => setAllWrong()} style={{ marginRight: 10 }}>
+            <Button variant="outlined" onClick={() => {
+              setAllWrong();
+              }} 
+              style={{ marginRight: 10 }}>
               Set All wrong
             </Button>
             <Button
               variant="outlined"
-              onClick={() => setCounterWrongAnswers((prevState) => Math.min(prevState + 1, 3))}
+              onClick={() => {
+                setCounterWrongAnswers((prevState) => Math.min(prevState + 1, 3))
+                if (counterWrongAnswers <= 3){
+                  playSound(wrongAnswerSound, 5000);
+                }
+              }}
               style={{ marginRight: 10 }}
             >
               {counterWrongAnswers} wrong (click for +1)
