@@ -38,10 +38,4 @@ const useTimerStore = create<TimerStore>((set) => ({
     })
 }));
 
-const useAnimationStore = create<Animate>((set) => ({
-  started: false,
-  setStarted: (value) => set({ started: value })
-}));
-
 export default useTimerStore;
-export { useAnimationStore };
