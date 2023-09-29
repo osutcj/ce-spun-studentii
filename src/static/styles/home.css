@@ -4,7 +4,8 @@
 
 .ce-spun-studentii
 {
-    font: 'Montserrat';
+    font-family: 'Montserrat', sans-serif;
+
     font-weight: bold;
     color: white;
 }
@@ -15,6 +16,14 @@
     margin-bottom: 40px;
 }
 
+.board-flash {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+    flex-direction: column;
+    align-items: center;
+}
 
 .echipa1 
 {
@@ -58,6 +67,21 @@
     font-size: 46px;
 }
 
+.timer{
+    background-color: #323231;
+    border-style: solid;
+    border-color: white;
+    border-width: 5px;
+    border-radius: 50%;
+    margin-top: 2rem;
+    height: 150px;
+    width: 150px;
+    font-size: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .intrebare
 {
     background-color: #323231;
@@ -79,6 +103,23 @@
     background-color: #991a1a;
     width: 1500px;
     height: 635px;
+    border: 5px solid white; 
+    border-radius: 50px;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    
+    
+}
+
+.tablaRaspunsuri-flash {
+    background-color: #991a1a;
+    width: 845px;
+    height: 687px;
     border: 5px solid white; 
     border-radius: 50px;
     margin-top: 20px;
@@ -125,9 +166,41 @@
     
 }
 
+.tablaRaspunsuri-flash .raspunsuri {
+    margin: auto;
+    width: 574px;
+    height: 102px;
+    border: 5px solid white;
+    border-radius: 25px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    background: rgb(50,50,49);
+    background: linear-gradient(180deg, rgba(50,50,49,1) 0%, rgba(50,50,49,1) 80%, rgba(153,26,26,1) 100%);
+    
+}
+
 .ce-spun-studentii {
     background: url("../background.png") no-repeat center center;
     background-size: cover;
     height: 100vh;
   }
   
+
+.puncteRunda-flash{
+    background-color: #323231;
+    width: 429px;
+    height: 124px;
+    margin-top: 20px;
+    display: flex;
+    border-radius: 50px;
+    border-style: solid;
+    border-color: white;
+    border-width: 5px;
+    align-items: center;
+    justify-content: center;
+    font-size: 50px;
+    
+
+}
