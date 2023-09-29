@@ -15,7 +15,7 @@ import { currEnvironment, firestore } from '../firebase/firebase';
 import { auth } from '../firebase/firebase';
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { environmentType } from '../utils/contants';
+import { environmentType } from '../utils/constants';
 
 const Admin = () => {
   const [loggedIn, setLoggedIn] = useState(false);

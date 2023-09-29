@@ -20,6 +20,7 @@ const RoundAnswer = (props: any) => {
     if (props.reset) {
       setAnswer('');
       setPoints(0);
+      setShowPoints(false);
     }
   }, [[props.reset]]);
 

@@ -16,6 +16,11 @@ const Timer = () => {
   } = useTimerStore();
   const [storedCurrentTime, setStoredCurrentTime] = useLocalStorage('currentTime', currentTime);
   const [storedIsFirstRound, storedSetIsFirstRound] = useLocalStorage('isFirstRound', true);
+  const [storedIsStarted, setStoredIsStarted] = useLocalStorage('isStarted', false);
+
+  useEffect(() => {
+    localStorage.setItem('startAnimation', 'false');
+  }, []);
 
   useEffect(() => {
     let timer: any;
@@ -36,6 +41,11 @@ const Timer = () => {
   }, [currentTime, setStoredCurrentTime]);
 
   useEffect(() => {
+    setStoredIsStarted(isRunning)
+  }, [currentTime, setStoredIsStarted]);
+
+
+  useEffect(() => {
     storedSetIsFirstRound(isFirstRound);
   }, [isFirstRound, storedSetIsFirstRound]);
 
@@ -49,6 +59,10 @@ const Timer = () => {
     storedSetIsFirstRound(false);
   };
 
+  const handleButtonClick = () => {
+    startTimer();
+  };
+
   return (
     <div style={{ marginBottom: '20px;' }}>
       <h2 style={{ fontFamily: 'Popins', fontSize: '30px;', marginBottom: '10px' }}>
@@ -60,7 +74,7 @@ const Timer = () => {
         xs={12}
         style={{ justifyContent: 'space-around', display: 'flex', width: '50%', margin: '0 auto' }}
       >
-        <Button variant="contained" onClick={startTimer} disabled={isRunning}>
+        <Button variant="contained" onClick={handleButtonClick} disabled={isRunning}>
           Start
         </Button>
         <Button

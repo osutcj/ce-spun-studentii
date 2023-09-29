@@ -1,6 +1,6 @@
 import { firestore, db } from '../firebase/firebase';
 import { collection, addDoc, getDoc, doc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
-import { GAMES_COLLECTION } from '../utils/contants';
+import { GAMES_COLLECTION } from '../utils/constants';
 import { NormalGame } from '../types/game';
 
 const GamesService = {

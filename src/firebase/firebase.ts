@@ -2,7 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getDatabase } from 'firebase/database';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import { environmentType } from '../utils/contants';
+import { environmentType } from '../utils/constants';
 
 // Your web app's Firebase configuration for local development
 const firebaseConfigDev = {

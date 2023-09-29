@@ -1,5 +1,5 @@
 import { addDoc, collection } from 'firebase/firestore';
-import { QUESTIONS_COLLECTION } from '../utils/contants';
+import { QUESTIONS_COLLECTION } from '../utils/constants';
 import { firestore } from '../firebase/firebase';
 import { DBAnswer } from '../types/questions';
 

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import Container from '@mui/material/Container';
 import { styled } from '@mui/material';
 import { DBAnswer, DBQuestion } from '../types/questions';
 import { NormalGame } from '../types/game';
@@ -12,7 +10,7 @@ import useGame from '../hooks/useGame';
 import QuestionsService from '../services/questions.service';
 import wrongAnswerPng from '../static/x.png';
 import { truncateQuestion } from '../helpers/truncate-question';
-import { WRONG_ANSWER_TIME } from '../utils/contants';
+import { WRONG_ANSWER_TIME } from '../utils/constants';
 
 const Game = () => {
   const [currentQuestion, setCurrentQuestion] = useState<DBQuestion>();
