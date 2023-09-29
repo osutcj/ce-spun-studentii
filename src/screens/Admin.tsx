@@ -40,7 +40,7 @@ const Admin = () => {
           setLoggedIn(true);
         } else {
           alert(
-            'Nu ai acces la aceasta aplicatie! Pentru mai multe detalii contacteaza OSUT | Serviciul IT sau OSUT | Serviciul Divertisment !'
+            'Nu ai acces la aceasta aplicatie! Pentru mai multe detalii contacteaza OSUT | Serviciul IT sau OSUT | Directia Divertisment !'
           );
         }
       });
