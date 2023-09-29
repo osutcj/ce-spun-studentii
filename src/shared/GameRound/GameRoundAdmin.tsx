@@ -21,6 +21,7 @@ import { useSounds } from '../../hooks/useSounds.hook';
 import round_start from '../../static/round_start.mp3';
 import correct_answer from '../../static/correct_answer.mp3';
 import wrongAnswerSound from '../../static/x.mp3';
+import { WRONG_ANSWER_TIME } from '../../utils/contants';
 
 const GameRoundAdmin = (props: any) => {
   const [questions, setQuestions] = useState<DBQuestion[]>([]);
@@ -103,7 +104,7 @@ const GameRoundAdmin = (props: any) => {
 
   const setAllWrong = () => {
     if (counterWrongAnswers != 3){
-      playSound(wrongAnswerSound, 5000);
+      playSound(wrongAnswerSound, WRONG_ANSWER_TIME);
     }
     GamesService.update(selectedGame, {
       ...game,
@@ -395,7 +396,7 @@ const GameRoundAdmin = (props: any) => {
               onClick={() => {
                 setCounterWrongAnswers((prevState) => Math.min(prevState + 1, 3))
                 if (counterWrongAnswers <= 3){
-                  playSound(wrongAnswerSound, 5000);
+                  playSound(wrongAnswerSound, WRONG_ANSWER_TIME);
                 }
               }}
               style={{ marginRight: 10 }}
