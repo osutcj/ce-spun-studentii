@@ -10,6 +10,7 @@ import round_start from '../../static/round_start.mp3';
 import { useSounds } from '../../hooks/useSounds.hook';
 import question_revealed from '../../static/question_revealed.mp3';
 import wrongAnswerSound from '../../static/x.mp3';
+import { WRONG_ANSWER_TIME } from '../../utils/constants';
 
 const FlashRoundAdmin = () => {
   const [game, selectGame] = useState<string>('');
@@ -106,7 +107,11 @@ const FlashRoundAdmin = () => {
         setAlerts({ message: 'Error saving answer', errorType: 0 });
       });
     if (answerToSave.showPoints === true) {
-      playSound(question_revealed, 4000);
+      if (answerToSave.points === 0) {
+        setWrong();
+      } else {
+        playSound(question_revealed, 4000);
+      }
     }
   };
 
