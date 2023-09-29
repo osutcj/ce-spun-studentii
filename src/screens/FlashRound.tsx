@@ -117,10 +117,10 @@ const FlashRoundClient = () => {
     return (
       <CountDownTimer
         seconds={currentTime}
-        size={200}
-        strokeBgColor="#ffffff"
-        strokeColor="#000000"
-        strokeWidth={10}
+        size={150}
+        strokeBgColor="#000000"
+        strokeColor="#ffffff"
+        strokeWidth={5}
       />
     );
   };
@@ -140,7 +140,10 @@ const FlashRoundClient = () => {
         </div>
       )}
       <div className="board-flash">
-        <div className="timer"> {currentTime} </div>
+        <div className="timer">
+          {' '}
+          <RenderCountdownCircle />{' '}
+        </div>
 
         <div className="tablaRaspunsuri-flash">
           <div className="coloana1">

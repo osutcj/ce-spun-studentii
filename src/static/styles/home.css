@@ -69,9 +69,6 @@
 
 .timer{
     background-color: #323231;
-    border-style: solid;
-    border-color: white;
-    border-width: 5px;
     border-radius: 50%;
     margin-top: 2rem;
     height: 150px;
