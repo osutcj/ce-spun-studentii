@@ -9,3 +9,4 @@ export enum environmentType {
 
 export const TIMER_LENGTH = 20;
 export const TIMER_BONUS = 5;
+export const WRONG_ANSWER_TIME = 3000;

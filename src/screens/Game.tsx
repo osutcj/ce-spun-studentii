@@ -10,10 +10,9 @@ import '../static/styles/home.css';
 import { useParams } from 'react-router-dom';
 import useGame from '../hooks/useGame';
 import QuestionsService from '../services/questions.service';
-import wrongAnswerSound from '../static/x.mp3';
 import wrongAnswerPng from '../static/x.png';
 import { truncateQuestion } from '../helpers/truncate-question';
-import { useSounds } from '../hooks/useSounds.hook';
+import { WRONG_ANSWER_TIME } from '../utils/contants';
 
 const Game = () => {
   const [currentQuestion, setCurrentQuestion] = useState<DBQuestion>();
@@ -37,15 +36,11 @@ const Game = () => {
     if (game?.wrongAnswer === 0) {
       return;
     }
-    const audio = new Audio(wrongAnswerSound);
-    const { play, stop } = useSounds(audio);
-    play(audio);
     setWrongAnswers(Math.min(3, game.wrongAnswer));
 
     setTimeout(() => {
       setWrongAnswers(0);
-      stop(audio);
-    }, 2000);
+    }, WRONG_ANSWER_TIME);
   }, [game?.wrongAnswer]);
 
   useEffect(() => {
