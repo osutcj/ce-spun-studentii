@@ -11,8 +11,8 @@ import { FlashRoundAnswers } from '../types/flashRound';
 import wrongAnswerSound from '../static/x.mp3';
 import { useSounds } from '../hooks/useSounds.hook';
 import wrongAnswerPng from '../static/x.png';
-import { TIMER_LENGTH, TIMER_BONUS } from '../utils/contants';
-import CountdownTimer from '../shared/FlashRound/countDownTimer';
+import { TIMER_LENGTH, TIMER_BONUS } from '../utils/constants';
+import CountDownTimer from '../shared/FlashRound/CountDownTimer';
 
 const FlashRoundClient = () => {
   const [answers, setAnswers] = useState<FlashRoundAnswers[]>([]);
@@ -115,7 +115,7 @@ const FlashRoundClient = () => {
 
   const RenderCountdownCircle = () => {
     return (
-      <CountdownTimer
+      <CountDownTimer
         seconds={currentTime}
         size={200}
         strokeBgColor="#ffffff"

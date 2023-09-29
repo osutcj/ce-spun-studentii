@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { TIMER_BONUS, TIMER_LENGTH } from "../../utils/constants";
 
 type CountdownTimerProps = {
   seconds: number;
@@ -8,7 +9,7 @@ type CountdownTimerProps = {
   strokeWidth: number;
 };
 
-const CountdownTimer: React.FC<CountdownTimerProps> = ({
+const CountDownTimer: React.FC<CountdownTimerProps> = ({
   seconds,
   size,
   strokeBgColor,
@@ -16,6 +17,8 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
   strokeWidth
 }) => {
   const radius = size / 2;
+  const localStorageIsStarted = localStorage.getItem('isStarted')
+  const maxSeconds =  localStorage.getItem('isFirstRound') === 'true' ? TIMER_LENGTH : (TIMER_LENGTH+TIMER_BONUS)
   const circumference = size * Math.PI;
 
   const countdownSizeStyles: React.CSSProperties = {
@@ -28,35 +31,14 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
     fontSize: size * 0.3
   };
 
-  const [remainingTime, setRemainingTime] = useState(
-    localStorage.getItem('startAnimation') ? seconds : 0
-  );
 
-  useEffect(() => {
-    if (localStorage.getItem('startAnimation') === 'true') {
-      const timer = setInterval(() => {
-        // Decrease the remaining time by 1 second
-        setRemainingTime((prevRemainingTime) =>
-          prevRemainingTime > 0 ? prevRemainingTime - 1 : 0
-        );
-      }, 1000);
-
-      // Clear the interval when component unmounts or when seconds reach 0
-      return () => {
-        clearInterval(timer);
-        if (remainingTime === 0) {
-          localStorage.setItem('startAnimation', 'false');
-        }
-      };
-    }
-  }, [localStorage.getItem('startAnimation'), remainingTime]);
-
-  // Calculate the strokeDashoffset based on the remaining time
   const strokeDashoffset = () => {
-    if (localStorage.getItem('startAnimation') != 'true') {
-      return 0; // Full stroke when not started
+    if (localStorageIsStarted != 'true') {
+      return 0;
     }
-    const fractionElapsed = remainingTime / seconds;
+    const fractionElapsed = seconds / maxSeconds;
+    console.log(fractionElapsed)
+    console.log(circumference, circumference * (1 - fractionElapsed))
     return circumference * (1 - fractionElapsed);
   };
 
@@ -64,7 +46,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
     <div>
       <div
         style={{
-          opacity: localStorage.getItem('startAnimation') ? 0.4 : 1
+          opacity: localStorageIsStarted ? 0.4 : 1
         }}
       ></div>
       <div style={{ ...styles.countdownContainer, ...countdownSizeStyles }}>
@@ -116,4 +98,4 @@ const styles = {
   } as React.CSSProperties
 };
 
-export default CountdownTimer;
+export default CountDownTimer;

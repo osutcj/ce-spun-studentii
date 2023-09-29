@@ -1,6 +1,6 @@
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
 import { FlashRound } from '../types/flashRound';
-import { FLASH_ROUND_COLLECTION } from '../utils/contants';
+import { FLASH_ROUND_COLLECTION } from '../utils/constants';
 import { firestore } from '../firebase/firebase';
 
 const FlashRoundService = {

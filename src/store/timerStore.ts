@@ -1,5 +1,5 @@
 import create from 'zustand';
-import { TIMER_BONUS, TIMER_LENGTH } from '../utils/contants';
+import { TIMER_BONUS, TIMER_LENGTH } from '../utils/constants';
 
 type TimerStore = {
   currentTime: number;

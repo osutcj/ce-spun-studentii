@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { onSnapshot, doc } from 'firebase/firestore';
 import { firestore } from '../firebase/firebase';
-import { GAMES_COLLECTION } from '../utils/contants';
+import { GAMES_COLLECTION } from '../utils/constants';
 import { NormalGame } from '../types/game';
 import { EmptyGame } from '../models/game';
 

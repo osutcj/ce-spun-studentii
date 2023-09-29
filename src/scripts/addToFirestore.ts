@@ -1,6 +1,6 @@
 import { firestore } from '../firebase/firebase';
 import { addDoc, collection } from 'firebase/firestore';
-import { FLASH_ROUND_COLLECTION } from '../utils/contants';
+import { FLASH_ROUND_COLLECTION } from '../utils/constants';
 
 const arrayOfObjects = [
   {

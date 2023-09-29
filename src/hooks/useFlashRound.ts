@@ -1,7 +1,7 @@
 import { doc, onSnapshot } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { FlashRound } from '../types/flashRound';
-import { FLASH_ROUND_COLLECTION } from '../utils/contants';
+import { FLASH_ROUND_COLLECTION } from '../utils/constants';
 import { firestore } from '../firebase/firebase';
 
 function useFlashRound(docId: string) {

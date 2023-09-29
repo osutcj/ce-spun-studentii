@@ -1,7 +1,7 @@
 import Button from '@mui/material/Button';
 import { Grid } from '@mui/material';
 import React, { useEffect } from 'react';
-import useTimerStore, { useAnimationStore } from '../../store/timerStore';
+import useTimerStore from '../../store/timerStore';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 const Timer = () => {
@@ -16,6 +16,7 @@ const Timer = () => {
   } = useTimerStore();
   const [storedCurrentTime, setStoredCurrentTime] = useLocalStorage('currentTime', currentTime);
   const [storedIsFirstRound, storedSetIsFirstRound] = useLocalStorage('isFirstRound', true);
+  const [storedIsStarted, setStoredIsStarted] = useLocalStorage('isStarted', false);
 
   useEffect(() => {
     localStorage.setItem('startAnimation', 'false');
@@ -40,6 +41,11 @@ const Timer = () => {
   }, [currentTime, setStoredCurrentTime]);
 
   useEffect(() => {
+    setStoredIsStarted(isRunning)
+  }, [currentTime, setStoredIsStarted]);
+
+
+  useEffect(() => {
     storedSetIsFirstRound(isFirstRound);
   }, [isFirstRound, storedSetIsFirstRound]);
 
@@ -55,7 +61,6 @@ const Timer = () => {
 
   const handleButtonClick = () => {
     startTimer();
-    localStorage.setItem('startAnimation', 'true');
   };
 
   return (
