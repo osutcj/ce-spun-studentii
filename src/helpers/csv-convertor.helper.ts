@@ -1,4 +1,4 @@
-import { DBQuestion } from '../shared/types/questions';
+import { DBQuestion } from '../types/questions';
 
 export default function convert(csv: string) {
   let data = csv.split('\n');
@@ -10,7 +10,7 @@ export default function convert(csv: string) {
     let obj: DBQuestion = {
       id: '',
       text: '',
-      answers: [],
+      answers: []
     };
     if (row.trim().length === 0) {
       return;
@@ -24,7 +24,7 @@ export default function convert(csv: string) {
       } else {
         obj['answers'].push({
           answer: elements[index - 1],
-          points: parseInt(elements[index]),
+          points: parseInt(elements[index])
         });
       }
     });

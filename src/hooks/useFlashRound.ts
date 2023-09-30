@@ -1,8 +1,8 @@
 import { doc, onSnapshot } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import { FlashRound } from '../shared/types/flashRound';
-import { FLASH_ROUND_COLLECTION } from '../utils/contants'; 
-import { firestore } from '../utils/firebase/firebase';
+import { FlashRound } from '../types/flashRound';
+import { FLASH_ROUND_COLLECTION } from '../utils/constants';
+import { firestore } from '../firebase/firebase';
 
 function useFlashRound(docId: string) {
   const [flashAnswers, setFlashAnswers] = useState<FlashRound | undefined>();
