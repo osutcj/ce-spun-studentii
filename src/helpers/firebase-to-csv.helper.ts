@@ -1,4 +1,4 @@
-import { DBQuestion } from '../shared/types/questions';
+import { DBQuestion } from '../types/questions';
 
 export default function convertFirebaseToCsv(questions: DBQuestion[]) {
   let csvContent =

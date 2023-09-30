@@ -1,0 +1,10 @@
+/.firebase
+node_modules
+assets
+/.husky
+/.github
+/.vscode
+/.idea
+dist
+
+

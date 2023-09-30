@@ -1,9 +1,10 @@
-name: Deploy to Firebase
+name: Ce Spun Studentii Pipeline
 
 on:
   push:
     branches:
       - master
+      - 'release/*'
 
 jobs:
   build_and_deploy:
@@ -24,8 +25,31 @@ jobs:
       - name: Build the app
         run: npm run build
 
+      - name: Determine Branch Name
+        id: branch_name
+        run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+
+      - name: Set Firebase Project ID and Token
+        id: set_firebase_vars
+        run: |
+          if [[ "${{ steps.branch_name.outputs.branch }}" == "master" ]]; then
+            echo "Setting Firebase for master branch"
+            echo "::set-output name=FIREBASE_TOKEN::${{ secrets.FIREBASE_TOKEN }}"
+            echo "::set-output name=FIREBASE_PROJECT_ID::${{ secrets.FIREBASE_PROJECT_ID }}"
+          elif [[ "${{ steps.branch_name.outputs.branch }}" =~ ^release/([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            echo "Setting Firebase for release branch"
+            echo "::set-output name=FIREBASE_TOKEN::${{ secrets.TESTING_FIREBASE_TOKEN }}"
+            echo "::set-output name=FIREBASE_PROJECT_ID::${{ secrets.TESTING_FIREBASE_PROJECT_ID }}"
+          else
+            echo "Branch not recognized, skipping deployment."
+            echo "::set-output name=SKIP_DEPLOYMENT::true"
+          fi
+        shell: bash
+
       - name: Deploy to Firebase
+        if: steps.set_firebase_vars.outputs.SKIP_DEPLOYMENT != 'true'
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only hosting
-
+          args: deploy --only hosting --project ${{ steps.set_firebase_vars.outputs.FIREBASE_PROJECT_ID }}
+        env:
+          FIREBASE_TOKEN: ${{ steps.set_firebase_vars.outputs.FIREBASE_TOKEN }}
