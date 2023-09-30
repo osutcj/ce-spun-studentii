@@ -22,6 +22,7 @@ import round_start from '../../static/round_start.mp3';
 import correct_answer from '../../static/correct_answer.mp3';
 import wrongAnswerSound from '../../static/x.mp3';
 import { WRONG_ANSWER_TIME } from '../../utils/constants';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 const GameRoundAdmin = (props: any) => {
   const [questions, setQuestions] = useState<DBQuestion[]>([]);
@@ -37,6 +38,7 @@ const GameRoundAdmin = (props: any) => {
   const game: NormalGame = useGame(selectedGame || '');
   const [counterWrongAnswers, setCounterWrongAnswers] = useState<number>(0);
   const [allQuestions, setAllQuestions] = useState<DBQuestion[]>([]);
+  const [storedFinalPoints, setStoresFinalPoints] = useLocalStorage('finalPoints', 0);
 
   useEffect(() => {
     GamesService.update(selectedGame, {
@@ -234,6 +236,14 @@ const GameRoundAdmin = (props: any) => {
     );
   };
 
+  const handleAddFinalPoints = () => {
+    if (game?.team2.points > game?.team1.points) {
+      setStoresFinalPoints(game?.team2.points);
+    } else {
+      setStoresFinalPoints(game?.team1.points);
+    }
+  };
+
   return (
     <Grid container spacing={2} sx={{ width: 1 / 2 }}>
       <Grid item xs={12}>
@@ -422,6 +432,17 @@ const GameRoundAdmin = (props: any) => {
               <Grid item xs={6}>
                 <Button variant="outlined" onClick={() => addPointsToTeam(2)}>
                   {game?.team2.name}
+                </Button>
+              </Grid>
+            </Grid>
+          </div>
+
+          <div style={{ marginTop: 10, width: '100%' }}>
+            <h2>Adauga puncte finale:</h2>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Button variant="outlined" onClick={handleAddFinalPoints}>
+                  Add to Final points
                 </Button>
               </Grid>
             </Grid>
