@@ -84,8 +84,8 @@ const Game = () => {
   const indexOfAnswer = (index: number) => {
     if (currentQuestion === undefined) return;
     if (
-      currentQuestion.answers[index].answer === '' ||
-      currentQuestion.answers[index].answer === undefined
+      currentQuestion?.answers[index]?.answer === undefined ||
+      currentQuestion?.answers[index]?.answer === ''
     ) {
       return '';
     }
@@ -94,8 +94,8 @@ const Game = () => {
         (answerEntry: number) => answerEntry === index
       );
       if (answerRevealed !== undefined) {
-        return `${currentQuestion.answers[index].answer} - ${currentQuestion.answers[index].points}`;
-      } else if (index < currentQuestion.answers.length) {
+        return `${currentQuestion?.answers[index]?.answer} - ${currentQuestion?.answers[index]?.points}`;
+      } else if (index < currentQuestion?.answers?.length) {
         return `${index + 1}`;
       }
     }
