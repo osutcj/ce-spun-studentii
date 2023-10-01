@@ -80,8 +80,16 @@ const GameRoundAdmin = (props: any) => {
 
   const stopSound = (audio: any) => {
     const { stop } = useSounds(audio);
-    setPlayingCurrentThemeSong(false);
-    stop(audio);
+    for (let i = 0; i < 10; i++) {
+      setTimeout(() => {
+        audio.volume -= 0.1;
+      }, i * 100);
+    }
+    setTimeout(() => {
+      setPlayingCurrentThemeSong(false);
+      stop(audio);
+    }, 1000);
+    
   };
 
   const resetDbValues = (newQuestion: string) => {
