@@ -78,19 +78,14 @@ const GameRoundAdmin = (props: any) => {
     }, timeout);
   };
 
-  const stopSound = (audio: any) => {
-    const { stop } = useSounds(audio);
-    for (let i = 0; i < 10; i++) {
-      setTimeout(() => {
-        audio.volume -= 0.1;
-      }, i * 100);
-    }
+  const stopSound = (audio: HTMLAudioElement) => {
+    const { fadeOutSound } = useSounds(audio)
+    fadeOutSound(audio)
     setTimeout(() => {
       setPlayingCurrentThemeSong(false);
-      stop(audio);
     }, 1000);
-    
   };
+
 
   const resetDbValues = (newQuestion: string) => {
     GamesService.update(selectedGame, {

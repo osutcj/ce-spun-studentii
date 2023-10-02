@@ -162,8 +162,17 @@ const FlashRoundAdmin = () => {
     }, timeout);
   };
 
-  const stopSound = (audio: any) => {
-    const { stop } = useSounds(audio);
+  const stopSound = (audio: HTMLAudioElement) => {
+    const { fadeOutSound } = useSounds(audio)
+    fadeOutSound(audio)
+    setTimeout(() => {
+      setPlayingCurrentThemeSong(false);
+    }, 1000);
+  };
+
+
+/*  const fadeOutSound = (audio : any) => {
+    const { stop } = useSounds(audio)
     for (let i = 0; i < 10; i++) {
       setTimeout(() => {
         audio.volume -= 0.1;
@@ -173,8 +182,8 @@ const FlashRoundAdmin = () => {
       setPlayingCurrentThemeSong(false);
       stop(audio);
     }, 1000);
-    
-  };
+  }
+  */
 
 
   useEffect(() => {
