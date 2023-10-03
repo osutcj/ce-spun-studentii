@@ -158,7 +158,7 @@ const FlashRoundAdmin = () => {
     const { play } = useSounds(audio);
     play(audio);
     setCurrentThemeSong(audio);
-    setPlayingCurrentThemeSong(true);
+    //setPlayingCurrentThemeSong(true);
     setTimeout(() => {
       stopSound(audio);
     }, timeout);
@@ -167,9 +167,6 @@ const FlashRoundAdmin = () => {
   const stopSound = (audio: HTMLAudioElement) => {
     const { fadeOutSound } = useSounds(audio)
     fadeOutSound(audio)
-    setTimeout(() => {
-      setPlayingCurrentThemeSong(false);
-    }, 1000);
   };
 
 
@@ -288,6 +285,7 @@ const FlashRoundAdmin = () => {
           variant="outlined"
           onClick={() => {
             playSound(round_start, 15000);
+            setPlayingCurrentThemeSong(true);
           }}
         >
           Play intro theme song
@@ -296,6 +294,9 @@ const FlashRoundAdmin = () => {
           variant="outlined"
           onClick={() => {
             stopSound(currentThemeSong);
+            setTimeout(() => {
+              setPlayingCurrentThemeSong(false);
+            }, 1000);
           }}
         >
           Stop intro theme song

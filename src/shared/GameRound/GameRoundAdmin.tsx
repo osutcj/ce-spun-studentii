@@ -72,18 +72,14 @@ const GameRoundAdmin = (props: any) => {
     const { play } = useSounds(audio);
     play(audio);
     setCurrentThemeSong(audio);
-    setPlayingCurrentThemeSong(true);
     setTimeout(() => {
       stopSound(audio);
     }, timeout);
   };
 
-  const stopSound = (audio: HTMLAudioElement) => {
+  const stopSound = (audio: any) => {
     const { fadeOutSound } = useSounds(audio)
     fadeOutSound(audio)
-    setTimeout(() => {
-      setPlayingCurrentThemeSong(false);
-    }, 1000);
   };
 
 
@@ -373,6 +369,7 @@ const GameRoundAdmin = (props: any) => {
               variant="outlined"
               onClick={() => {
                 playSound(round_start, 15000);
+                setPlayingCurrentThemeSong(true);
               }}
             >
               Play intro theme song
@@ -381,6 +378,7 @@ const GameRoundAdmin = (props: any) => {
               variant="outlined"
               onClick={() => {
                 stopSound(currentThemeSong);
+                setPlayingCurrentThemeSong(false);
               }}
             >
               Stop intro theme song
