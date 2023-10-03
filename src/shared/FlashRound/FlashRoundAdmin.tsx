@@ -10,6 +10,8 @@ import round_start from '../../static/round_start.mp3';
 import { useSounds } from '../../hooks/useSounds.hook';
 import question_revealed from '../../static/question_revealed.mp3';
 import wrongAnswerSound from '../../static/x.mp3';
+import dublicateAnswer from '../../static/dublicate_answer.mp3';
+import correctAnswer from '../../static/correct_answer.mp3';
 import { WRONG_ANSWER_TIME } from '../../utils/constants';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 
@@ -159,17 +161,32 @@ const FlashRoundAdmin = () => {
     const { play } = useSounds(audio);
     play(audio);
     setCurrentThemeSong(audio);
-    setPlayingCurrentThemeSong(true);
+    //setPlayingCurrentThemeSong(true);
     setTimeout(() => {
       stopSound(audio);
     }, timeout);
   };
 
-  const stopSound = (audio: any) => {
-    const { stop } = useSounds(audio);
-    setPlayingCurrentThemeSong(false);
-    stop(audio);
+  const stopSound = (audio: HTMLAudioElement) => {
+    const { fadeOutSound } = useSounds(audio)
+    fadeOutSound(audio)
   };
+
+
+/*  const fadeOutSound = (audio : any) => {
+    const { stop } = useSounds(audio)
+    for (let i = 0; i < 10; i++) {
+      setTimeout(() => {
+        audio.volume -= 0.1;
+      }, i * 100);
+    }
+    setTimeout(() => {
+      setPlayingCurrentThemeSong(false);
+      stop(audio);
+    }, 1000);
+  }
+  */
+
 
   useEffect(() => {
     if (resetChild) {
@@ -265,12 +282,29 @@ const FlashRoundAdmin = () => {
         >
           Show X
         </Button>
+        <Button
+          variant="outlined"
+          color="info"
+          onClick={() => playSound(dublicateAnswer, 1000)}
+          style={{ marginLeft: '20px' }}
+        >
+          Play DUBLICATE answer SFX
+        </Button>
+        <Button
+          variant="outlined"
+          color="info"
+          onClick={() => playSound(correctAnswer, 1000)}
+          style={{ marginLeft: '20px' }}
+        >
+          Play CORRECT answer SFX
+        </Button>
       </div>
       <div style={{ marginTop: 10, width: '100%' }}>
         <Button
           variant="outlined"
           onClick={() => {
             playSound(round_start, 15000);
+            setPlayingCurrentThemeSong(true);
           }}
         >
           Play intro theme song
@@ -279,6 +313,9 @@ const FlashRoundAdmin = () => {
           variant="outlined"
           onClick={() => {
             stopSound(currentThemeSong);
+            setTimeout(() => {
+              setPlayingCurrentThemeSong(false);
+            }, 1000);
           }}
         >
           Stop intro theme song

@@ -74,17 +74,16 @@ const GameRoundAdmin = (props: any) => {
     const { play } = useSounds(audio);
     play(audio);
     setCurrentThemeSong(audio);
-    setPlayingCurrentThemeSong(true);
     setTimeout(() => {
       stopSound(audio);
     }, timeout);
   };
 
   const stopSound = (audio: any) => {
-    const { stop } = useSounds(audio);
-    setPlayingCurrentThemeSong(false);
-    stop(audio);
+    const { fadeOutSound } = useSounds(audio)
+    fadeOutSound(audio)
   };
+
 
   const resetDbValues = (newQuestion: string) => {
     GamesService.update(selectedGame, {
@@ -380,6 +379,7 @@ const GameRoundAdmin = (props: any) => {
               variant="outlined"
               onClick={() => {
                 playSound(round_start, 15000);
+                setPlayingCurrentThemeSong(true);
               }}
             >
               Play intro theme song
@@ -388,6 +388,7 @@ const GameRoundAdmin = (props: any) => {
               variant="outlined"
               onClick={() => {
                 stopSound(currentThemeSong);
+                setPlayingCurrentThemeSong(false);
               }}
             >
               Stop intro theme song
