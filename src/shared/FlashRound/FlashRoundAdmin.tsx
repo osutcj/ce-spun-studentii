@@ -10,6 +10,8 @@ import round_start from '../../static/round_start.mp3';
 import { useSounds } from '../../hooks/useSounds.hook';
 import question_revealed from '../../static/question_revealed.mp3';
 import wrongAnswerSound from '../../static/x.mp3';
+import dublicateAnswer from '../../static/dublicate_answer.mp3';
+import correctAnswer from '../../static/correct_answer.mp3';
 import { WRONG_ANSWER_TIME } from '../../utils/constants';
 
 const FlashRoundAdmin = () => {
@@ -263,6 +265,22 @@ const FlashRoundAdmin = () => {
           style={{ marginLeft: '20px' }}
         >
           Show X
+        </Button>
+        <Button
+          variant="outlined"
+          color="info"
+          onClick={() => playSound(dublicateAnswer, 1000)}
+          style={{ marginLeft: '20px' }}
+        >
+          Play DUBLICATE answer SFX
+        </Button>
+        <Button
+          variant="outlined"
+          color="info"
+          onClick={() => playSound(correctAnswer, 1000)}
+          style={{ marginLeft: '20px' }}
+        >
+          Play CORRECT answer SFX
         </Button>
       </div>
       <div style={{ marginTop: 10, width: '100%' }}>
