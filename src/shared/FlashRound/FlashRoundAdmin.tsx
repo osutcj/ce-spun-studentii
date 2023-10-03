@@ -11,6 +11,7 @@ import { useSounds } from '../../hooks/useSounds.hook';
 import question_revealed from '../../static/question_revealed.mp3';
 import wrongAnswerSound from '../../static/x.mp3';
 import { WRONG_ANSWER_TIME } from '../../utils/constants';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 const FlashRoundAdmin = () => {
   const [game, selectGame] = useState<string>('');
@@ -20,9 +21,11 @@ const FlashRoundAdmin = () => {
   const [resetChild, setResetChild] = useState(false);
   const flash = useFlashRound(game);
   const [alert, setAlerts] = useState<AlertType>({ message: '', errorType: 1 });
+  const [points, setPoints] = useState(0);
   let currentToggle = flash?.toggleWrongSound;
   if (currentToggle === undefined) currentToggle = false;
   const [toggleWrong, setToggleWrong] = useState<boolean>(currentToggle);
+  const [storedFinalPoints, setStoresFinalPoints] = useLocalStorage('finalPoints', 0);
 
   useEffect(() => {
     FlashRoundService.get()
@@ -193,6 +196,22 @@ const FlashRoundAdmin = () => {
       });
   };
 
+  const computePoints = (answers: FlashRoundAnswers[] | undefined) => {
+    if (answers === undefined) return;
+    let points = 0;
+    for (let i = 0; i < answers.length; i++) {
+      if (answers[i].points && answers[i].showPoints) {
+        points += answers[i].points;
+      }
+    }
+    setPoints(points);
+  };
+
+  const handleAddFinalPoints = () => {
+    computePoints(flash?.answers);
+    setStoresFinalPoints(points);
+  };
+
   return (
     <Container>
       {game && (
@@ -265,6 +284,12 @@ const FlashRoundAdmin = () => {
           Stop intro theme song
         </Button>
       </div>
+      <div style={{ marginTop: 10, width: '100%' }}>
+        <Button variant="outlined" onClick={handleAddFinalPoints}>
+          Add to final points
+        </Button>
+      </div>
+
     </Container>
   );
 };
