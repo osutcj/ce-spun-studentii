@@ -18,7 +18,7 @@
     "@mui/icons-material": "^5.14.8",
     "@mui/material": "^5.14.8",
     "@mui/styled-engine-sc": "^5.14.8",
-    "@rollup/plugin-node-resolve": "^15.2.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/styled-components": "^5.1.24",
     "firebase": "^9.6.8",
     "lint-staged": "^14.0.1",
